@@ -1,10 +1,10 @@
 class AppError {
-  public readonly message: string;
   public readonly code: number;
+  public readonly message: string;
 
-  constructor(message: string, code: number) {
-    this.message = message;
+  constructor(code: number, message: string) {
     this.code = code;
+    this.message = message;
   }
 }
 

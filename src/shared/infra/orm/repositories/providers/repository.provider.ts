@@ -1,36 +1,42 @@
+/**
+ * Generic repository provider interface for entities of type T.
+ *
+ * This interface defines the core CRUD operations that a repository must implement
+ * to interact with a database for a specific entity.
+ */
 interface IRepositoryProvider<T> {
   /**
-   * @param data is the object of type T that will be created
+   * Creates a new entity.
    *
-   * @returns a promise that resolves to the created object of type T
+   * @param data The data of the entity to be created.
+   * @returns A promise that resolves to the created entity.
    */
-
   create(data: T): Promise<T>;
 
   /**
-   * @param options is the object of type T that will be used to find the objects,
-   * in most of cases is a DTO that extends the entity T
+   * Finds entities that match the provided options.
+   * These options are usually a DTO that extends or partializes the entity.
    *
-   * @returns a promise that resolves to an array of objects of type T
+   * @param options The criteria used to filter and search for entities.
+   * @returns A promise that resolves to an array of found entities.
    */
-
   find(options: Partial<T>): Promise<T[]>;
 
   /**
-   * @param id is the id of the object that will be updated
-   * @param data is the object of type T that will be used to update the object
+   * Updates an existing entity by its identifier.
    *
-   * @returns a promise that resolves to the updated object of type T
+   * @param id The identifier of the entity to be updated.
+   * @param data The new data for the entity.
+   * @returns A promise that resolves to the updated entity.
    */
-
   update(id: string, data: T): Promise<T>;
 
   /**
-   * @param id is the id of the object that will be deleted
+   * Deletes an entity from the database by its identifier.
    *
-   * @returns a promise that resolves to the number of objects deleted
+   * @param id The identifier of the entity to be deleted.
+   * @returns A promise that resolves to the number of affected rows.
    */
-
   delete(id: string): Promise<number>;
 }
 
