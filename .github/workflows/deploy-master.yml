@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - 5-infra-criar-ambiente-deployado-database-e-vps
+      - master
   workflow_dispatch:
 
 env:
