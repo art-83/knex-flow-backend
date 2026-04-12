@@ -1,5 +1,9 @@
 import fs from 'fs';
 
+const isDevelopment = process.env.ENVIRONMENT === 'development';
+
+console.log('isDevelopment', isDevelopment);
+
 const typeOrmConfig = {
   type: String(process.env.DB_TYPE),
   host: String(process.env.DB_HOST),
@@ -8,9 +12,13 @@ const typeOrmConfig = {
   password: String(process.env.DB_PASSWORD),
   database: String(process.env.DB_NAME),
   entities: [__dirname + String(process.env.ORM_ENTITIES_PATH)],
-  ssl: {
-    ca: fs.readFileSync(__dirname + String(process.env.SSL_CERT_PATH)),
-  },
+  requestCert: false,
+  synchronize: Boolean(process.env.DB_SYNCHRONIZE),
+  ...(process.env.ENVIRONMENT === 'production' ? {
+    ssl: {
+      ca: fs.readFileSync(__dirname + String(process.env.SSL_CERT_PATH)),
+    },
+  } : {}),
   extra: {
     max: 10,
     idleTimeoutMillis: 30000,

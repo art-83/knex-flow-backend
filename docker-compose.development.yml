@@ -4,9 +4,8 @@ services:
   db:
     image: postgres:15-alpine
     container_name: eventflow-database
-    restart: always
     env_file:
-      - .env
+      - .env.development
     ports:
       - '5432:5432'
     volumes:
@@ -17,9 +16,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: eventflow-app
-    restart: always
     env_file:
-      - .env
+      - .env.development
     ports:
       - '3000:3000'
     depends_on:
