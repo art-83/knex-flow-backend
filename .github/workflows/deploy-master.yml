@@ -58,19 +58,19 @@ jobs:
 
       - name: Ensure remote directory exists
         run: |
-          ssh "${SSH_TARGET}" "mkdir -p '${APP_DIR}'"
+          ssh "${SSH_TARGET}" "sudo mkdir -p '${APP_DIR}'"
 
       - name: Create remote backup (rollback point)
         run: |
-          ssh "${SSH_TARGET}" "if [ -d '${APP_DIR}' ]; then rm -rf '${BACKUP_DIR}' && cp -a '${APP_DIR}' '${BACKUP_DIR}'; fi"
+          ssh "${SSH_TARGET}" "if [ -d '${APP_DIR}' ]; then sudo rm -rf '${BACKUP_DIR}' && sudo cp -a '${APP_DIR}' '${BACKUP_DIR}'; fi"
 
       - name: Copy bundle to VPS
         run: |
-          rsync -az --delete deploy/ "${SSH_TARGET}:${APP_DIR}/"
+          rsync -az --delete --rsync-path="sudo rsync" deploy/ "${SSH_TARGET}:${APP_DIR}/"
 
       - name: Deploy with Docker Compose
         run: |
-          ssh "${SSH_TARGET}" "cd '${APP_DIR}' && docker compose -f docker-compose.production.yml up -d --build --remove-orphans"
+          ssh "${SSH_TARGET}" "cd '${APP_DIR}' && sudo docker compose -f docker-compose.production.yml up -d --build --remove-orphans"
 
       - name: Health check
         run: |
@@ -79,9 +79,9 @@ jobs:
       - name: Rollback on failed health check
         if: ${{ failure() }}
         run: |
-          ssh "${SSH_TARGET}" "if [ -d '${BACKUP_DIR}' ]; then rm -rf '${APP_DIR}' && mv '${BACKUP_DIR}' '${APP_DIR}' && cd '${APP_DIR}' && docker compose -f docker-compose.production.yml up -d --build --remove-orphans; else echo 'Rollback skipped: no backup found' && exit 1; fi"
+          ssh "${SSH_TARGET}" "if [ -d '${BACKUP_DIR}' ]; then sudo rm -rf '${APP_DIR}' && sudo mv '${BACKUP_DIR}' '${APP_DIR}' && cd '${APP_DIR}' && sudo docker compose -f docker-compose.production.yml up -d --build --remove-orphans; else echo 'Rollback skipped: no backup found' && exit 1; fi"
 
       - name: Remove backup after successful deploy
         if: ${{ success() }}
         run: |
-          ssh "${SSH_TARGET}" "rm -rf '${BACKUP_DIR}'"
+          ssh "${SSH_TARGET}" "sudo rm -rf '${BACKUP_DIR}'"
