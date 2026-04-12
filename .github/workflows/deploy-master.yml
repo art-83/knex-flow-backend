@@ -60,9 +60,12 @@ jobs:
         id: target
         env:
           SERVER_IPV4: ${{ secrets.SERVER_IPV4 }}
+          SERVER_ROOT_USER: ${{ secrets.SERVER_ROOT_USER }}
         run: |
           if [[ "$SERVER_IPV4" == *"@"* ]]; then
             echo "ssh_target=$SERVER_IPV4" >> "$GITHUB_OUTPUT"
+          elif [[ -n "$SERVER_ROOT_USER" ]]; then
+            echo "ssh_target=$SERVER_ROOT_USER@$SERVER_IPV4" >> "$GITHUB_OUTPUT"
           else
             echo "ssh_target=root@$SERVER_IPV4" >> "$GITHUB_OUTPUT"
           fi
