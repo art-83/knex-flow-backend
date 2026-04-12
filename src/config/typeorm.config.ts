@@ -1,12 +1,12 @@
 import fs from 'fs';
 
 const typeOrmConfig = {
-  type: process.env.DB_TYPE,
-  host: process.env.DB_HOST,
+  type: String(process.env.DB_TYPE),
+  host: String(process.env.DB_HOST),
   port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  username: String(process.env.DB_USER),
+  password: String(process.env.DB_PASSWORD),
+  database: String(process.env.DB_NAME),
   entities: [__dirname + String(process.env.ORM_ENTITIES_PATH)],
   ssl: {
     ca: fs.readFileSync(__dirname + String(process.env.SSL_CERT_PATH)),
