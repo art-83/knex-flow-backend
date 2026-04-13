@@ -12,6 +12,7 @@ import {
 import { OrderStatus } from '../enums/order-status.enum';
 import { Ticket } from './ticket.entity';
 import { User } from '../../../../users/infra/orm/entities/user.entity';
+import { Payment } from '../../../../payments/infra/orm/entities/payment.entity';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -39,6 +40,9 @@ export class Order {
 
   @OneToMany(() => Ticket, ticket => ticket.order)
   tickets: Ticket[];
+
+  @OneToMany(() => Payment, payment => payment.order)
+  payments: Payment[];
 }
 
 export default Order;
