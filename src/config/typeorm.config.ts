@@ -14,15 +14,17 @@ const typeOrmConfig = {
   entities: [__dirname + String(process.env.ORM_ENTITIES_PATH)],
   requestCert: false,
   synchronize: Boolean(process.env.DB_SYNCHRONIZE),
-  ...(process.env.ENVIRONMENT === 'production' ? {
-    ssl: {
-      ca: fs.readFileSync(__dirname + String(process.env.SSL_CERT_PATH)),
-    },
-  } : {}),
+  ...(process.env.ENVIRONMENT === 'production'
+    ? {
+        ssl: {
+          ca: fs.readFileSync(__dirname + String(process.env.SSL_CERT_PATH)),
+        },
+      }
+    : {}),
   extra: {
     max: 10,
     idleTimeoutMillis: 30000,
-  }
+  },
 };
 
 export default typeOrmConfig;
