@@ -1,6 +1,8 @@
 import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-query-options.dto';
 import { Activity } from '../../infra/orm/entities/activity.entity';
 
-interface ActivityQueryOptions extends Activity, DefaultQueryOptionsDTO {}
+interface ActivityQueryOptions extends Activity, DefaultQueryOptionsDTO {
+  // TODO: quando Organization virar @ManyToOne, declarar organization_id: string aqui
+}
 
 export default ActivityQueryOptions;
