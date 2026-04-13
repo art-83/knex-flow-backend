@@ -17,7 +17,7 @@ export class EventConfiguration {
 
   // TODO: definir tipo do configuration com o time
   @Column({ type: 'jsonb' })
-  configuration: Record<string, unknown>;
+  configuration: object;
 
   @CreateDateColumn()
   created_at: Date;
