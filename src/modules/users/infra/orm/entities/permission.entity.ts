@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserPermission } from './user-permission.entity';
 import { OrganizationRolePermission } from './organization-role-permission.entity';
 
@@ -9,6 +17,15 @@ export class Permission {
 
   @Column()
   description: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @OneToMany(() => UserPermission, userPermission => userPermission.permission)
   userPermissions: UserPermission[];

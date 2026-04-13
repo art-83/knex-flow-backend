@@ -1,4 +1,14 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { OrganizationRolePermission } from './organization-role-permission.entity';
 
@@ -12,6 +22,15 @@ export class OrganizationRole {
 
   @Column()
   description: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @ManyToOne(() => Organization, organization => organization.organizationRoles)
   @JoinColumn({ name: 'organization_id' })

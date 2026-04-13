@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
 
@@ -15,6 +23,15 @@ export class User {
 
   @Column({ nullable: true })
   phone: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @OneToMany(() => UserOrganization, userOrganization => userOrganization.user)
   userOrganizations: UserOrganization[];

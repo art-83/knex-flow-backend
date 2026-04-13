@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { OrganizationRole } from './organization-role.entity';
 import { UserOrganization } from './user-organization.entity';
 
@@ -9,6 +17,15 @@ export class Organization {
 
   @Column()
   name: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @OneToMany(() => OrganizationRole, organizationRole => organizationRole.organization)
   organizationRoles: OrganizationRole[];
