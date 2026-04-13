@@ -3,11 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { EventActivity } from './event-activity.entity';
+import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
 
 @Entity({ name: 'activities' })
 export class Activity {
@@ -20,9 +23,9 @@ export class Activity {
   @Column({ type: 'text' })
   description: string;
 
-  // TODO: adicionar @ManyToOne quando Organization existir
-  @Column('uuid')
-  organization_id: string;
+  @ManyToOne(() => Organization, organization => organization.activities, { nullable: false })
+  @JoinColumn({ name: 'organization_id' })
+  organization: Organization;
 
   @CreateDateColumn()
   created_at: Date;

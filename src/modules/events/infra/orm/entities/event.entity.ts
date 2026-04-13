@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +13,7 @@ import {
 import { EventConfiguration } from './event-configuration.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
+import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
 
 @Entity({ name: 'events' })
 export class Event {
@@ -23,9 +26,9 @@ export class Event {
   @Column({ type: 'text' })
   description: string;
 
-  // TODO: adicionar @ManyToOne quando Organization existir
-  @Column('uuid')
-  organization_id: string;
+  @ManyToOne(() => Organization, organization => organization.events, { nullable: false })
+  @JoinColumn({ name: 'organization_id' })
+  organization: Organization;
 
   @Column()
   start_date: Date;

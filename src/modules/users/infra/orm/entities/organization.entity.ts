@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { OrganizationRole } from './organization-role.entity';
 import { UserOrganization } from './user-organization.entity';
+import { Event } from '../../../../events/infra/orm/entities/event.entity';
+import { Activity } from '../../../../events/infra/orm/entities/activity.entity';
 
 @Entity('organizations')
 export class Organization {
@@ -33,11 +35,11 @@ export class Organization {
   @OneToMany(() => UserOrganization, userOrganization => userOrganization.organization)
   userOrganizations: UserOrganization[];
 
-  // TODO: adicionar relacionamento @OneToMany com a entidade Event do módulo events (Organization -> 0..* Events)
-  // events: Event[];
+  @OneToMany(() => Event, event => event.organization)
+  events: Event[];
 
-  // TODO: adicionar relacionamento @OneToMany com a entidade Activity do módulo events (Organization -> 1..* Activities)
-  // activities: Activity[];
+  @OneToMany(() => Activity, activity => activity.organization)
+  activities: Activity[];
 }
 
 export default Organization;

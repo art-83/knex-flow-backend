@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
+import { Order } from '../../../../events/infra/orm/entities/order.entity';
 
 @Entity('users')
 export class User {
@@ -39,8 +40,8 @@ export class User {
   @OneToMany(() => UserPermission, userPermission => userPermission.user)
   userPermissions: UserPermission[];
 
-  // TODO: adicionar relacionamento @OneToMany com a entidade Order do módulo events (User -> 0..* Orders)
-  // orders: Order[];
+  @OneToMany(() => Order, order => order.user)
+  orders: Order[];
 }
 
 export default User;
