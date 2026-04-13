@@ -29,7 +29,7 @@ export class Ticket {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => Batch, (batch) => batch.tickets)
+  @ManyToOne(() => Batch, (batch) => batch.tickets, { nullable: false })
   @JoinColumn({ name: 'batch_id' })
   batch: Batch;
 
