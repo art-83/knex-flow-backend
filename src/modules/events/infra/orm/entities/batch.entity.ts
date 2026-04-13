@@ -32,11 +32,11 @@ export class Batch {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.batches, { nullable: false })
+  @ManyToOne(() => Event, event => event.batches, { nullable: false })
   @JoinColumn({ name: 'event_id' })
   event: Event;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.batch)
+  @OneToMany(() => Ticket, ticket => ticket.batch)
   tickets: Ticket[];
 }
 

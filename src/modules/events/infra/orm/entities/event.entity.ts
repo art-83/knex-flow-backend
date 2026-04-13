@@ -42,13 +42,13 @@ export class Event {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToOne(() => EventConfiguration, (config) => config.event)
+  @OneToOne(() => EventConfiguration, config => config.event)
   configuration: EventConfiguration;
 
-  @OneToMany(() => Batch, (batch) => batch.event)
+  @OneToMany(() => Batch, batch => batch.event)
   batches: Batch[];
 
-  @OneToMany(() => EventActivity, (ea) => ea.event)
+  @OneToMany(() => EventActivity, ea => ea.event)
   event_activities: EventActivity[];
 }
 

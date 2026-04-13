@@ -34,7 +34,7 @@ export class Order {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.order)
+  @OneToMany(() => Ticket, ticket => ticket.order)
   tickets: Ticket[];
 }
 

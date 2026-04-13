@@ -15,8 +15,8 @@ class CreateTable3Service {
     @inject('Table1Repository')
     private table1RepositoryProvider: IRepositoryProvider<Table1>,
     @inject('Table2Repository')
-    private table2RepositoryProvider: IRepositoryProvider<Table2>
-  ) { }
+    private table2RepositoryProvider: IRepositoryProvider<Table2>,
+  ) {}
 
   public async execute(data: CreateOrUpdateTable3DTO) {
     const [table1, table2] = await Promise.all([

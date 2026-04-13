@@ -28,7 +28,7 @@ export class EventConfiguration {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToOne(() => Event, (event) => event.configuration, { nullable: false })
+  @OneToOne(() => Event, event => event.configuration, { nullable: false })
   @JoinColumn({ name: 'event_id' })
   event: Event;
 }

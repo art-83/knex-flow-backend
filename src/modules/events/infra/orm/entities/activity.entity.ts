@@ -33,7 +33,7 @@ export class Activity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToMany(() => EventActivity, (ea) => ea.activity)
+  @OneToMany(() => EventActivity, ea => ea.activity)
   event_activities: EventActivity[];
 }
 

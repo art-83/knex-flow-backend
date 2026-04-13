@@ -29,11 +29,11 @@ export class Ticket {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => Batch, (batch) => batch.tickets, { nullable: false })
+  @ManyToOne(() => Batch, batch => batch.tickets, { nullable: false })
   @JoinColumn({ name: 'batch_id' })
   batch: Batch;
 
-  @ManyToOne(() => Order, (order) => order.tickets, { nullable: true })
+  @ManyToOne(() => Order, order => order.tickets, { nullable: true })
   @JoinColumn({ name: 'order_id' })
   order: Order;
 }

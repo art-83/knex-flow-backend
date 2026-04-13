@@ -31,11 +31,11 @@ export class EventActivity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => Event, (event) => event.event_activities, { nullable: false })
+  @ManyToOne(() => Event, event => event.event_activities, { nullable: false })
   @JoinColumn({ name: 'event_id' })
   event: Event;
 
-  @ManyToOne(() => Activity, (activity) => activity.event_activities, { nullable: false })
+  @ManyToOne(() => Activity, activity => activity.event_activities, { nullable: false })
   @JoinColumn({ name: 'activity_id' })
   activity: Activity;
 }
