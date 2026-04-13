@@ -1,0 +1,6 @@
+export enum TicketStatus {
+  UNASSIGNED = 'UNASSIGNED',
+  PROCESSING = 'PROCESSING',
+  ASSIGNED = 'ASSIGNED',
+  CANCELLED = 'CANCELLED',
+}

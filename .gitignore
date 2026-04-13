@@ -4,3 +4,4 @@ node_modules
 .env.development
 prod-ca-2021.crt
 dist
+.claude
