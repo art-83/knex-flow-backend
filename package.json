@@ -7,7 +7,8 @@
     "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "node -e \"const fs=require('fs');const {execFileSync}=require('child_process');const p=require('path');const b=p.join('node_modules','husky','bin.js');if(fs.existsSync(b))execFileSync(process.execPath,[b],{stdio:'inherit'})\""
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
+    "husky": "^9.1.7",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2"
   },

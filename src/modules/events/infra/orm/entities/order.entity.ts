@@ -3,12 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderStatus } from '../enums/order-status.enum';
 import { Ticket } from './ticket.entity';
+import { User } from '../../../../users/infra/orm/entities/user.entity';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -18,9 +21,9 @@ export class Order {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total_amount: number;
 
-  // TODO: adicionar @ManyToOne quando User existir
-  @Column('uuid')
-  user_id: string;
+  @ManyToOne(() => User, user => user.orders, { nullable: false })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ type: 'enum', enum: OrderStatus })
   status: OrderStatus;

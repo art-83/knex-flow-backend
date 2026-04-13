@@ -36,7 +36,10 @@ export class OrganizationRole {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @OneToMany(() => OrganizationRolePermission, organizationRolePermission => organizationRolePermission.organizationRole)
+  @OneToMany(
+    () => OrganizationRolePermission,
+    organizationRolePermission => organizationRolePermission.organizationRole,
+  )
   organizationRolePermissions: OrganizationRolePermission[];
 }
 
