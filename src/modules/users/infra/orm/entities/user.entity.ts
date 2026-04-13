@@ -15,7 +15,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column({ select: false })
@@ -38,6 +38,9 @@ export class User {
 
   @OneToMany(() => UserPermission, userPermission => userPermission.user)
   userPermissions: UserPermission[];
+
+  // TODO: adicionar relacionamento @OneToMany com a entidade Order do módulo events (User -> 0..* Orders)
+  // orders: Order[];
 }
 
 export default User;

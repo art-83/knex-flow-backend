@@ -32,6 +32,12 @@ export class Organization {
 
   @OneToMany(() => UserOrganization, userOrganization => userOrganization.organization)
   userOrganizations: UserOrganization[];
+
+  // TODO: adicionar relacionamento @OneToMany com a entidade Event do módulo events (Organization -> 0..* Events)
+  // events: Event[];
+
+  // TODO: adicionar relacionamento @OneToMany com a entidade Activity do módulo events (Organization -> 1..* Activities)
+  // activities: Activity[];
 }
 
 export default Organization;
