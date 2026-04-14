@@ -44,7 +44,7 @@ export class Payment {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne(() => Order, { nullable: false })
+  @ManyToOne(() => Order, order => order.payments, { nullable: false })
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
