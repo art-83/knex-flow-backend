@@ -2,7 +2,7 @@ import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-qu
 import { Order } from '../../infra/orm/entities/order.entity';
 
 interface OrderQueryOptions extends Order, DefaultQueryOptionsDTO {
-  // TODO: quando User virar @ManyToOne, declarar user_id: string aqui
+  user_id: string;
 }
 
 export default OrderQueryOptions;

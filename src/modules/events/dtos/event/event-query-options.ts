@@ -2,7 +2,7 @@ import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-qu
 import { Event } from '../../infra/orm/entities/event.entity';
 
 interface EventQueryOptions extends Event, DefaultQueryOptionsDTO {
-  // TODO: quando Organization virar @ManyToOne, declarar organization_id: string aqui
+  organization_id: string;
 }
 
 export default EventQueryOptions;
