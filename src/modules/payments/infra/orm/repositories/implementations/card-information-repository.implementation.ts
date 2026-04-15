@@ -51,7 +51,7 @@ export class CardInformationRepository implements IRepositoryProvider<CardInform
   }
 
   public async delete(id: string): Promise<number> {
-    const deleteResult = await this.repository.delete(id);
+    const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
   }
 }
