@@ -18,6 +18,11 @@ import IOrderRepositoryProvider from '../../modules/events/infra/orm/repositorie
 import OrderRepository from '../../modules/events/infra/orm/repositories/implementations/order-repository.implementation';
 import ITicketRepositoryProvider from '../../modules/events/infra/orm/repositories/providers/ticket-repository.provider';
 import TicketRepository from '../../modules/events/infra/orm/repositories/implementations/ticket-repository.implementation';
+import { PaymentRepository } from '../../modules/payments/infra/orm/repositories/implementations/payment-repository.implementation';
+import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
+import IRepositoryProvider from '../infra/orm/repositories/providers/repository.provider';
+import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
+import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -34,3 +39,9 @@ container.registerSingleton<IEventConfigurationRepositoryProvider>(
 );
 container.registerSingleton<IOrderRepositoryProvider>('OrderRepositoryProvider', OrderRepository);
 container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider', TicketRepository);
+
+container.registerSingleton<IRepositoryProvider<Payment>>('PaymentRepositoryProvider', PaymentRepository);
+container.registerSingleton<IRepositoryProvider<CardInformation>>(
+  'CardInformationRepositoryProvider',
+  CardInformationRepository,
+);
