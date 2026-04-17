@@ -45,6 +45,11 @@ import IRepositoryProvider from '../infra/orm/repositories/providers/repository.
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 
+import IHashProvider from '../../modules/users/infra/providers/hash/hash.provider';
+import BcryptHashProvider from '../../modules/users/infra/providers/hash/bcrypt-hash.provider';
+import IJwtProvider from '../../modules/users/infra/providers/jwt/jwt.provider';
+import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/jsonwebtoken-jwt.provider';
+
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
@@ -86,3 +91,6 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
   'CardInformationRepositoryProvider',
   CardInformationRepository,
 );
+
+container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
+container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
