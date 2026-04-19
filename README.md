@@ -30,6 +30,12 @@ npm run build
 docker compose -f docker-compose.development.yml up --build
 ```
 
+Esse comando sobe:
+
+- `app`: API HTTP
+- `worker`: processamento de filas (BullMQ)
+- `db`: PostgreSQL local
+
 ### Observações importantes
 
 - O projeto depende dos valores definidos em `.env` e `.env.development`.

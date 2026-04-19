@@ -44,6 +44,8 @@ import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
 import IRepositoryProvider from '../infra/orm/repositories/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
+import { IProducerProvider } from '../infra/queue/infra/providers/producer.provider';
+import { BullMQProducer } from '../infra/queue/infra/implementation/producer.implementation';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -86,3 +88,4 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
   'CardInformationRepositoryProvider',
   CardInformationRepository,
 );
+container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);

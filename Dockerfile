@@ -5,4 +5,3 @@ RUN npm ci --omit=dev
 COPY dist ./dist
 COPY src/config/prod-ca-2021.crt dist/config/prod-ca-2021.crt
 EXPOSE 3000
-CMD ["node", "dist/shared/infra/http/server.js"]
