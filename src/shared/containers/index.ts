@@ -44,6 +44,10 @@ import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
 import IRepositoryProvider from '../infra/orm/repositories/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
+import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
+import { AbacatepayCreatePixPaymentDTO } from '../../modules/payments/dtos/gateways/abacatepay-create-pix-payment.dto';
+import { AbacatepayPixPaymentResponseDTO } from '../../modules/payments/dtos/gateways/abacatepay-pix-payment-response.dto';
+import { AbacatepayPixGatewayImplementation } from '../../modules/payments/infra/gateways/implementations/abacatepay-pix-gateway.implementation';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -86,3 +90,5 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
   'CardInformationRepositoryProvider',
   CardInformationRepository,
 );
+
+container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);

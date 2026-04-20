@@ -10,8 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
+import { PaymentStatus } from '../../../enums/payment-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
-import { PaymentStatus } from '../enums/payment-status.enum';
 import { CardInformation } from './card-information.entity';
 import { PaymentProvider } from '../enums/payment-provider.enum';
 
