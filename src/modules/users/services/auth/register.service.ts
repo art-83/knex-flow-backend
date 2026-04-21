@@ -20,43 +20,31 @@ class RegisterService {
   ) {}
 
   public async execute(data: RegisterDTO): Promise<LoginResponseDTO> {
-    try {
-      const passwordValidation = validatePasswordStrength(data.password);
-      if (!passwordValidation.isValid) {
-        throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
-      }
-
-      const existingUsers = await this.userRepository.find({ email: data.email });
-      if (existingUsers.length > 0) {
-        throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
-      }
-
-      const hashedPassword = await this.hashProvider.hash(data.password);
-
-      const user = new User();
-      user.email = data.email;
-      user.password = hashedPassword;
-
-      const createdUser = await this.userRepository.create(user);
-
-      const tokenPayload = { user_id: createdUser.id };
-      const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
-      const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
-
-      return {
-        message: 'Register successful.',
-        data: {
-          accessToken,
-          refreshToken,
-        },
-      };
-    } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-
+    const passwordValidation = validatePasswordStrength(data.password);
+    if (!passwordValidation.isValid) {
       throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
     }
+
+    const existingUsers = await this.userRepository.find({ email: data.email });
+    if (existingUsers.length > 0) {
+      throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
+    }
+
+    const hashedPassword = await this.hashProvider.hash(data.password);
+    data.password = hashedPassword;
+    const createdUser = await this.userRepository.create(data);
+
+    const tokenPayload = { user_id: createdUser.id };
+    const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
+    const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
+
+    return {
+      message: 'Register successful.',
+      data: {
+        accessToken,
+        refreshToken,
+      },
+    };
   }
 }
 
