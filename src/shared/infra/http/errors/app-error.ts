@@ -1,4 +1,4 @@
-export class AppError {
+export default class AppError {
   public readonly code: number;
   public readonly message: string;
 
