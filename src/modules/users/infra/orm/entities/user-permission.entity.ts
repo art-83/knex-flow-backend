@@ -29,7 +29,7 @@ export class UserPermission {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Organization)
+  @ManyToOne(() => Organization, organization => organization.userPermissions)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 

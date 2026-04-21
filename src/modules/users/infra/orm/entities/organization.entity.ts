@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { OrganizationRole } from './organization-role.entity';
 import { UserOrganization } from './user-organization.entity';
+import { UserPermission } from './user-permission.entity';
 import { Event } from '../../../../events/infra/orm/entities/event.entity';
 import { Activity } from '../../../../events/infra/orm/entities/activity.entity';
 
@@ -34,6 +35,9 @@ export class Organization {
 
   @OneToMany(() => UserOrganization, userOrganization => userOrganization.organization)
   userOrganizations: UserOrganization[];
+
+  @OneToMany(() => UserPermission, userPermission => userPermission.organization)
+  userPermissions: UserPermission[];
 
   @OneToMany(() => Event, event => event.organization)
   events: Event[];
