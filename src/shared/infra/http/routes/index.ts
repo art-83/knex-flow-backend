@@ -6,7 +6,7 @@ import paymentRouter from '../../../../modules/payments/infra/http/routers/payme
 const routes = Router();
 
 routes.use('/health', (request, response) => {
-  return response.status(200).json({ message: 'Strawberry fields forever!' });
+  return response.status(200).json({ message: 'Strawberry fields forever!', timestamp: new Date().toISOString() });
 });
 
 routes.use('/auth', authRouter);
