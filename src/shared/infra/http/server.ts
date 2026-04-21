@@ -1,3 +1,4 @@
+import '../../containers';
 import express from 'express';
 import dataSource from '../orm/database';
 import routes from './routes';

@@ -3,10 +3,6 @@ interface LoginResponseDTO {
   data: {
     accessToken: string;
     refreshToken: string;
-    user: {
-      id: string;
-      email: string;
-    };
   };
 }
 

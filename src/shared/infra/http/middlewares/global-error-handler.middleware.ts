@@ -5,7 +5,7 @@ async function globalErrorHandlerMiddleware(error: Error, request: Request, resp
   if (error instanceof AppError) {
     return response.status(error.code).json({ message: error.message });
   }
-
+  console.error(error);
   return response.status(500).json({ message: 'Internal server error' });
 }
 

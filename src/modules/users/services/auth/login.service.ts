@@ -40,10 +40,6 @@ class LoginService {
       data: {
         accessToken,
         refreshToken,
-        user: {
-          id: user.id,
-          email: user.email,
-        },
       },
     };
   }
