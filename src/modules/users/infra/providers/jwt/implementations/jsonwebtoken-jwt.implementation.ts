@@ -24,6 +24,10 @@ class JsonWebTokenJwtProvider implements IJwtProvider {
     return (jwt.sign as any)(payload, this.refreshSecret, { expiresIn: this.refreshExpiresIn });
   }
 
+  public verifyAccessToken(token: string): JwtPayloadDTO {
+    return jwt.verify(token, this.secret) as JwtPayloadDTO;
+  }
+
   public verifyRefreshToken(token: string): JwtPayloadDTO {
     return jwt.verify(token, this.refreshSecret) as JwtPayloadDTO;
   }

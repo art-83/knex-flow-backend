@@ -18,6 +18,7 @@
     "strictPropertyInitialization": false,
     "isolatedModules": false,
     "skipLibCheck": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["./node_modules/@types", "./@types"]
   }
 }
