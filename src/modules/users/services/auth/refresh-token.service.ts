@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import IJwtProvider from '../../infra/providers/jwt/jwt.provider';
+import IJwtProvider from '../../infra/providers/jwt/providers/jwt.provider';
 import RefreshTokenDTO from '../../dtos/auth/refresh-token.dto';
 import RefreshTokenResponseDTO from '../../dtos/auth/refresh-token-response.dto';
 import AppError from '../../../../shared/infra/http/errors/app-error';

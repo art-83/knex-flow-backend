@@ -1,5 +1,5 @@
 import jwt, { Secret } from 'jsonwebtoken';
-import IJwtProvider from '../jwt.provider';
+import IJwtProvider from '../providers/jwt.provider';
 import JwtPayloadDTO from '../../../../dtos/auth/jwt-payload.dto';
 import jwtConfig from '../../../../../../config/jwt.config';
 

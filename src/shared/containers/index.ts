@@ -47,7 +47,7 @@ import CardInformation from '../../modules/payments/infra/orm/entities/card-info
 
 import IHashProvider from '../../modules/users/infra/providers/hash/providers/hash.provider';
 import BcryptHashProvider from '../../modules/users/infra/providers/hash/implementations/bcrypt-hash.implementation';
-import IJwtProvider from '../../modules/users/infra/providers/jwt/jwt.provider';
+import IJwtProvider from '../../modules/users/infra/providers/jwt/providers/jwt.provider';
 import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/implementations/jsonwebtoken-jwt.implementation';
 import AuthController from '../../modules/users/infra/http/controllers/auth.controller';
 import LoginService from '../../modules/users/services/auth/login.service';
