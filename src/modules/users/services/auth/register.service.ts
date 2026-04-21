@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
-import IHashProvider from '../../infra/providers/hash/providers/hash.provider';
-import IJwtProvider from '../../infra/providers/jwt/providers/jwt.provider';
+import IHashProvider from '../../infra/hash/providers/hash.provider';
+import IJwtProvider from '../../infra/jwt/providers/jwt.provider';
 import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
 import RegisterDTO from '../../dtos/auth/register.dto';
 import LoginResponseDTO from '../../dtos/auth/login-response.dto';

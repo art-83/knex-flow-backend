@@ -49,10 +49,10 @@ import { AbacatepayCreatePixPaymentDTO } from '../../modules/payments/dtos/gatew
 import { AbacatepayPixPaymentResponseDTO } from '../../modules/payments/dtos/gateways/abacatepay-pix-payment-response.dto';
 import { AbacatepayPixGatewayImplementation } from '../../modules/payments/infra/gateways/implementations/abacatepay-pix-gateway.implementation';
 
-import IHashProvider from '../../modules/users/infra/providers/hash/providers/hash.provider';
-import BcryptHashProvider from '../../modules/users/infra/providers/hash/implementations/bcrypt-hash.implementation';
-import IJwtProvider from '../../modules/users/infra/providers/jwt/providers/jwt.provider';
-import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/implementations/jsonwebtoken-jwt.implementation';
+import IHashProvider from '../../modules/users/infra/hash/providers/hash.provider';
+import BcryptHashProvider from '../../modules/users/infra/hash/implementations/bcrypt-hash.implementation';
+import IJwtProvider from '../../modules/users/infra/jwt/providers/jwt.provider';
+import JsonWebTokenJwtProvider from '../../modules/users/infra/jwt/implementations/jsonwebtoken-jwt.implementation';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 

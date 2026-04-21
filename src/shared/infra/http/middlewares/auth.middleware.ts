@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
-import IJwtProvider from '../../../../modules/users/infra/providers/jwt/providers/jwt.provider';
+import IJwtProvider from '../../../../modules/users/infra/jwt/providers/jwt.provider';
 
 function authMiddleware(request: Request, response: Response, next: NextFunction): void {
   try {
