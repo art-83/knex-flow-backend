@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
+import { container } from 'tsyringe';
 import AuthController from '../controllers/auth.controller';
 
 const authRouter = Router();
-const authController = new AuthController();
+const authController = container.resolve(AuthController);
 
 authRouter.post(
   '/login',
@@ -13,7 +14,7 @@ authRouter.post(
       password: Joi.string().min(6).required(),
     },
   }),
-  authController.login,
+  (request, response) => authController.login(request, response),
 );
 
 authRouter.post(
@@ -23,7 +24,7 @@ authRouter.post(
       refreshToken: Joi.string().required(),
     },
   }),
-  authController.refresh,
+  (request, response) => authController.refresh(request, response),
 );
 
 export default authRouter;

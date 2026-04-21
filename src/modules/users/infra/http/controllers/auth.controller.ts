@@ -1,27 +1,25 @@
-import { NextFunction, Request, Response } from 'express';
-import { container } from 'tsyringe';
+import { Request, Response } from 'express';
+import { inject, injectable } from 'tsyringe';
 import LoginService from '../../../services/auth/login.service';
 import RefreshTokenService from '../../../services/auth/refresh-token.service';
 
+@injectable()
 class AuthController {
-  public async login(request: Request, response: Response, next: NextFunction) {
-    try {
-      const loginService = container.resolve(LoginService);
-      const result = await loginService.execute(request.body);
-      return response.json(result);
-    } catch (error) {
-      next(error);
-    }
+  constructor(
+    @inject('LoginService')
+    private loginService: LoginService,
+    @inject('RefreshTokenService')
+    private refreshTokenService: RefreshTokenService,
+  ) {}
+
+  public async login(request: Request, response: Response) {
+    const result = await this.loginService.execute(request.body);
+    return response.json(result);
   }
 
-  public async refresh(request: Request, response: Response, next: NextFunction) {
-    try {
-      const refreshTokenService = container.resolve(RefreshTokenService);
-      const result = await refreshTokenService.execute(request.body);
-      return response.json(result);
-    } catch (error) {
-      next(error);
-    }
+  public async refresh(request: Request, response: Response) {
+    const result = await this.refreshTokenService.execute(request.body);
+    return response.json(result);
   }
 }
 

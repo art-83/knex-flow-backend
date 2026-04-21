@@ -1,11 +1,9 @@
-class AppError extends Error {
+class AppError {
   public readonly code: number;
+  public readonly message: string;
 
   constructor(code: number, message: string) {
-    super(message);
     this.code = code;
-    Object.setPrototypeOf(this, AppError.prototype);
+    this.message = message;
   }
 }
-
-export default AppError;

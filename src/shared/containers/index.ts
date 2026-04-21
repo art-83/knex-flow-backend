@@ -46,9 +46,12 @@ import { CardInformationRepository } from '../../modules/payments/infra/orm/repo
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 
 import IHashProvider from '../../modules/users/infra/providers/hash/hash.provider';
-import BcryptHashProvider from '../../modules/users/infra/providers/hash/bcrypt-hash.provider';
+import BcryptHashProvider from '../../modules/users/infra/providers/hash/implementations/bcrypt-hash.implementation';
 import IJwtProvider from '../../modules/users/infra/providers/jwt/jwt.provider';
-import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/jsonwebtoken-jwt.provider';
+import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/implementations/jsonwebtoken-jwt.implementation';
+import AuthController from '../../modules/users/infra/http/controllers/auth.controller';
+import LoginService from '../../modules/users/services/auth/login.service';
+import RefreshTokenService from '../../modules/users/services/auth/refresh-token.service';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -94,3 +97,6 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
 
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
 container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
+container.registerSingleton('LoginService', LoginService);
+container.registerSingleton('RefreshTokenService', RefreshTokenService);
+container.registerSingleton('AuthController', AuthController);

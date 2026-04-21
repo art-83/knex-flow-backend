@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import IJwtProvider from '../../infra/providers/jwt/jwt.provider';
 import RefreshTokenDTO from '../../dtos/auth/refresh-token.dto';
+import RefreshTokenResponseDTO from '../../dtos/auth/refresh-token-response.dto';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 
 @injectable()
@@ -10,16 +11,13 @@ class RefreshTokenService {
     private jwtProvider: IJwtProvider,
   ) {}
 
-  public async execute(data: RefreshTokenDTO) {
+  public async execute(data: RefreshTokenDTO): Promise<RefreshTokenResponseDTO> {
     try {
-      const decoded = this.jwtProvider.verifyRefreshToken(data.refreshToken) as {
-        id: string;
-        email: string;
-      };
+      const decoded = this.jwtProvider.verifyRefreshToken(data.refreshToken);
 
       const accessToken = this.jwtProvider.signAccessToken({
-        id: decoded.id,
-        email: decoded.email,
+        user_id: decoded.user_id,
+        type: decoded.type,
       });
 
       return {

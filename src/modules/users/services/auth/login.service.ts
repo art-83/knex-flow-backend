@@ -3,6 +3,7 @@ import IHashProvider from '../../infra/providers/hash/hash.provider';
 import IJwtProvider from '../../infra/providers/jwt/jwt.provider';
 import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
 import LoginDTO from '../../dtos/auth/login.dto';
+import LoginResponseDTO from '../../dtos/auth/login-response.dto';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 
 @injectable()
@@ -16,7 +17,7 @@ class LoginService {
     private jwtProvider: IJwtProvider,
   ) {}
 
-  public async execute(data: LoginDTO) {
+  public async execute(data: LoginDTO): Promise<LoginResponseDTO> {
     const users = await this.userRepository.find({ email: data.email, includePassword: true });
     const user = users.at(0);
 
@@ -30,7 +31,7 @@ class LoginService {
       throw new AppError(401, 'Invalid email or password.');
     }
 
-    const tokenPayload = { id: user.id, email: user.email };
+    const tokenPayload = { user_id: user.id };
     const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
     const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
 
