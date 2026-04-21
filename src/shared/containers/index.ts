@@ -56,6 +56,7 @@ import JsonWebTokenJwtProvider from '../../modules/users/infra/providers/jwt/imp
 import AuthController from '../../modules/users/infra/http/controllers/auth.controller';
 import LoginService from '../../modules/users/services/auth/login.service';
 import RefreshTokenService from '../../modules/users/services/auth/refresh-token.service';
+import RegisterService from '../../modules/users/services/auth/register.service';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -102,6 +103,7 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
 container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
 container.registerSingleton('LoginService', LoginService);
+container.registerSingleton('RegisterService', RegisterService);
 container.registerSingleton('RefreshTokenService', RefreshTokenService);
 container.registerSingleton('AuthController', AuthController);
 container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);

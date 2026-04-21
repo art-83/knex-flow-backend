@@ -18,6 +18,17 @@ authRouter.post(
 );
 
 authRouter.post(
+  '/register',
+  celebrate({
+    [Segments.BODY]: {
+      email: Joi.string().email().required(),
+      password: Joi.string().min(6).required(),
+    },
+  }),
+  (request, response) => authController.register(request, response),
+);
+
+authRouter.post(
   '/refresh',
   celebrate({
     [Segments.BODY]: {
