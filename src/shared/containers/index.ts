@@ -44,6 +44,10 @@ import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
 import IRepositoryProvider from '../infra/orm/repositories/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
+import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
+import { AbacatepayCreatePixPaymentDTO } from '../../modules/payments/dtos/gateways/abacatepay-create-pix-payment.dto';
+import { AbacatepayPixPaymentResponseDTO } from '../../modules/payments/dtos/gateways/abacatepay-pix-payment-response.dto';
+import { AbacatepayPixGatewayImplementation } from '../../modules/payments/infra/gateways/implementations/abacatepay-pix-gateway.implementation';
 
 import IHashProvider from '../../modules/users/infra/providers/hash/providers/hash.provider';
 import BcryptHashProvider from '../../modules/users/infra/providers/hash/implementations/bcrypt-hash.implementation';
@@ -100,3 +104,4 @@ container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider
 container.registerSingleton('LoginService', LoginService);
 container.registerSingleton('RefreshTokenService', RefreshTokenService);
 container.registerSingleton('AuthController', AuthController);
+container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);

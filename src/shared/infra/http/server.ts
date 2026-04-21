@@ -1,5 +1,6 @@
 import '../../containers';
 import express from 'express';
+import globalErrorHandlerMiddleware from './middlewares/global-error-handler.middleware';
 import dataSource from '../orm/database';
 import routes from './routes';
 import { errors } from 'celebrate';
@@ -12,6 +13,7 @@ async function main() {
   app.use(express.json());
   app.use(routes);
   app.use(errors());
+  app.use(globalErrorHandlerMiddleware);
 
   await dataSource.initialize();
 

@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import globalErrorHandlerMiddleware from '../middlewares/global-error-handler.middleware';
 import authRouter from '../../../../modules/users/infra/http/routers/auth.router';
+import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/checkout.hooks';
+import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
 
 const routes = Router();
 
@@ -10,6 +11,7 @@ routes.use('/health', (request, response) => {
 
 routes.use('/auth', authRouter);
 
-routes.use(globalErrorHandlerMiddleware);
+routes.use('/payment', paymentRouter);
+routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
 
 export default routes;
