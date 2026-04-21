@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import authMiddleware from '../middlewares/auth.middleware';
 import authRouter from '../../../../modules/users/infra/http/routers/auth.router';
 import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/checkout.hooks';
 import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
@@ -10,6 +11,7 @@ routes.use('/health', (request, response) => {
 });
 
 routes.use('/auth', authRouter);
+routes.use(authMiddleware);
 
 routes.use('/payment', paymentRouter);
 routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
