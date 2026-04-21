@@ -8,7 +8,7 @@ const typeOrmConfig = {
   password: String(process.env.DB_PASSWORD),
   database: String(process.env.DB_NAME),
   entities: [__dirname + String(process.env.ORM_ENTITIES_PATH)],
-  synchronize: Boolean(process.env.DB_SYNCHRONIZE),
+  synchronize: true,
   ...(process.env.ENVIRONMENT === 'production'
     ? {
         ssl: {
