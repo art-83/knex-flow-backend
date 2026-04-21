@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import IHashProvider from '../../infra/providers/hash/hash.provider';
+import IHashProvider from '../../infra/providers/hash/providers/hash.provider';
 import IJwtProvider from '../../infra/providers/jwt/jwt.provider';
 import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
 import LoginDTO from '../../dtos/auth/login.dto';

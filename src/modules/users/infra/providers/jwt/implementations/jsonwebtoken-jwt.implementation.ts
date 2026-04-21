@@ -1,6 +1,7 @@
 import jwt, { Secret } from 'jsonwebtoken';
 import IJwtProvider from '../jwt.provider';
 import JwtPayloadDTO from '../../../../dtos/auth/jwt-payload.dto';
+import jwtConfig from '../../../../../../config/jwt.config';
 
 class JsonWebTokenJwtProvider implements IJwtProvider {
   private secret: Secret;
@@ -9,10 +10,10 @@ class JsonWebTokenJwtProvider implements IJwtProvider {
   private refreshExpiresIn: string;
 
   constructor() {
-    this.secret = String(process.env.JWT_SECRET);
-    this.expiresIn = process.env.JWT_EXPIRES_IN || '1d';
-    this.refreshSecret = String(process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
-    this.refreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+    this.secret = jwtConfig.secret;
+    this.expiresIn = jwtConfig.expiresIn;
+    this.refreshSecret = jwtConfig.refreshSecret;
+    this.refreshExpiresIn = jwtConfig.refreshExpiresIn;
   }
 
   public signAccessToken(payload: JwtPayloadDTO): string {
