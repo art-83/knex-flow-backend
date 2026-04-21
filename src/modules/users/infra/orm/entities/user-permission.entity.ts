@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Permission } from './permission.entity';
+import { Organization } from './organization.entity';
 
 @Entity('user_permissions')
 export class UserPermission {
@@ -27,6 +28,10 @@ export class UserPermission {
   @ManyToOne(() => User, user => user.userPermissions)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Organization)
+  @JoinColumn({ name: 'organization_id' })
+  organization: Organization;
 
   @ManyToOne(() => Permission, permission => permission.userPermissions)
   @JoinColumn({ name: 'permission_id' })

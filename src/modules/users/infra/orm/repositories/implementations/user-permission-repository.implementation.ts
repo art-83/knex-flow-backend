@@ -16,6 +16,10 @@ class UserPermissionRepository implements IUserPermissionRepositoryProvider {
 
     if (data.id) query.andWhere('userPermission.id = :id', { id: data.id });
     if (data.user_id) query.andWhere('userPermission.user_id = :user_id', { user_id: data.user_id });
+    if (data.organization_id)
+      query.andWhere('userPermission.organization_id = :organization_id', {
+        organization_id: data.organization_id,
+      });
     if (data.permission_id)
       query.andWhere('userPermission.permission_id = :permission_id', {
         permission_id: data.permission_id,
