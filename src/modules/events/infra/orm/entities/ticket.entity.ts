@@ -17,7 +17,7 @@ export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'enum', enum: TicketStatus })
+  @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.UNASSIGNED })
   status: TicketStatus;
 
   @CreateDateColumn()

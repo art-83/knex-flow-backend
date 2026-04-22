@@ -21,6 +21,9 @@ export class Organization {
   @Column()
   name: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  configuration: Record<string, any>;
+
   @CreateDateColumn()
   created_at: Date;
 

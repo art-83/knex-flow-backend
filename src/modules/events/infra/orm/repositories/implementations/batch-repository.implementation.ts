@@ -14,6 +14,8 @@ class BatchRepository implements IBatchRepositoryProvider {
   public async find(data: Partial<BatchQueryOptions>): Promise<Batch[]> {
     const query = this.repository.createQueryBuilder('batch');
 
+    query.leftJoinAndSelect('batch.event', 'event');
+
     if (data.id) query.andWhere('batch.id = :id', { id: data.id });
 
     if (data.event_id) query.andWhere('batch.event_id = :event_id', { event_id: data.event_id });

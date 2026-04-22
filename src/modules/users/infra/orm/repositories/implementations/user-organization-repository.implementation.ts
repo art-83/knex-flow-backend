@@ -14,6 +14,8 @@ class UserOrganizationRepository implements IUserOrganizationRepositoryProvider 
   public async find(data: Partial<UserOrganizationQueryOptions>): Promise<UserOrganization[]> {
     const query = this.repository.createQueryBuilder('userOrganization');
 
+    query.leftJoinAndSelect('userOrganization.organization', 'organization');
+
     if (data.id) query.andWhere('userOrganization.id = :id', { id: data.id });
     if (data.user_id) query.andWhere('userOrganization.user_id = :user_id', { user_id: data.user_id });
     if (data.organization_id)

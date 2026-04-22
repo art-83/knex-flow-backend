@@ -14,6 +14,8 @@ class ActivityRepository implements IActivityRepositoryProvider {
   public async find(data: Partial<ActivityQueryOptions>): Promise<Activity[]> {
     const query = this.repository.createQueryBuilder('activity');
 
+    query.leftJoinAndSelect('activity.organization', 'organization');
+
     if (data.id) query.andWhere('activity.id = :id', { id: data.id });
 
     if (data.organization_id)

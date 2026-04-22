@@ -11,7 +11,7 @@ interface IRepositoryProvider<T> {
    * @param data The data of the entity to be created.
    * @returns A promise that resolves to the created entity.
    */
-  create(data: T): Promise<T>;
+  create(data: Partial<T>): Promise<T>;
 
   /**
    * Finds entities that match the provided options.

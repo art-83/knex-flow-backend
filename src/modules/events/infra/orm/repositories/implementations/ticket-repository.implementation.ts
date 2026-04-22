@@ -43,6 +43,11 @@ class TicketRepository implements ITicketRepositoryProvider {
     const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
   }
+
+  public async createMany(data: Partial<Ticket>[]): Promise<Ticket[]> {
+    const create = this.repository.create(data);
+    return await this.repository.save(create);
+  }
 }
 
 export default TicketRepository;

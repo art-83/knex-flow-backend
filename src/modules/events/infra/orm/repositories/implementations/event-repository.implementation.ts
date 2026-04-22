@@ -14,6 +14,8 @@ class EventRepository implements IEventRepositoryProvider {
   public async find(data: Partial<EventQueryOptions>): Promise<Event[]> {
     const query = this.repository.createQueryBuilder('event');
 
+    query.leftJoinAndSelect('event.organization', 'organization');
+
     if (data.id) query.andWhere('event.id = :id', { id: data.id });
 
     if (data.organization_id)
