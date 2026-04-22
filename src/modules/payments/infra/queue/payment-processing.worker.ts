@@ -33,7 +33,7 @@ export class PaymentProcessingWorker implements IWorkerProvider {
     });
 
     this.worker.on('error', error => {
-      console.error(`[worker:payment-processing] error: ${error.message}`);
+      console.error('[worker:payment-processing] error:', error);
     });
 
     await this.worker.waitUntilReady();
