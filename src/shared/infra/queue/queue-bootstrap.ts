@@ -9,6 +9,7 @@ import RedisConnection from './redis-connection';
 
 async function main() {
   await dataSource.initialize();
+  await RedisConnection.getInstance().getConnection().ping();
 
   const workers: IWorkerProvider[] = [];
 
