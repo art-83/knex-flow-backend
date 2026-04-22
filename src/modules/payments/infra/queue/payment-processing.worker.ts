@@ -31,6 +31,12 @@ export class PaymentProcessingWorker implements IWorkerProvider {
     this.worker.on('failed', (job, error) => {
       console.log(`[worker:payment-processing] failed job ${job?.id ?? 'unknown'}: ${error.message}`);
     });
+
+    this.worker.on('error', error => {
+      console.error(`[worker:payment-processing] error: ${error.message}`);
+    });
+
+    await this.worker.waitUntilReady();
   }
 
   public async close(): Promise<void> {

@@ -3,13 +3,14 @@ import 'reflect-metadata';
 import '../../containers';
 import { QueueNames } from './enums/queues-names.enum';
 import { WorkerFactory } from './factories/worker.factory';
+import { IWorkerProvider } from './infra/providers/worker.provider';
 import dataSource from '../orm/database';
 import RedisConnection from './redis-connection';
 
 async function main() {
   await dataSource.initialize();
 
-  const workers = [];
+  const workers: IWorkerProvider[] = [];
 
   for (const queueName of Object.values(QueueNames)) {
     const worker = WorkerFactory.createWorker(queueName);
