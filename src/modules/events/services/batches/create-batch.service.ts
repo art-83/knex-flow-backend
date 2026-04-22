@@ -41,7 +41,7 @@ export class CreateBatchService {
       throw new AppError(403, 'User does not have permission to create batch in this organization.');
     }
 
-    const configurationObject = event.configuration.configuration as OrganizationConfiguration;
+    const configurationObject = userOrganization.organization.configuration as OrganizationConfiguration;
 
     if (
       configurationObject &&
