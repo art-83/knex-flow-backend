@@ -16,19 +16,19 @@ export class EventActivity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   start_date: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   end_date: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @ManyToOne(() => Event, event => event.event_activities, { nullable: false })
