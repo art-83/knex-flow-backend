@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 
-import { ConnectionOptions, Worker } from 'bullmq';
+import { Worker } from 'bullmq';
 
-import bullmqConfig from '../../../../config/bullmq.config';
 import Payment from '../orm/entities/payment.entity';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
 import { PaymentProcessorService } from '../../services/payment-processor.service';
 import { container } from 'tsyringe';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
+import RedisConnection from '../../../../shared/infra/queue/redis-connection';
 
 export class PaymentProcessingWorker implements IWorkerProvider {
   private worker: Worker<Payment>;
@@ -20,7 +20,7 @@ export class PaymentProcessingWorker implements IWorkerProvider {
         await paymentProcessorService.execute(job.data);
       },
       {
-        connection: bullmqConfig.connection as ConnectionOptions,
+        connection: RedisConnection.getInstance().getConnection(),
       },
     );
 
@@ -31,5 +31,15 @@ export class PaymentProcessingWorker implements IWorkerProvider {
     this.worker.on('failed', (job, error) => {
       console.log(`[worker:payment-processing] failed job ${job?.id ?? 'unknown'}: ${error.message}`);
     });
+
+    this.worker.on('error', error => {
+      console.error('[worker:payment-processing] error:', error);
+    });
+
+    await this.worker.waitUntilReady();
+  }
+
+  public async close(): Promise<void> {
+    await this.worker.close();
   }
 }
