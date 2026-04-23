@@ -43,4 +43,5 @@ eventRouter.post(
   eventController.createActivity,
 );
 
+// TODO: adicionar rota para criar evento-atividade e transferir o createActivity para um controller e um router específico para atividade
 export default eventRouter;
