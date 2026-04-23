@@ -1,9 +1,10 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
-import PaymentController from '../controllers/payment.controller';
+import { container } from 'tsyringe';
+import { PaymentController } from '../controllers/payment.controller';
 
 const paymentRouter = Router();
-const paymentController = new PaymentController();
+const paymentController = container.resolve(PaymentController);
 
 paymentRouter.post(
   '/pix',

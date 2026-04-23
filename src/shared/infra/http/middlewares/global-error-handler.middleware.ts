@@ -11,7 +11,7 @@ async function globalErrorHandlerMiddleware(error: Error, request: Request, resp
     return response.status(error.code).json({ message: error.message });
   }
 
-  console.error(error);
+  console.error('[globalErrorHandlerMiddleware]', error);
   return response.status(500).json({ message: 'Internal server error' });
 }
 
