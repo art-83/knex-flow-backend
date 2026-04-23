@@ -52,15 +52,23 @@ async function main() {
     return shutdownPromise;
   };
 
-  process.on('SIGTERM', () => void shutdown().catch(error => {
-    console.error('[queue-bootstrap] shutdown failed:', error);
-    process.exit(1);
-  }));
+  process.on(
+    'SIGTERM',
+    () =>
+      void shutdown().catch(error => {
+        console.error('[queue-bootstrap] shutdown failed:', error);
+        process.exit(1);
+      }),
+  );
 
-  process.on('SIGINT', () => void shutdown().catch(error => {
-    console.error('[queue-bootstrap] shutdown failed:', error);
-    process.exit(1);
-  }));
+  process.on(
+    'SIGINT',
+    () =>
+      void shutdown().catch(error => {
+        console.error('[queue-bootstrap] shutdown failed:', error);
+        process.exit(1);
+      }),
+  );
 }
 
 main().catch(error => {

@@ -17,4 +17,21 @@ export class BullMQProducer<T> implements IProducerProvider<T, BaseJobOptions> {
     }
     await queue.add(queueName, payload, jobOptions);
   }
+
+  async close(): Promise<void> {
+    const closeResults = await Promise.allSettled(
+      Array.from(this.queues.entries()).map(async ([queueName, queue]) => {
+        await queue.close();
+        return queueName;
+      }),
+    );
+
+    closeResults.forEach(result => {
+      if (result.status === 'rejected') {
+        console.error('[bullmq-producer] failed to close queue:', result.reason);
+      }
+    });
+
+    this.queues.clear();
+  }
 }

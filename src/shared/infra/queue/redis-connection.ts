@@ -38,6 +38,10 @@ class RedisConnection {
     return RedisConnection.instance;
   }
 
+  public static hasInstance(): boolean {
+    return Boolean(RedisConnection.instance);
+  }
+
   public getConnection(): IORedis {
     return this.connection;
   }
