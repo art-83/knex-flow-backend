@@ -9,10 +9,10 @@ const paymentController = container.resolve(PaymentController);
 paymentRoutes.post(
   '/process',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       amount: Joi.number().required(),
       order_id: Joi.string().uuid().required(),
-    },
+    }).required(),
   }),
   (request, response) => paymentController.processPayment(request, response),
 );

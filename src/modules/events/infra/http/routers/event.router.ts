@@ -8,13 +8,13 @@ const eventController = new EventController();
 eventRouter.post(
   '/',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       name: Joi.string().required(),
       description: Joi.string().required(),
       organization_id: Joi.string().uuid().required(),
       start_date: Joi.date().required(),
       end_date: Joi.date().required(),
-    },
+    }).required(),
   }),
   eventController.createEvent,
 );
@@ -22,11 +22,11 @@ eventRouter.post(
 eventRouter.post(
   '/batches',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       event_id: Joi.string().uuid().required(),
       base_quantity: Joi.number().integer().min(1).required(),
       price: Joi.number().positive().required(),
-    },
+    }).required(),
   }),
   eventController.createBatch,
 );
@@ -34,11 +34,11 @@ eventRouter.post(
 eventRouter.post(
   '/activities',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       name: Joi.string().required(),
       description: Joi.string().required(),
       organization_id: Joi.string().uuid().required(),
-    },
+    }).required(),
   }),
   eventController.createActivity,
 );

@@ -8,11 +8,11 @@ const table1Controller = new Table1Controller();
 table1Router.post(
   '/',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       name: Joi.string().required(),
       table1_id: Joi.string().uuid().required(),
       table2_id: Joi.string().uuid().required(),
-    },
+    }).required(),
   }),
   table1Controller.create,
 );
@@ -38,11 +38,11 @@ table1Router.put(
     [Segments.PARAMS]: {
       id: Joi.string().uuid().required(),
     },
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       name: Joi.string().optional(),
       table1_id: Joi.string().uuid().optional(),
       table2_id: Joi.string().uuid().optional(),
-    },
+    }).required(),
   }),
   table1Controller.update,
 );
