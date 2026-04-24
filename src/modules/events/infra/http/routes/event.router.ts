@@ -30,18 +30,4 @@ eventRouter.post(
   }),
   eventController.createBatch,
 );
-
-eventRouter.post(
-  '/activities',
-  celebrate({
-    [Segments.BODY]: {
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-      organization_id: Joi.string().uuid().required(),
-    },
-  }),
-  eventController.createActivity,
-);
-
-// TODO: adicionar rota para criar evento-atividade e transferir o createActivity para um controller e um router específico para atividade
 export default eventRouter;

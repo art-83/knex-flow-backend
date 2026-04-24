@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware';
 import authRouter from '../../../../modules/users/infra/http/routers/auth.router';
+import organizationRouter from '../../../../modules/users/infra/http/routers/organization.router';
 import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/checkout.hooks';
 import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
 import eventRouter from '../../../../modules/events/infra/http/routes/event.router';
@@ -15,6 +16,7 @@ routes.use('/auth', authRouter);
 routes.use(authMiddleware);
 
 routes.use('/events', eventRouter);
+routes.use('/organizations', organizationRouter);
 routes.use('/payment', paymentRouter);
 routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
 
