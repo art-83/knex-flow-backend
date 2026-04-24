@@ -9,9 +9,9 @@ const paymentController = container.resolve(PaymentController);
 paymentRouter.post(
   '/pix',
   celebrate({
-    [Segments.BODY]: {
+    [Segments.BODY]: Joi.object({
       amount: Joi.number().integer().positive().required(),
-    },
+    }).required(),
   }),
   paymentController.createPix,
 );
