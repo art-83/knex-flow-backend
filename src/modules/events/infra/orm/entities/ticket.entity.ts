@@ -20,13 +20,13 @@ export class Ticket {
   @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.UNASSIGNED })
   status: TicketStatus;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @ManyToOne(() => Batch, batch => batch.tickets, { nullable: false })
