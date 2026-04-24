@@ -22,13 +22,13 @@ class LoginService {
     const user = users.at(0);
 
     if (!user) {
-      throw new AppError(401, 'Invalid email or password.');
+      throw new AppError(401, 'Invalid email or password.', 'Email ou senha invalidos.');
     }
 
     const passwordMatches = await this.hashProvider.compare(data.password, user.password);
 
     if (!passwordMatches) {
-      throw new AppError(401, 'Invalid email or password.');
+      throw new AppError(401, 'Invalid email or password.', 'Email ou senha invalidos.');
     }
 
     const tokenPayload = { user_id: user.id };

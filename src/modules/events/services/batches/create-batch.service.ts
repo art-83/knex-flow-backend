@@ -27,7 +27,7 @@ export class CreateBatchService {
     const event = (await this.eventRepository.find({ id: data.event_id })).at(0);
 
     if (!event) {
-      throw new AppError(404, 'Event not found.');
+      throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
     const userPermissionQueryOptions = {
@@ -38,7 +38,11 @@ export class CreateBatchService {
     const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
 
     if (!userOrganization) {
-      throw new AppError(403, 'User does not have permission to create batch in this organization.');
+      throw new AppError(
+        403,
+        'User does not have permission to create batch in this organization.',
+        'Usuario nao tem permissao para criar lote nesta organizacao.',
+      );
     }
 
     const configurationObject = userOrganization.organization.configuration as OrganizationConfiguration;
@@ -48,7 +52,11 @@ export class CreateBatchService {
       configurationObject.max_batch_base_quantity &&
       data.base_quantity > configurationObject.max_batch_base_quantity
     ) {
-      throw new AppError(400, 'Batch base quantity exceeds the maximum allowed by the organization.');
+      throw new AppError(
+        400,
+        'Batch base quantity exceeds the maximum allowed by the organization.',
+        'Quantidade base do lote excede o maximo permitido pela organizacao.',
+      );
     }
 
     data.event = event;

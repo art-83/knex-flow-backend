@@ -8,7 +8,7 @@ async function globalErrorHandlerMiddleware(error: Error, request: Request, resp
   }
 
   if (error instanceof AppError) {
-    return response.status(error.code).json({ message: error.message });
+    return response.status(error.code).json({ message: error.message, formattedMessage: error.formattedMessage });
   }
 
   console.error('[globalErrorHandlerMiddleware]', error);

@@ -25,11 +25,11 @@ class CreateTable3Service {
     ]);
 
     if (!table1) {
-      throw new AppError(404, 'Table 1 not found.');
+      throw new AppError(404, 'Table 1 not found.', 'Tabela 1 nao encontrada.');
     }
 
     if (!table2) {
-      throw new AppError(404, 'Table 2 not found.');
+      throw new AppError(404, 'Table 2 not found.', 'Tabela 2 nao encontrada.');
     }
 
     data.table1 = table1;
