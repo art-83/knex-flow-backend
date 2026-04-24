@@ -1,7 +1,10 @@
+version: '3.8'
+
 services:
   redis:
     image: redis:7-alpine
     container_name: eventflow-redis
+    restart: always
     env_file:
       - .env.development
     ports:
@@ -13,11 +16,12 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+      start_period: 5s
 
   db:
     image: postgres:15-alpine
     container_name: eventflow-database
-    command: ['postgres', '-c', 'timezone=America/Sao_Paulo', '-c', 'log_timezone=America/Sao_Paulo']
+    restart: always
     env_file:
       - .env.development
     ports:
@@ -25,17 +29,20 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 5432 -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 5s
+      retries: 15
+      start_period: 30s
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: eventflow-app
+    restart: always
+    stop_grace_period: 60s
+    stop_signal: SIGTERM
     env_file:
       - .env.development
     ports:
@@ -46,13 +53,15 @@ services:
       redis:
         condition: service_healthy
     command: ['node', 'dist/shared/infra/http/server.js']
-    restart: unless-stopped
 
   workers:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: eventflow-worker
+    restart: always
+    stop_grace_period: 60s
+    stop_signal: SIGTERM
     env_file:
       - .env.development
     command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
@@ -61,7 +70,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    restart: unless-stopped
 
 volumes:
   db-data:
