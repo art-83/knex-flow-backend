@@ -22,12 +22,20 @@ class RegisterService {
   public async execute(data: RegisterDTO): Promise<LoginResponseDTO> {
     const passwordValidation = validatePasswordStrength(data.password);
     if (!passwordValidation.isValid) {
-      throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
+      throw new AppError(
+        400,
+        'Failed to register. Invalid credentials or email already in use.',
+        'Falha no cadastro. Credenciais invalidas ou email ja esta em uso.',
+      );
     }
 
     const existingUsers = await this.userRepository.find({ email: data.email });
     if (existingUsers.length > 0) {
-      throw new AppError(400, 'Failed to register. Invalid credentials or email already in use.');
+      throw new AppError(
+        400,
+        'Failed to register. Invalid credentials or email already in use.',
+        'Falha no cadastro. Credenciais invalidas ou email ja esta em uso.',
+      );
     }
 
     const hashedPassword = await this.hashProvider.hash(data.password);

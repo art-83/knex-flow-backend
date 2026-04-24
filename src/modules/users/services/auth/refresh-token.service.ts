@@ -25,7 +25,7 @@ class RefreshTokenService {
         data: { accessToken },
       };
     } catch {
-      throw new AppError(401, 'Invalid or expired refresh token.');
+      throw new AppError(401, 'Invalid or expired refresh token.', 'Refresh token invalido ou expirado.');
     }
   }
 }

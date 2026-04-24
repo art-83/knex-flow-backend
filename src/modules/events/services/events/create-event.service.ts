@@ -23,7 +23,11 @@ export class CreateEventService {
     const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
 
     if (!userOrganization) {
-      throw new AppError(403, 'User does not have permission to create event in this organization.');
+      throw new AppError(
+        403,
+        'User does not have permission to create event in this organization.',
+        'Usuario nao tem permissao para criar evento nesta organizacao.',
+      );
     }
 
     this.validateDateRange(data);
@@ -45,15 +49,15 @@ export class CreateEventService {
 
   private validateDateRange(data: CreateOrUpdateEventDTO) {
     if (data.start_date > data.end_date) {
-      throw new AppError(400, 'Start date must be before end date.');
+      throw new AppError(400, 'Start date must be before end date.', 'Data de inicio deve ser anterior a data de fim.');
     }
 
     if (data.start_date < new Date()) {
-      throw new AppError(400, 'Start date must be in the future.');
+      throw new AppError(400, 'Start date must be in the future.', 'Data de inicio deve estar no futuro.');
     }
 
     if (data.end_date < new Date()) {
-      throw new AppError(400, 'End date must be in the future.');
+      throw new AppError(400, 'End date must be in the future.', 'Data de fim deve estar no futuro.');
     }
   }
 }

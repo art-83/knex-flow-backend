@@ -23,7 +23,11 @@ export class CreateActivityService {
     const userOrganization = (await this.userOrganizationRepositoryProvider.find(userOrganizationQuery)).at(0);
 
     if (!userOrganization) {
-      throw new AppError(403, 'User does not have permission to create event in this organization.');
+      throw new AppError(
+        403,
+        'User does not have permission to create event in this organization.',
+        'Usuario nao tem permissao para criar evento nesta organizacao.',
+      );
     }
 
     data.organization = userOrganization.organization;

@@ -26,15 +26,19 @@ export class CreateEventActivityService {
     ]);
 
     if (!event) {
-      throw new AppError(404, 'Event not found.');
+      throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
     if (!activity) {
-      throw new AppError(404, 'Activity not found.');
+      throw new AppError(404, 'Activity not found.', 'Atividade nao encontrada.');
     }
 
     if (event.organization.id !== activity.organization.id) {
-      throw new AppError(403, 'Activity does not belong to the same organization as the event.');
+      throw new AppError(
+        403,
+        'Activity does not belong to the same organization as the event.',
+        'Atividade nao pertence a mesma organizacao do evento.',
+      );
     }
 
     const userOrganizationQuery = {
@@ -45,7 +49,11 @@ export class CreateEventActivityService {
     const userOrganization = (await this.userOrganizationRepositoryProvider.find(userOrganizationQuery)).at(0);
 
     if (!userOrganization) {
-      throw new AppError(403, 'User does not have permission to create event activity in this organization.');
+      throw new AppError(
+        403,
+        'User does not have permission to create event activity in this organization.',
+        'Usuario nao tem permissao para criar atividade de evento nesta organizacao.',
+      );
     }
 
     data.event = event;
