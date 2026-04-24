@@ -27,13 +27,13 @@ export class Activity {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @OneToMany(() => EventActivity, ea => ea.activity)

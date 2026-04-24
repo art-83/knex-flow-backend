@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "00000000-0000-4000-8000-000000000001",
-    "name": "Eventflow API (boilerplate)",
-    "description": "Boilerplate: importe os ambientes Local e PROD (pasta `postman collection`). Selecione o ambiente no canto superior direito do Postman. `baseUrl` e `token` vêm do ambiente ativo; a coleção mantém valores por defeito se não houver ambiente.",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Eventflow API",
+    "description": "Rotas alinhadas ao backend (`src/shared/infra/http/routes/index.ts`). Use `baseUrl` e `token` (variáveis de coleção ou ambiente). Login/Register/Refresh e Health não usam Bearer; o restante usa o auth da coleção.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -27,45 +27,117 @@
   ],
   "item": [
     {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health",
+            "description": "Público (antes do `authMiddleware`)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Auth",
       "item": [
         {
-          "name": "Login (exemplo — ajustar path e body)",
+          "name": "Login",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code !== 200 && pm.response.code !== 201) {",
-                  "  console.warn('Login não OK:', pm.response.code);",
-                  "  return;",
-                  "}",
+                  "if (pm.response.code !== 200 && pm.response.code !== 201) return;",
                   "let body;",
-                  "try { body = pm.response.json(); } catch (e) {",
-                  "  console.warn('Resposta não é JSON; defina o token manualmente na coleção.');",
-                  "  return;",
-                  "}",
-                  "const token =",
-                  "  body.token ||",
-                  "  body.access_token ||",
-                  "  body.accessToken ||",
-                  "  (body.data && (body.data.token || body.data.access_token || body.data.accessToken));",
+                  "try { body = pm.response.json(); } catch (e) { return; }",
+                  "const token = body.token || body.access_token || body.accessToken || (body.data && (body.data.token || body.data.access_token));",
                   "if (token) {",
-                  "  if (pm.environment.get('baseUrl') !== undefined) {",
-                  "    pm.environment.set('token', token);",
-                  "    console.log('Token guardado na variável de ambiente \"token\".');",
-                  "  } else {",
-                  "    pm.collectionVariables.set('token', token);",
-                  "    console.log('Token guardado na variável de coleção \"token\" (sem ambiente ativo).');",
-                  "  }",
-                  "} else {",
-                  "  console.warn('Nenhum token encontrado no JSON. Ajuste o script ao formato da API.');",
+                  "  if (pm.environment.get('baseUrl') !== undefined) pm.environment.set('token', token);",
+                  "  else pm.collectionVariables.set('token', token);",
                   "}"
                 ]
               }
             }
           ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret12\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login",
+            "description": "`celebrate`: email (string email), password (min 6)."
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"secret12\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register",
+            "description": "`celebrate`: email, password (min 6)."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"<paste-refresh-token>\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/refresh",
+            "description": "`celebrate`: refreshToken (string obrigatório)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Create event",
           "request": {
             "method": "POST",
             "header": [
@@ -76,10 +148,196 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"change-me\"\n}\n"
+              "raw": "{\n  \"name\": \"Conference\",\n  \"description\": \"Annual meetup\",\n  \"organization_id\": \"00000000-0000-4000-8000-000000000001\",\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-02T18:00:00.000Z\"\n}"
             },
-            "url": "{{baseUrl}}/auth/login",
-            "description": "Altere o path (ex.: /v1/auth/login) e o corpo conforme o contrato real do backend."
+            "url": "{{baseUrl}}/events/",
+            "description": "POST `/events/` — requer Bearer. Joi: name, description, organization_id (uuid), start_date, end_date."
+          },
+          "response": []
+        },
+        {
+          "name": "Create batch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_id\": \"00000000-0000-4000-8000-000000000001\",\n  \"base_quantity\": 100,\n  \"price\": 49.9\n}"
+            },
+            "url": "{{baseUrl}}/events/batches",
+            "description": "Joi: event_id (uuid), base_quantity (int >= 1), price (positive)."
+          },
+          "response": []
+        },
+        {
+          "name": "Create activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Workshop\",\n  \"description\": \"Hands-on\",\n  \"organization_id\": \"00000000-0000-4000-8000-000000000001\"\n}"
+            },
+            "url": "{{baseUrl}}/events/activities",
+            "description": "Joi: name, description, organization_id (uuid)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payment (Pix)",
+      "item": [
+        {
+          "name": "Create Pix payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000\n}"
+            },
+            "url": "{{baseUrl}}/payment/pix",
+            "description": "POST `/payment/pix` — após `authMiddleware`. Joi: amount (integer > 0)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments (queue)",
+      "item": [
+        {
+          "name": "Enqueue payment processing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 99.9,\n  \"order_id\": \"00000000-0000-4000-8000-000000000002\"\n}"
+            },
+            "url": "{{baseUrl}}/payments/process",
+            "description": "BullMQ job. Joi: amount (number), order_id (uuid)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhooks (Pix checkout)",
+      "item": [
+        {
+          "name": "Checkout — any event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/webhooks/pix/checkout/event",
+            "description": "Montado em `checkout.hooks` — no código atual fica **depois** do `authMiddleware`; se for webhook externo, considere mover a rota ou usar token."
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout — completed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/webhooks/pix/checkout/completed",
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout — refunded",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/webhooks/pix/checkout/refunded",
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout — disputed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/webhooks/pix/checkout/disputed",
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout — lost",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/webhooks/pix/checkout/lost",
+            "description": ""
           },
           "response": []
         }

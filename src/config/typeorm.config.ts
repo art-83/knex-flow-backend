@@ -8,7 +8,7 @@ const typeOrmConfig = {
   password: String(process.env.DB_PASSWORD),
   database: String(process.env.DB_NAME),
   entities: [__dirname + String(process.env.ORM_ENTITIES_PATH)],
-  synchronize: true,
+  synchronize: process.env.DB_SYNCHRONIZE === 'true',
   ...(process.env.ENVIRONMENT === 'production'
     ? {
         ssl: {
@@ -19,6 +19,7 @@ const typeOrmConfig = {
   extra: {
     max: 10,
     idleTimeoutMillis: 30000,
+    options: `-c timezone=${process.env.DB_TIMEZONE || 'America/Sao_Paulo'}`,
   },
 };
 

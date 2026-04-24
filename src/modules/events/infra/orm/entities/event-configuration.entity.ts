@@ -19,13 +19,13 @@ export class EventConfiguration {
   @Column({ type: 'jsonb', nullable: true })
   configuration: Record<string, any>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @OneToOne(() => Event, event => event.configuration, { nullable: false })

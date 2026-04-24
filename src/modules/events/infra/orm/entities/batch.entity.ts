@@ -23,13 +23,13 @@ export class Batch {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @ManyToOne(() => Event, event => event.batches, { nullable: false })

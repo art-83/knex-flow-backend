@@ -30,19 +30,19 @@ export class Event {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   start_date: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   end_date: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deleted_at: Date;
 
   @OneToOne(() => EventConfiguration, config => config.event)

@@ -45,14 +45,14 @@ import IRepositoryProvider from '../infra/orm/repositories/providers/repository.
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
-import { AbacatepayCreatePixPaymentDTO } from '../../modules/payments/dtos/gateways/abacatepay-create-pix-payment.dto';
-import { AbacatepayPixPaymentResponseDTO } from '../../modules/payments/dtos/gateways/abacatepay-pix-payment-response.dto';
 import { AbacatepayPixGatewayImplementation } from '../../modules/payments/infra/gateways/implementations/abacatepay-pix-gateway.implementation';
 
 import IHashProvider from '../../modules/users/infra/hash/providers/hash.provider';
 import BcryptHashProvider from '../../modules/users/infra/hash/implementations/bcrypt-hash.implementation';
 import IJwtProvider from '../../modules/users/infra/jwt/providers/jwt.provider';
 import JsonWebTokenJwtProvider from '../../modules/users/infra/jwt/implementations/jsonwebtoken-jwt.implementation';
+import { IProducerProvider } from '../infra/queue/infra/providers/producer.provider';
+import { BullMQProducer } from '../infra/queue/infra/implementation/producer.implementation';
 
 container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
@@ -95,7 +95,7 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
   'CardInformationRepositoryProvider',
   CardInformationRepository,
 );
-
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
 container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
 container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);
+container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
