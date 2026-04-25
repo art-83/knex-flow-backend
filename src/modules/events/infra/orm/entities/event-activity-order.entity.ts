@@ -1,0 +1,40 @@
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { EventActivity } from './event-activity.entity';
+import { Order } from './order.entity';
+
+@Entity({ name: 'event_activity_orders' })
+export class EventActivityOrder {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'boolean', default: false })
+  user_presence: boolean;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  created_at: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updated_at: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deleted_at: Date;
+
+  @ManyToOne(() => EventActivity, eventActivity => eventActivity.event_activity_orders, { nullable: false })
+  @JoinColumn({ name: 'event_activity_id' })
+  event_activity: EventActivity;
+
+  @ManyToOne(() => Order, order => order.event_activity_orders, { nullable: true })
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
+}
+
+export default EventActivityOrder;

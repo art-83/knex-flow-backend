@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Eventflow API",
-    "description": "Rotas alinhadas ao backend (`src/shared/infra/http/routes/index.ts`). Use `baseUrl` e `token` (variáveis de coleção ou ambiente). Login/Register/Refresh e Health não usam Bearer; o restante usa o auth da coleção.",
+    "description": "Collection rebuilt from current backend routes. Auth scripts persist accessToken/refreshToken automatically.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -23,6 +23,26 @@
     {
       "key": "token",
       "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "organizationId",
+      "value": "00000000-0000-4000-8000-000000000001"
+    },
+    {
+      "key": "eventId",
+      "value": "00000000-0000-4000-8000-000000000001"
+    },
+    {
+      "key": "activityId",
+      "value": "00000000-0000-4000-8000-000000000010"
+    },
+    {
+      "key": "orderId",
+      "value": "00000000-0000-4000-8000-000000000002"
     }
   ],
   "item": [
@@ -37,8 +57,7 @@
             },
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/health",
-            "description": "Público (antes do `authMiddleware`)."
+            "url": "{{baseUrl}}/health"
           },
           "response": []
         }
@@ -55,13 +74,18 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code !== 200 && pm.response.code !== 201) return;",
+                  "if (pm.response.code < 200 || pm.response.code >= 300) return;",
                   "let body;",
                   "try { body = pm.response.json(); } catch (e) { return; }",
-                  "const token = body.token || body.access_token || body.accessToken || (body.data && (body.data.token || body.data.access_token));",
-                  "if (token) {",
-                  "  if (pm.environment.get('baseUrl') !== undefined) pm.environment.set('token', token);",
-                  "  else pm.collectionVariables.set('token', token);",
+                  "const accessToken = body.accessToken || body.access_token || body.token || (body.data && (body.data.accessToken || body.data.access_token || body.data.token));",
+                  "const refreshToken = body.refreshToken || body.refresh_token || (body.data && (body.data.refreshToken || body.data.refresh_token));",
+                  "if (accessToken) {",
+                  "  pm.collectionVariables.set('token', accessToken);",
+                  "  if (pm.environment.get('token') !== undefined) pm.environment.set('token', accessToken);",
+                  "}",
+                  "if (refreshToken) {",
+                  "  pm.collectionVariables.set('refreshToken', refreshToken);",
+                  "  if (pm.environment.get('refreshToken') !== undefined) pm.environment.set('refreshToken', refreshToken);",
                   "}"
                 ]
               }
@@ -82,13 +106,35 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret12\"\n}"
             },
-            "url": "{{baseUrl}}/auth/login",
-            "description": "`celebrate`: email (string email), password (min 6)."
+            "url": "{{baseUrl}}/auth/login"
           },
           "response": []
         },
         {
           "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 200 || pm.response.code >= 300) return;",
+                  "let body;",
+                  "try { body = pm.response.json(); } catch (e) { return; }",
+                  "const accessToken = body.accessToken || body.access_token || body.token || (body.data && (body.data.accessToken || body.data.access_token || body.data.token));",
+                  "const refreshToken = body.refreshToken || body.refresh_token || (body.data && (body.data.refreshToken || body.data.refresh_token));",
+                  "if (accessToken) {",
+                  "  pm.collectionVariables.set('token', accessToken);",
+                  "  if (pm.environment.get('token') !== undefined) pm.environment.set('token', accessToken);",
+                  "}",
+                  "if (refreshToken) {",
+                  "  pm.collectionVariables.set('refreshToken', refreshToken);",
+                  "  if (pm.environment.get('refreshToken') !== undefined) pm.environment.set('refreshToken', refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "noauth"
@@ -104,13 +150,30 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"secret12\"\n}"
             },
-            "url": "{{baseUrl}}/auth/register",
-            "description": "`celebrate`: email, password (min 6)."
+            "url": "{{baseUrl}}/auth/register"
           },
           "response": []
         },
         {
           "name": "Refresh token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code < 200 || pm.response.code >= 300) return;",
+                  "let body;",
+                  "try { body = pm.response.json(); } catch (e) { return; }",
+                  "const accessToken = body.accessToken || body.access_token || body.token || (body.data && (body.data.accessToken || body.data.access_token || body.data.token));",
+                  "if (accessToken) {",
+                  "  pm.collectionVariables.set('token', accessToken);",
+                  "  if (pm.environment.get('token') !== undefined) pm.environment.set('token', accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "noauth"
@@ -124,10 +187,32 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"<paste-refresh-token>\"\n}"
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
             },
-            "url": "{{baseUrl}}/auth/refresh",
-            "description": "`celebrate`: refreshToken (string obrigatório)."
+            "url": "{{baseUrl}}/auth/refresh"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Organizations",
+      "item": [
+        {
+          "name": "Create activity in organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Workshop\",\n  \"description\": \"Hands-on\"\n}"
+            },
+            "url": "{{baseUrl}}/organizations/{{organizationId}}/activities"
           },
           "response": []
         }
@@ -148,10 +233,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Conference\",\n  \"description\": \"Annual meetup\",\n  \"organization_id\": \"00000000-0000-4000-8000-000000000001\",\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-02T18:00:00.000Z\"\n}"
+              "raw": "{\n  \"name\": \"Conference\",\n  \"description\": \"Annual meetup\",\n  \"organization_id\": \"{{organizationId}}\",\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-02T18:00:00.000Z\"\n}"
             },
-            "url": "{{baseUrl}}/events/",
-            "description": "POST `/events/` — requer Bearer. Joi: name, description, organization_id (uuid), start_date, end_date."
+            "url": "{{baseUrl}}/events/"
           },
           "response": []
         },
@@ -167,15 +251,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"event_id\": \"00000000-0000-4000-8000-000000000001\",\n  \"base_quantity\": 100,\n  \"price\": 49.9\n}"
+              "raw": "{\n  \"event_id\": \"{{eventId}}\",\n  \"base_quantity\": 100,\n  \"price\": 49.9\n}"
             },
-            "url": "{{baseUrl}}/events/batches",
-            "description": "Joi: event_id (uuid), base_quantity (int >= 1), price (positive)."
+            "url": "{{baseUrl}}/events/batches"
           },
           "response": []
         },
         {
-          "name": "Create activity",
+          "name": "Create event activity",
           "request": {
             "method": "POST",
             "header": [
@@ -186,10 +269,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Workshop\",\n  \"description\": \"Hands-on\",\n  \"organization_id\": \"00000000-0000-4000-8000-000000000001\"\n}"
+              "raw": "{\n  \"activity_id\": \"{{activityId}}\",\n  \"hours_to_retrieve\": 24,\n  \"max_participants\": 30,\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-01T12:00:00.000Z\"\n}"
             },
-            "url": "{{baseUrl}}/events/activities",
-            "description": "Joi: name, description, organization_id (uuid)."
+            "url": "{{baseUrl}}/events/{{eventId}}/activity"
           },
           "response": []
         }
@@ -212,8 +294,7 @@
               "mode": "raw",
               "raw": "{\n  \"amount\": 1000\n}"
             },
-            "url": "{{baseUrl}}/payment/pix",
-            "description": "POST `/payment/pix` — após `authMiddleware`. Joi: amount (integer > 0)."
+            "url": "{{baseUrl}}/payment/pix"
           },
           "response": []
         }
@@ -234,10 +315,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": 99.9,\n  \"order_id\": \"00000000-0000-4000-8000-000000000002\"\n}"
+              "raw": "{\n  \"amount\": 99.9,\n  \"order_id\": \"{{orderId}}\"\n}"
             },
-            "url": "{{baseUrl}}/payments/process",
-            "description": "BullMQ job. Joi: amount (number), order_id (uuid)."
+            "url": "{{baseUrl}}/payments/process"
           },
           "response": []
         }
@@ -247,7 +327,7 @@
       "name": "Webhooks (Pix checkout)",
       "item": [
         {
-          "name": "Checkout — any event",
+          "name": "Checkout - any event",
           "request": {
             "method": "POST",
             "header": [
@@ -260,13 +340,12 @@
               "mode": "raw",
               "raw": "{}"
             },
-            "url": "{{baseUrl}}/webhooks/pix/checkout/event",
-            "description": "Montado em `checkout.hooks` — no código atual fica **depois** do `authMiddleware`; se for webhook externo, considere mover a rota ou usar token."
+            "url": "{{baseUrl}}/webhooks/pix/checkout/event"
           },
           "response": []
         },
         {
-          "name": "Checkout — completed",
+          "name": "Checkout - completed",
           "request": {
             "method": "POST",
             "header": [
@@ -279,13 +358,12 @@
               "mode": "raw",
               "raw": "{}"
             },
-            "url": "{{baseUrl}}/webhooks/pix/checkout/completed",
-            "description": ""
+            "url": "{{baseUrl}}/webhooks/pix/checkout/completed"
           },
           "response": []
         },
         {
-          "name": "Checkout — refunded",
+          "name": "Checkout - refunded",
           "request": {
             "method": "POST",
             "header": [
@@ -298,13 +376,12 @@
               "mode": "raw",
               "raw": "{}"
             },
-            "url": "{{baseUrl}}/webhooks/pix/checkout/refunded",
-            "description": ""
+            "url": "{{baseUrl}}/webhooks/pix/checkout/refunded"
           },
           "response": []
         },
         {
-          "name": "Checkout — disputed",
+          "name": "Checkout - disputed",
           "request": {
             "method": "POST",
             "header": [
@@ -317,13 +394,12 @@
               "mode": "raw",
               "raw": "{}"
             },
-            "url": "{{baseUrl}}/webhooks/pix/checkout/disputed",
-            "description": ""
+            "url": "{{baseUrl}}/webhooks/pix/checkout/disputed"
           },
           "response": []
         },
         {
-          "name": "Checkout — lost",
+          "name": "Checkout - lost",
           "request": {
             "method": "POST",
             "header": [
@@ -336,8 +412,7 @@
               "mode": "raw",
               "raw": "{}"
             },
-            "url": "{{baseUrl}}/webhooks/pix/checkout/lost",
-            "description": ""
+            "url": "{{baseUrl}}/webhooks/pix/checkout/lost"
           },
           "response": []
         }

@@ -30,4 +30,21 @@ eventRouter.post(
   }),
   eventController.createBatch,
 );
+
+eventRouter.post(
+  '/:event_id/activity',
+  celebrate({
+    [Segments.PARAMS]: {
+      event_id: Joi.string().uuid().required(),
+    },
+    [Segments.BODY]: {
+      activity_id: Joi.string().uuid().required(),
+      hours_to_retrieve: Joi.number().integer().min(0).required(),
+      max_participants: Joi.number().integer().min(1).required(),
+      start_date: Joi.date().required(),
+      end_date: Joi.date().required(),
+    },
+  }),
+  eventController.createEventActivity,
+);
 export default eventRouter;

@@ -26,11 +26,11 @@ export class CreateEventService {
       throw new AppError(403, 'User does not have permission to create event in this organization.');
     }
 
-    this.validateDateRange(data);
+    this.validateEventDateRange(data);
 
     data.organization = userOrganization.organization;
 
-    // TODO: Criar configuração de evento
+    // TODO: Criar configuração de evento, ainda definir regras de negócio
 
     const event = await this.eventRepository.create(data);
     return {
@@ -43,7 +43,7 @@ export class CreateEventService {
     };
   }
 
-  private validateDateRange(data: CreateOrUpdateEventDTO) {
+  private validateEventDateRange(data: CreateOrUpdateEventDTO) {
     if (data.start_date > data.end_date) {
       throw new AppError(400, 'Start date must be before end date.');
     }

@@ -9,6 +9,8 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      DB_SYNCHRONIZE: 'true'
     command: ['node', 'dist/shared/infra/http/server.js']
     stop_grace_period: 60s
     stop_signal: SIGTERM
@@ -26,6 +28,8 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      DB_SYNCHRONIZE: 'false'
     command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
     stop_grace_period: 60s
     stop_signal: SIGTERM
