@@ -355,33 +355,6 @@
           "response": []
         },
         {
-          "name": "Update batch",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"price\": 59.9\n}"
-            },
-            "url": "{{baseUrl}}/events/batches/{{batchId}}"
-          },
-          "response": []
-        },
-        {
-          "name": "Delete batch",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": "{{baseUrl}}/events/batches/{{batchId}}"
-          },
-          "response": []
-        },
-        {
           "name": "List event activities",
           "request": {
             "method": "GET",
@@ -468,15 +441,6 @@
             "method": "DELETE",
             "header": [],
             "url": "{{baseUrl}}/events/event-configurations/{{eventConfigurationId}}"
-          },
-          "response": []
-        },
-        {
-          "name": "List orders",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "{{baseUrl}}/events/orders?user_id={{userId}}&status=AWAITING&limit=20&offset=0"
           },
           "response": []
         }

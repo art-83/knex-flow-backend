@@ -1,7 +1,6 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
 import EventController from '../controllers/event.controller';
-import { OrderStatus } from '../../orm/enums/order-status.enum';
 import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
@@ -64,31 +63,6 @@ eventRouter.post(
     },
   }),
   eventController.createBatch,
-);
-
-eventRouter.patch(
-  '/batches/:batch_id',
-  celebrate({
-    [Segments.PARAMS]: {
-      batch_id: Joi.string().uuid().required(),
-    },
-    [Segments.BODY]: {
-      event_id: Joi.string().uuid().optional(),
-      base_quantity: Joi.number().integer().min(1).optional(),
-      price: Joi.number().positive().optional(),
-    },
-  }),
-  eventController.updateBatch,
-);
-
-eventRouter.delete(
-  '/batches/:batch_id',
-  celebrate({
-    [Segments.PARAMS]: {
-      batch_id: Joi.string().uuid().required(),
-    },
-  }),
-  eventController.deleteBatch,
 );
 
 eventRouter.get(
@@ -170,23 +144,6 @@ eventRouter.delete(
     },
   }),
   eventController.deleteEventConfiguration,
-);
-
-eventRouter.get(
-  '/orders',
-  celebrate({
-    [Segments.QUERY]: {
-      id: Joi.string().uuid().optional(),
-      total_amount: Joi.number().positive().optional(),
-      user_id: Joi.string().uuid().optional(),
-      status: Joi.string()
-        .valid(...Object.values(OrderStatus))
-        .optional(),
-      ...timestampQueryOptionsSchema,
-      ...defaultQueryOptionsSchema,
-    },
-  }),
-  eventController.findOrders,
 );
 
 eventRouter.post(

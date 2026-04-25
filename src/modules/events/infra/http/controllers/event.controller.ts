@@ -15,9 +15,6 @@ import { DeleteEventActivityService } from '../../../services/activities/delete-
 import { FindEventConfigurationsService } from '../../../services/event-configurations/find-event-configurations.service';
 import { UpdateEventConfigurationService } from '../../../services/event-configurations/update-event-configuration.service';
 import { DeleteEventConfigurationService } from '../../../services/event-configurations/delete-event-configuration.service';
-import { FindOrdersService } from '../../../services/orders/find-orders.service';
-import { UpdateOrderService } from '../../../services/orders/update-order.service';
-import { DeleteOrderService } from '../../../services/orders/delete-order.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -117,26 +114,6 @@ class EventController {
     const event_configuration_id = String(request.params.event_configuration_id);
     const eventConfiguration = await deleteEventConfigurationService.execute(event_configuration_id);
     return response.json(eventConfiguration);
-  }
-
-  public async findOrders(request: Request, response: Response) {
-    const findOrdersService = container.resolve(FindOrdersService);
-    const orders = await findOrdersService.execute(request.query);
-    return response.json(orders);
-  }
-
-  public async updateOrder(request: Request, response: Response) {
-    const updateOrderService = container.resolve(UpdateOrderService);
-    const order_id = String(request.params.order_id);
-    const order = await updateOrderService.execute(order_id, request.body);
-    return response.json(order);
-  }
-
-  public async deleteOrder(request: Request, response: Response) {
-    const deleteOrderService = container.resolve(DeleteOrderService);
-    const order_id = String(request.params.order_id);
-    const order = await deleteOrderService.execute(order_id);
-    return response.json(order);
   }
 }
 
