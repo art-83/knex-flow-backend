@@ -1,17 +1,17 @@
 import { Repository } from 'typeorm';
 import dataSource from '../../../../../../shared/infra/orm/database';
 import EventActivityOrderQueryOptions from '../../../../dtos/event-activity-order/event-activity-order-query-options';
-import EventActivityOrder from '../../entities/event-activity-order.entity';
+import EventActivityPresence from '../../entities/event-activity-presence.entity';
 import IEventActivityOrderRepositoryProvider from '../providers/event-activity-order-repository.provider';
 
 class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvider {
-  private repository: Repository<EventActivityOrder>;
+  private repository: Repository<EventActivityPresence>;
 
   constructor() {
-    this.repository = dataSource.getRepository(EventActivityOrder);
+    this.repository = dataSource.getRepository(EventActivityPresence);
   }
 
-  public async find(data: Partial<EventActivityOrderQueryOptions>): Promise<EventActivityOrder[]> {
+  public async find(data: Partial<EventActivityOrderQueryOptions>): Promise<EventActivityPresence[]> {
     const query = this.repository.createQueryBuilder('event_activity_order');
 
     if (data.id) query.andWhere('event_activity_order.id = :id', { id: data.id });
@@ -36,12 +36,12 @@ class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvi
     return await query.getMany();
   }
 
-  public async create(data: Partial<EventActivityOrder>): Promise<EventActivityOrder> {
+  public async create(data: Partial<EventActivityPresence>): Promise<EventActivityPresence> {
     const create = this.repository.create(data);
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: EventActivityOrder): Promise<EventActivityOrder> {
+  public async update(id: string, data: Partial<EventActivityPresence>): Promise<EventActivityPresence> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;
@@ -52,7 +52,7 @@ class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvi
     return Number(deleteResult.affected);
   }
 
-  public async createMany(data: Partial<EventActivityOrder>[]): Promise<EventActivityOrder[]> {
+  public async createMany(data: Partial<EventActivityPresence>[]): Promise<EventActivityPresence[]> {
     const create = this.repository.create(data);
     return await this.repository.save(create);
   }

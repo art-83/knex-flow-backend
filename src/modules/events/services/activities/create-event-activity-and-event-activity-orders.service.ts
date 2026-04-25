@@ -7,7 +7,7 @@ import CreateOrUpdateEventActivityDTO from '../../dtos/event-activity/create-or-
 import UserOrganizationQueryOptions from '../../../users/dtos/user-organization/user-organization-query-options';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import Event from '../../infra/orm/entities/event.entity';
-import EventActivityOrder from '../../infra/orm/entities/event-activity-order.entity';
+import EventActivityPresence from '../../infra/orm/entities/event-activity-presence.entity';
 import IEventActivityOrderRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-order-repository.provider';
 
 @injectable()
@@ -65,7 +65,7 @@ export class CreateEventActivityService {
       () =>
         ({
           event_activity: eventActivity,
-        }) as EventActivityOrder,
+        }) as EventActivityPresence,
     );
 
     await this.eventActivityOrderRepository.createMany(eventActivityOrders);

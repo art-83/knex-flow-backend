@@ -1,8 +1,8 @@
 import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
-import EventActivityOrder from '../../entities/event-activity-order.entity';
+import EventActivityPresence from '../../entities/event-activity-presence.entity';
 
-interface IEventActivityOrderRepositoryProvider extends IRepositoryProvider<EventActivityOrder> {
-  createMany(data: Partial<EventActivityOrder>[]): Promise<EventActivityOrder[]>;
+interface IEventActivityOrderRepositoryProvider extends IRepositoryProvider<EventActivityPresence> {
+  createMany(data: Partial<EventActivityPresence>[]): Promise<EventActivityPresence[]>;
 }
 
 export default IEventActivityOrderRepositoryProvider;

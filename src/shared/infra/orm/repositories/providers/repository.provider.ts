@@ -29,7 +29,7 @@ interface IRepositoryProvider<T> {
    * @param data The new data for the entity.
    * @returns A promise that resolves to the updated entity.
    */
-  update(id: string, data: T): Promise<T>;
+  update(id: string, data: Partial<T>): Promise<T>;
 
   /**
    * Deletes an entity from the database by its identifier.

@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Event } from './event.entity';
 import { Activity } from './activity.entity';
-import { EventActivityOrder } from './event-activity-order.entity';
+import { EventActivityPresence } from './event-activity-presence.entity';
 
 @Entity({ name: 'event_activities' })
 export class EventActivity {
@@ -47,8 +47,8 @@ export class EventActivity {
   @JoinColumn({ name: 'activity_id' })
   activity: Activity;
 
-  @OneToMany(() => EventActivityOrder, eventActivityOrder => eventActivityOrder.event_activity)
-  event_activity_orders: EventActivityOrder[];
+  @OneToMany(() => EventActivityPresence, eventActivityOrder => eventActivityOrder.event_activity)
+  event_activity_orders: EventActivityPresence[];
 }
 
 export default EventActivity;

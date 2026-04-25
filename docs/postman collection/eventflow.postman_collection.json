@@ -33,12 +33,28 @@
       "value": "00000000-0000-4000-8000-000000000001"
     },
     {
+      "key": "userId",
+      "value": "00000000-0000-4000-8000-000000000009"
+    },
+    {
       "key": "eventId",
       "value": "00000000-0000-4000-8000-000000000001"
     },
     {
       "key": "activityId",
       "value": "00000000-0000-4000-8000-000000000010"
+    },
+    {
+      "key": "batchId",
+      "value": "00000000-0000-4000-8000-000000000011"
+    },
+    {
+      "key": "eventActivityId",
+      "value": "00000000-0000-4000-8000-000000000012"
+    },
+    {
+      "key": "eventConfigurationId",
+      "value": "00000000-0000-4000-8000-000000000013"
     },
     {
       "key": "orderId",
@@ -199,6 +215,15 @@
       "name": "Organizations",
       "item": [
         {
+          "name": "List activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/organizations/activities?organization_id={{organizationId}}&limit=20&offset=0"
+          },
+          "response": []
+        },
+        {
           "name": "Create activity in organization",
           "request": {
             "method": "POST",
@@ -215,12 +240,48 @@
             "url": "{{baseUrl}}/organizations/{{organizationId}}/activities"
           },
           "response": []
+        },
+        {
+          "name": "Update activity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated workshop\",\n  \"description\": \"Updated hands-on activity\"\n}"
+            },
+            "url": "{{baseUrl}}/organizations/activities/{{activityId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete activity",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/organizations/activities/{{activityId}}"
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Events",
       "item": [
+        {
+          "name": "List events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events?organization_id={{organizationId}}&limit=20&offset=0"
+          },
+          "response": []
+        },
         {
           "name": "Create event",
           "request": {
@@ -236,6 +297,42 @@
               "raw": "{\n  \"name\": \"Conference\",\n  \"description\": \"Annual meetup\",\n  \"organization_id\": \"{{organizationId}}\",\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-02T18:00:00.000Z\"\n}"
             },
             "url": "{{baseUrl}}/events/"
+          },
+          "response": []
+        },
+        {
+          "name": "Update event",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated conference\",\n  \"description\": \"Updated annual meetup\"\n}"
+            },
+            "url": "{{baseUrl}}/events/{{eventId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "List batches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/batches?event_id={{eventId}}&limit=20&offset=0"
           },
           "response": []
         },
@@ -258,6 +355,42 @@
           "response": []
         },
         {
+          "name": "Update batch",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 59.9\n}"
+            },
+            "url": "{{baseUrl}}/events/batches/{{batchId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete batch",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/batches/{{batchId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "List event activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/event-activities?event_id={{eventId}}&activity_id={{activityId}}&limit=20&offset=0"
+          },
+          "response": []
+        },
+        {
           "name": "Create event activity",
           "request": {
             "method": "POST",
@@ -272,6 +405,78 @@
               "raw": "{\n  \"activity_id\": \"{{activityId}}\",\n  \"hours_to_retrieve\": 24,\n  \"max_participants\": 30,\n  \"start_date\": \"2026-06-01T10:00:00.000Z\",\n  \"end_date\": \"2026-06-01T12:00:00.000Z\"\n}"
             },
             "url": "{{baseUrl}}/events/{{eventId}}/activity"
+          },
+          "response": []
+        },
+        {
+          "name": "Update event activity",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hours_to_retrieve\": 12,\n  \"max_participants\": 40\n}"
+            },
+            "url": "{{baseUrl}}/events/event-activities/{{eventActivityId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete event activity",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/event-activities/{{eventActivityId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "List event configurations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/event-configurations?event_id={{eventId}}&limit=20&offset=0"
+          },
+          "response": []
+        },
+        {
+          "name": "Update event configuration",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"configuration\": {\n    \"example\": true\n  }\n}"
+            },
+            "url": "{{baseUrl}}/events/event-configurations/{{eventConfigurationId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete event configuration",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/event-configurations/{{eventConfigurationId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "List orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/orders?user_id={{userId}}&status=AWAITING&limit=20&offset=0"
           },
           "response": []
         }

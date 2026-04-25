@@ -18,7 +18,17 @@ class OrderRepository implements IOrderRepositoryProvider {
 
     if (data.user_id) query.andWhere('order.user_id = :user_id', { user_id: data.user_id });
 
+    if (data.total_amount) query.andWhere('order.total_amount = :total_amount', { total_amount: data.total_amount });
+
     if (data.status) query.andWhere('order.status = :status', { status: data.status });
+
+    if (data.created_at) query.andWhere('order.created_at = :created_at', { created_at: data.created_at });
+
+    if (data.updated_at) query.andWhere('order.updated_at = :updated_at', { updated_at: data.updated_at });
+
+    if (data.start_date) query.andWhere('order.created_at >= :start_date', { start_date: data.start_date });
+
+    if (data.end_date) query.andWhere('order.created_at <= :end_date', { end_date: data.end_date });
 
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
@@ -31,7 +41,7 @@ class OrderRepository implements IOrderRepositoryProvider {
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: Order): Promise<Order> {
+  public async update(id: string, data: Partial<Order>): Promise<Order> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;

@@ -23,9 +23,15 @@ class EventRepository implements IEventRepositoryProvider {
 
     if (data.name) query.andWhere('event.name = :name', { name: data.name });
 
+    if (data.description) query.andWhere('event.description = :description', { description: data.description });
+
     if (data.start_date) query.andWhere('event.start_date >= :start_date', { start_date: data.start_date });
 
     if (data.end_date) query.andWhere('event.end_date <= :end_date', { end_date: data.end_date });
+
+    if (data.created_at) query.andWhere('event.created_at = :created_at', { created_at: data.created_at });
+
+    if (data.updated_at) query.andWhere('event.updated_at = :updated_at', { updated_at: data.updated_at });
 
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
@@ -38,7 +44,7 @@ class EventRepository implements IEventRepositoryProvider {
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: Event): Promise<Event> {
+  public async update(id: string, data: Partial<Event>): Promise<Event> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;

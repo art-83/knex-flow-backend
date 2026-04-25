@@ -1,7 +1,7 @@
 import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-query-options.dto';
-import { EventActivityOrder } from '../../infra/orm/entities/event-activity-order.entity';
+import { EventActivityPresence } from '../../infra/orm/entities/event-activity-presence.entity';
 
-interface EventActivityOrderQueryOptions extends EventActivityOrder, DefaultQueryOptionsDTO {
+interface EventActivityOrderQueryOptions extends EventActivityPresence, DefaultQueryOptionsDTO {
   event_activity_id: string;
   order_id: string;
 }

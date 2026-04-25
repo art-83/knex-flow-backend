@@ -11,8 +11,8 @@ import {
 import { EventActivity } from './event-activity.entity';
 import { Order } from './order.entity';
 
-@Entity({ name: 'event_activity_orders' })
-export class EventActivityOrder {
+@Entity({ name: 'event_activity_presences' })
+export class EventActivityPresence {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,4 +37,4 @@ export class EventActivityOrder {
   order: Order;
 }
 
-export default EventActivityOrder;
+export default EventActivityPresence;
