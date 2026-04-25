@@ -24,14 +24,14 @@ class OrganizationController {
   public async updateActivity(request: Request, response: Response) {
     const updateActivityService = container.resolve(UpdateActivityService);
     const activity_id = String(request.params.activity_id);
-    const activity = await updateActivityService.execute(activity_id, request.body);
+    const activity = await updateActivityService.execute(request.user_id, activity_id, request.body);
     return response.json(activity);
   }
 
   public async deleteActivity(request: Request, response: Response) {
     const deleteActivityService = container.resolve(DeleteActivityService);
     const activity_id = String(request.params.activity_id);
-    const activity = await deleteActivityService.execute(activity_id);
+    const activity = await deleteActivityService.execute(request.user_id, activity_id);
     return response.json(activity);
   }
 }

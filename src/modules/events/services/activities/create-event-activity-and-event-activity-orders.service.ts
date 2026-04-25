@@ -32,15 +32,19 @@ export class CreateEventActivityService {
     ]);
 
     if (!event) {
-      throw new AppError(404, 'Event not found.');
+      throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
     if (!activity) {
-      throw new AppError(404, 'Activity not found.');
+      throw new AppError(404, 'Activity not found.', 'Atividade nao encontrada.');
     }
 
     if (event.organization.id !== activity.organization.id) {
-      throw new AppError(403, 'Activity does not belong to the same organization as the event.');
+      throw new AppError(
+        403,
+        'Activity does not belong to the same organization as the event.',
+        'Atividade nao pertence a mesma organizacao do evento.',
+      );
     }
 
     const userPermissionQueryOptions = {
@@ -51,7 +55,11 @@ export class CreateEventActivityService {
     const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
 
     if (!userOrganization) {
-      throw new AppError(403, 'User does not have permission to create event activity in this organization.');
+      throw new AppError(
+        403,
+        'User does not have permission to create event activity in this organization.',
+        'Usuario nao tem permissao para criar atividade de evento nesta organizacao.',
+      );
     }
 
     this.validateEventActivityDateRange(data, event);
@@ -85,11 +93,19 @@ export class CreateEventActivityService {
 
   private validateEventActivityDateRange(eventActivity: CreateOrUpdateEventActivityDTO, targetEvent: Event) {
     if (eventActivity.start_date > eventActivity.end_date) {
-      throw new AppError(400, 'Start date must be before end date in event activity creation.');
+      throw new AppError(
+        400,
+        'Start date must be before end date in event activity creation.',
+        'Data de inicio deve ser anterior a data de fim na criacao da atividade do evento.',
+      );
     }
 
     if (eventActivity.start_date < targetEvent.start_date || eventActivity.end_date > targetEvent.end_date) {
-      throw new AppError(400, 'Activity date range must be within the event date range.');
+      throw new AppError(
+        400,
+        'Activity date range must be within the event date range.',
+        'Periodo da atividade deve estar dentro do periodo do evento.',
+      );
     }
   }
 }

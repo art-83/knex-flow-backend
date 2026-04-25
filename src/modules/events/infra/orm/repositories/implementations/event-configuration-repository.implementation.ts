@@ -14,6 +14,8 @@ class EventConfigurationRepository implements IEventConfigurationRepositoryProvi
   public async find(data: Partial<EventConfigurationQueryOptions>): Promise<EventConfiguration[]> {
     const query = this.repository.createQueryBuilder('event_configuration');
 
+    query.leftJoinAndSelect('event_configuration.event', 'event');
+
     if (data.id) query.andWhere('event_configuration.id = :id', { id: data.id });
 
     if (data.event_id) query.andWhere('event_configuration.event_id = :event_id', { event_id: data.event_id });

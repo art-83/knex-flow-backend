@@ -32,14 +32,14 @@ class EventController {
   public async updateEvent(request: Request, response: Response) {
     const updateEventService = container.resolve(UpdateEventService);
     const event_id = String(request.params.event_id);
-    const event = await updateEventService.execute(event_id, request.body);
+    const event = await updateEventService.execute(request.user_id, event_id, request.body);
     return response.json(event);
   }
 
   public async deleteEvent(request: Request, response: Response) {
     const deleteEventService = container.resolve(DeleteEventService);
     const event_id = String(request.params.event_id);
-    const event = await deleteEventService.execute(event_id);
+    const event = await deleteEventService.execute(request.user_id, event_id);
     return response.json(event);
   }
 
@@ -58,14 +58,14 @@ class EventController {
   public async updateBatch(request: Request, response: Response) {
     const updateBatchService = container.resolve(UpdateBatchService);
     const batch_id = String(request.params.batch_id);
-    const batch = await updateBatchService.execute(batch_id, request.body);
+    const batch = await updateBatchService.execute(request.user_id, batch_id, request.body);
     return response.json(batch);
   }
 
   public async deleteBatch(request: Request, response: Response) {
     const deleteBatchService = container.resolve(DeleteBatchService);
     const batch_id = String(request.params.batch_id);
-    const batch = await deleteBatchService.execute(batch_id);
+    const batch = await deleteBatchService.execute(request.user_id, batch_id);
     return response.json(batch);
   }
 
@@ -85,14 +85,14 @@ class EventController {
   public async updateEventActivity(request: Request, response: Response) {
     const updateEventActivityService = container.resolve(UpdateEventActivityService);
     const event_activity_id = String(request.params.event_activity_id);
-    const eventActivity = await updateEventActivityService.execute(event_activity_id, request.body);
+    const eventActivity = await updateEventActivityService.execute(request.user_id, event_activity_id, request.body);
     return response.json(eventActivity);
   }
 
   public async deleteEventActivity(request: Request, response: Response) {
     const deleteEventActivityService = container.resolve(DeleteEventActivityService);
     const event_activity_id = String(request.params.event_activity_id);
-    const eventActivity = await deleteEventActivityService.execute(event_activity_id);
+    const eventActivity = await deleteEventActivityService.execute(request.user_id, event_activity_id);
     return response.json(eventActivity);
   }
 
@@ -105,14 +105,18 @@ class EventController {
   public async updateEventConfiguration(request: Request, response: Response) {
     const updateEventConfigurationService = container.resolve(UpdateEventConfigurationService);
     const event_configuration_id = String(request.params.event_configuration_id);
-    const eventConfiguration = await updateEventConfigurationService.execute(event_configuration_id, request.body);
+    const eventConfiguration = await updateEventConfigurationService.execute(
+      request.user_id,
+      event_configuration_id,
+      request.body,
+    );
     return response.json(eventConfiguration);
   }
 
   public async deleteEventConfiguration(request: Request, response: Response) {
     const deleteEventConfigurationService = container.resolve(DeleteEventConfigurationService);
     const event_configuration_id = String(request.params.event_configuration_id);
-    const eventConfiguration = await deleteEventConfigurationService.execute(event_configuration_id);
+    const eventConfiguration = await deleteEventConfigurationService.execute(request.user_id, event_configuration_id);
     return response.json(eventConfiguration);
   }
 }
