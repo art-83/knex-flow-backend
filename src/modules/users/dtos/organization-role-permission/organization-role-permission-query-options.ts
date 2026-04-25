@@ -2,6 +2,7 @@ import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-qu
 import { OrganizationRolePermission } from '../../infra/orm/entities/organization-role-permission.entity';
 
 interface OrganizationRolePermissionQueryOptions extends OrganizationRolePermission, DefaultQueryOptionsDTO {
+  organization_id: string;
   organization_role_id: string;
   permission_id: string;
 }

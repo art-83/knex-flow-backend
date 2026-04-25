@@ -14,7 +14,16 @@ class OrganizationRolePermissionRepository implements IOrganizationRolePermissio
   public async find(data: Partial<OrganizationRolePermissionQueryOptions>): Promise<OrganizationRolePermission[]> {
     const query = this.repository.createQueryBuilder('orgRolePerm');
 
+    query
+      .leftJoinAndSelect('orgRolePerm.organizationRole', 'organizationRole')
+      .leftJoinAndSelect('orgRolePerm.permission', 'permission')
+      .leftJoin('organizationRole.organization', 'organization');
+
     if (data.id) query.andWhere('orgRolePerm.id = :id', { id: data.id });
+    if (data.organization_id)
+      query.andWhere('organization.id = :organization_id', {
+        organization_id: data.organization_id,
+      });
     if (data.organization_role_id)
       query.andWhere('orgRolePerm.organization_role_id = :organization_role_id', {
         organization_role_id: data.organization_role_id,

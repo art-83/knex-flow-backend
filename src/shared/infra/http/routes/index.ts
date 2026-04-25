@@ -7,6 +7,7 @@ import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/c
 import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
 import paymentRoutes from '../../../../modules/payments/infra/http/routes/payment.routes';
 import eventRouter from '../../../../modules/events/infra/http/routers/event.router';
+import authorizationRouter from '../../../../modules/users/infra/http/routers/authorization.router';
 
 const routes = Router();
 
@@ -18,6 +19,7 @@ routes.use('/auth', authRouter);
 routes.use(authMiddleware);
 
 routes.use('/events', eventRouter);
+routes.use('/users', authorizationRouter);
 routes.use('/payment', paymentRouter);
 routes.use('/payments', paymentRoutes);
 routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
