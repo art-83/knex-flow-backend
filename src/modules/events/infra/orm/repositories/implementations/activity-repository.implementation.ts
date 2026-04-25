@@ -23,6 +23,16 @@ class ActivityRepository implements IActivityRepositoryProvider {
 
     if (data.name) query.andWhere('activity.name = :name', { name: data.name });
 
+    if (data.description) query.andWhere('activity.description = :description', { description: data.description });
+
+    if (data.created_at) query.andWhere('activity.created_at = :created_at', { created_at: data.created_at });
+
+    if (data.updated_at) query.andWhere('activity.updated_at = :updated_at', { updated_at: data.updated_at });
+
+    if (data.start_date) query.andWhere('activity.created_at >= :start_date', { start_date: data.start_date });
+
+    if (data.end_date) query.andWhere('activity.created_at <= :end_date', { end_date: data.end_date });
+
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
 
@@ -34,7 +44,7 @@ class ActivityRepository implements IActivityRepositoryProvider {
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: Activity): Promise<Activity> {
+  public async update(id: string, data: Partial<Activity>): Promise<Activity> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;

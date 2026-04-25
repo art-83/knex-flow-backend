@@ -13,6 +13,7 @@ import { OrderStatus } from '../enums/order-status.enum';
 import { Ticket } from './ticket.entity';
 import { User } from '../../../../users/infra/orm/entities/user.entity';
 import { Payment } from '../../../../payments/infra/orm/entities/payment.entity';
+import { EventActivityPresence } from './event-activity-presence.entity';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -43,6 +44,9 @@ export class Order {
 
   @OneToMany(() => Payment, payment => payment.order)
   payments: Payment[];
+
+  @OneToMany(() => EventActivityPresence, eventActivityOrder => eventActivityOrder.order)
+  event_activity_orders: EventActivityPresence[];
 }
 
 export default Order;

@@ -33,7 +33,7 @@ class TicketRepository implements ITicketRepositoryProvider {
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: Ticket): Promise<Ticket> {
+  public async update(id: string, data: Partial<Ticket>): Promise<Ticket> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;
