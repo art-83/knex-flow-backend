@@ -1,5 +1,4 @@
 import {
-  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
@@ -8,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { TicketStatus } from '../enums/ticket-status.enum';
 import { Batch } from './batch.entity';
 import { Order } from './order.entity';
 
@@ -16,9 +14,6 @@ import { Order } from './order.entity';
 export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'enum', enum: TicketStatus, default: TicketStatus.UNASSIGNED })
-  status: TicketStatus;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
