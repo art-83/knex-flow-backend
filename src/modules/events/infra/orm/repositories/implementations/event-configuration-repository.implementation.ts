@@ -14,9 +14,22 @@ class EventConfigurationRepository implements IEventConfigurationRepositoryProvi
   public async find(data: Partial<EventConfigurationQueryOptions>): Promise<EventConfiguration[]> {
     const query = this.repository.createQueryBuilder('event_configuration');
 
+    query.leftJoinAndSelect('event_configuration.event', 'event');
+
     if (data.id) query.andWhere('event_configuration.id = :id', { id: data.id });
 
     if (data.event_id) query.andWhere('event_configuration.event_id = :event_id', { event_id: data.event_id });
+
+    if (data.created_at)
+      query.andWhere('event_configuration.created_at = :created_at', { created_at: data.created_at });
+
+    if (data.updated_at)
+      query.andWhere('event_configuration.updated_at = :updated_at', { updated_at: data.updated_at });
+
+    if (data.start_date)
+      query.andWhere('event_configuration.created_at >= :start_date', { start_date: data.start_date });
+
+    if (data.end_date) query.andWhere('event_configuration.created_at <= :end_date', { end_date: data.end_date });
 
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
@@ -29,7 +42,7 @@ class EventConfigurationRepository implements IEventConfigurationRepositoryProvi
     return await this.repository.save(create);
   }
 
-  public async update(id: string, data: EventConfiguration): Promise<EventConfiguration> {
+  public async update(id: string, data: Partial<EventConfiguration>): Promise<EventConfiguration> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;

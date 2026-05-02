@@ -45,6 +45,8 @@ services:
     stop_signal: SIGTERM
     env_file:
       - .env.development
+    environment:
+      DB_SYNCHRONIZE: 'true'
     ports:
       - '3000:3000'
     depends_on:
@@ -64,6 +66,8 @@ services:
     stop_signal: SIGTERM
     env_file:
       - .env.development
+    environment:
+      DB_SYNCHRONIZE: 'false'
     command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
     depends_on:
       db:
