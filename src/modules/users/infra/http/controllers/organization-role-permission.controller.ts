@@ -1,23 +1,26 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import OrganizationRolePermissionCrudService from '../../../services/organization-role-permissions/organization-role-permission-crud.service';
+import CreateOrganizationRolePermissionService from '../../../services/organization-role-permissions/create-organization-role-permission.service';
+import FindOrganizationRolePermissionsService from '../../../services/organization-role-permissions/find-organization-role-permissions.service';
+import UpdateOrganizationRolePermissionService from '../../../services/organization-role-permissions/update-organization-role-permission.service';
+import DeleteOrganizationRolePermissionService from '../../../services/organization-role-permissions/delete-organization-role-permission.service';
 
 class OrganizationRolePermissionController {
   public async create(request: Request, response: Response) {
-    const service = container.resolve(OrganizationRolePermissionCrudService);
-    const result = await service.create(request.user_id, request.body.organization_id, request.body);
+    const service = container.resolve(CreateOrganizationRolePermissionService);
+    const result = await service.execute(request.user_id, request.body.organization_id, request.body);
     return response.status(201).json(result);
   }
 
   public async find(request: Request, response: Response) {
-    const service = container.resolve(OrganizationRolePermissionCrudService);
-    const result = await service.find(request.user_id, request.query);
+    const service = container.resolve(FindOrganizationRolePermissionsService);
+    const result = await service.execute(request.user_id, request.query);
     return response.json(result);
   }
 
   public async update(request: Request, response: Response) {
-    const service = container.resolve(OrganizationRolePermissionCrudService);
-    const result = await service.update(
+    const service = container.resolve(UpdateOrganizationRolePermissionService);
+    const result = await service.execute(
       request.user_id,
       String(request.params.id),
       request.body.organization_id,
@@ -27,8 +30,8 @@ class OrganizationRolePermissionController {
   }
 
   public async delete(request: Request, response: Response) {
-    const service = container.resolve(OrganizationRolePermissionCrudService);
-    const result = await service.delete(
+    const service = container.resolve(DeleteOrganizationRolePermissionService);
+    const result = await service.execute(
       request.user_id,
       String(request.params.id),
       String(request.query.organization_id || ''),

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 import OrganizationRolePermissionController from '../controllers/organization-role-permission.controller';
+import { ensureOrganizationRolePermissionAccess } from '../middlewares/ensure-organization-role-permission-access.middleware';
+import PermissionDescriptionEnum from '../../../enums/permission-description.enum';
 
 const organizationRolePermissionRouter = Router();
 const organizationRolePermissionController = new OrganizationRolePermissionController();
@@ -14,6 +16,7 @@ organizationRolePermissionRouter.post(
       permission_id: Joi.string().uuid().required(),
     }).required(),
   }),
+  ensureOrganizationRolePermissionAccess(PermissionDescriptionEnum.ORGANIZATION_ROLE_PERMISSION_CREATE),
   (request, response) => organizationRolePermissionController.create(request, response),
 );
 
@@ -29,6 +32,7 @@ organizationRolePermissionRouter.get(
       offset: Joi.number().integer().min(0),
     }),
   }),
+  ensureOrganizationRolePermissionAccess(PermissionDescriptionEnum.ORGANIZATION_ROLE_PERMISSION_READ),
   (request, response) => organizationRolePermissionController.find(request, response),
 );
 
@@ -44,6 +48,7 @@ organizationRolePermissionRouter.patch(
       permission_id: Joi.string().uuid().required(),
     }).required(),
   }),
+  ensureOrganizationRolePermissionAccess(PermissionDescriptionEnum.ORGANIZATION_ROLE_PERMISSION_UPDATE),
   (request, response) => organizationRolePermissionController.update(request, response),
 );
 
@@ -57,6 +62,7 @@ organizationRolePermissionRouter.delete(
       organization_id: Joi.string().uuid().required(),
     }),
   }),
+  ensureOrganizationRolePermissionAccess(PermissionDescriptionEnum.ORGANIZATION_ROLE_PERMISSION_DELETE),
   (request, response) => organizationRolePermissionController.delete(request, response),
 );
 
