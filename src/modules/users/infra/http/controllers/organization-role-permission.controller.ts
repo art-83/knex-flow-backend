@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import CreateOrganizationRolePermissionService from '../../../services/organization-role-permissions/create-organization-role-permission.service';
 import FindOrganizationRolePermissionsService from '../../../services/organization-role-permissions/find-organization-role-permissions.service';
-import UpdateOrganizationRolePermissionService from '../../../services/organization-role-permissions/update-organization-role-permission.service';
 import DeleteOrganizationRolePermissionService from '../../../services/organization-role-permissions/delete-organization-role-permission.service';
 
 class OrganizationRolePermissionController {
@@ -15,17 +14,6 @@ class OrganizationRolePermissionController {
   public async find(request: Request, response: Response) {
     const service = container.resolve(FindOrganizationRolePermissionsService);
     const result = await service.execute(request.user_id, request.query);
-    return response.json(result);
-  }
-
-  public async update(request: Request, response: Response) {
-    const service = container.resolve(UpdateOrganizationRolePermissionService);
-    const result = await service.execute(
-      request.user_id,
-      String(request.params.id),
-      request.body.organization_id,
-      request.body,
-    );
     return response.json(result);
   }
 

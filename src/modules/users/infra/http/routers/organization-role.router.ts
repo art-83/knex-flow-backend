@@ -37,11 +37,15 @@ organizationRoleRouter.patch(
     [Segments.PARAMS]: Joi.object({
       id: Joi.string().uuid().required(),
     }),
-    [Segments.BODY]: Joi.object({
+    [Segments.QUERY]: Joi.object({
       organization_id: Joi.string().uuid().required(),
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-    }).required(),
+    }),
+    [Segments.BODY]: Joi.object({
+      name: Joi.string().optional(),
+      description: Joi.string().optional(),
+    })
+      .min(1)
+      .required(),
   }),
   (request, response) => organizationRoleController.update(request, response),
 );

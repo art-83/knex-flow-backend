@@ -16,6 +16,8 @@ routes.use('/health', (request, response) => {
 });
 
 routes.use('/auth', authRouter);
+routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
+
 routes.use(authMiddleware);
 
 routes.use('/events', eventRouter);
@@ -24,7 +26,6 @@ routes.use('/organizations', organizationRouter);
 
 routes.use('/payment', paymentRouter);
 routes.use('/payments', paymentRouter);
-routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
 
 routes.use(globalErrorHandlerMiddleware);
 

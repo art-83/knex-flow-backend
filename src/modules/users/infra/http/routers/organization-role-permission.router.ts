@@ -32,21 +32,6 @@ organizationRolePermissionRouter.get(
   (request, response) => organizationRolePermissionController.find(request, response),
 );
 
-organizationRolePermissionRouter.patch(
-  '/:id',
-  celebrate({
-    [Segments.PARAMS]: Joi.object({
-      id: Joi.string().uuid().required(),
-    }),
-    [Segments.BODY]: Joi.object({
-      organization_id: Joi.string().uuid().required(),
-      organization_role_id: Joi.string().uuid().required(),
-      permission_id: Joi.string().uuid().required(),
-    }).required(),
-  }),
-  (request, response) => organizationRolePermissionController.update(request, response),
-);
-
 organizationRolePermissionRouter.delete(
   '/:id',
   celebrate({

@@ -20,7 +20,12 @@ class OrganizationRoleController {
 
   public async update(request: Request, response: Response) {
     const service = container.resolve(UpdateOrganizationRoleService);
-    const result = await service.execute(request.user_id, String(request.params.id), request.body);
+    const result = await service.execute(
+      request.user_id,
+      String(request.params.id),
+      String(request.query.organization_id),
+      request.body,
+    );
     return response.json(result);
   }
 

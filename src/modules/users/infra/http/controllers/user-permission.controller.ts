@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import CreateUserPermissionService from '../../../services/user-permissions/create-user-permission.service';
 import FindUserPermissionsService from '../../../services/user-permissions/find-user-permissions.service';
-import UpdateUserPermissionService from '../../../services/user-permissions/update-user-permission.service';
 import DeleteUserPermissionService from '../../../services/user-permissions/delete-user-permission.service';
 
 class UserPermissionController {
@@ -15,12 +14,6 @@ class UserPermissionController {
   public async find(request: Request, response: Response) {
     const service = container.resolve(FindUserPermissionsService);
     const result = await service.execute(request.user_id, request.query);
-    return response.json(result);
-  }
-
-  public async update(request: Request, response: Response) {
-    const service = container.resolve(UpdateUserPermissionService);
-    const result = await service.execute(request.user_id, String(request.params.id), request.body);
     return response.json(result);
   }
 

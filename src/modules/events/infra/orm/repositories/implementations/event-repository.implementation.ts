@@ -45,9 +45,9 @@ class EventRepository implements IEventRepositoryProvider {
   }
 
   public async update(id: string, data: Partial<Event>): Promise<Event> {
-    const create = this.repository.create(data);
-    await this.repository.update(id, create);
-    return create;
+    const update = this.repository.create(data);
+    await this.repository.update(id, update);
+    return update;
   }
 
   public async delete(id: string): Promise<number> {

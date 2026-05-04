@@ -32,9 +32,10 @@ class OrganizationRoleRepository implements IOrganizationRoleRepositoryProvider 
     return await this.repository.save(entity);
   }
 
-  public async update(id: string, data: OrganizationRole): Promise<OrganizationRole> {
-    const entity = this.repository.create({ ...data, id });
-    return await this.repository.save(entity);
+  public async update(id: string, data: Partial<OrganizationRole>): Promise<OrganizationRole> {
+    const update = this.repository.create(data);
+    await this.repository.update(id, update);
+    return update;
   }
 
   public async delete(id: string): Promise<number> {

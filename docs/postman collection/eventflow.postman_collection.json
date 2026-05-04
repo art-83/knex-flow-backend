@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Eventflow API",
-    "description": "Collection rebuilt from current backend routes. Auth scripts persist accessToken/refreshToken automatically.",
+    "description": "Collection rebuilt from current backend routes. Auth scripts persist accessToken/refreshToken automatically. Pure junction tables (user-permissions, organization-role-permissions) expose no PATCH; use DELETE plus POST to change links.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -47,6 +47,10 @@
     {
       "key": "batchId",
       "value": "00000000-0000-4000-8000-000000000011"
+    },
+    {
+      "key": "organizationRoleId",
+      "value": "00000000-0000-4000-8000-000000000020"
     },
     {
       "key": "eventActivityId",
@@ -355,6 +359,24 @@
           "response": []
         },
         {
+          "name": "Update batch",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"base_quantity\": 120,\n  \"price\": 59.9\n}"
+            },
+            "url": "{{baseUrl}}/events/batches/{{batchId}}"
+          },
+          "response": []
+        },
+        {
           "name": "List event activities",
           "request": {
             "method": "GET",
@@ -441,6 +463,29 @@
             "method": "DELETE",
             "header": [],
             "url": "{{baseUrl}}/events/event-configurations/{{eventConfigurationId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authorization",
+      "item": [
+        {
+          "name": "Update organization role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Staff\",\n  \"description\": \"Staff role\"\n}"
+            },
+            "url": "{{baseUrl}}/users/organization-roles/{{organizationRoleId}}?organization_id={{organizationId}}"
           },
           "response": []
         }

@@ -1,9 +1,6 @@
 import 'reflect-metadata';
 
 import { container } from 'tsyringe';
-import ITable3RepositoryProvider from '../../modules/__example-module__/infra/orm/repositories/providers/table-3-repository.provider';
-import Table3Repository from '../../modules/__example-module__/infra/orm/repositories/implementations/table-3-repository.implementation';
-
 import IUserRepositoryProvider from '../../modules/users/infra/orm/repositories/providers/user-repository.provider';
 import UserRepository from '../../modules/users/infra/orm/repositories/implementations/user-repository.implementation';
 
@@ -55,8 +52,6 @@ import IJwtProvider from '../../modules/users/infra/jwt/providers/jwt.provider';
 import JsonWebTokenJwtProvider from '../../modules/users/infra/jwt/implementations/jsonwebtoken-jwt.implementation';
 import { IProducerProvider } from '../infra/queue/infra/providers/producer.provider';
 import { BullMQProducer } from '../infra/queue/infra/implementation/producer.implementation';
-
-container.registerSingleton<ITable3RepositoryProvider>('Table3RepositoryProvider', Table3Repository);
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
 container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);

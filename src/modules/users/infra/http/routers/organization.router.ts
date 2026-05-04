@@ -47,7 +47,6 @@ organizationRouter.patch(
     [Segments.BODY]: {
       name: Joi.string().optional(),
       description: Joi.string().optional(),
-      organization_id: Joi.string().uuid().optional(),
     },
   }),
   (request, response) => organizationController.updateActivity(request, response),

@@ -32,21 +32,6 @@ userPermissionRouter.get(
   (request, response) => userPermissionController.find(request, response),
 );
 
-userPermissionRouter.patch(
-  '/:id',
-  celebrate({
-    [Segments.PARAMS]: Joi.object({
-      id: Joi.string().uuid().required(),
-    }),
-    [Segments.BODY]: Joi.object({
-      user_id: Joi.string().uuid().required(),
-      organization_id: Joi.string().uuid().required(),
-      permission_id: Joi.string().uuid().required(),
-    }).required(),
-  }),
-  (request, response) => userPermissionController.update(request, response),
-);
-
 userPermissionRouter.delete(
   '/:id',
   celebrate({
