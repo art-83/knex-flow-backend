@@ -7,6 +7,7 @@ import organizationRouter from '../../../../modules/users/infra/http/routers/org
 import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/checkout.hooks';
 import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
 import eventRouter from '../../../../modules/events/infra/http/routers/event.router';
+import authorizationRouter from '../../../../modules/users/infra/http/routers/authorization.router';
 
 const routes = Router();
 
@@ -15,13 +16,16 @@ routes.use('/health', (request, response) => {
 });
 
 routes.use('/auth', authRouter);
+routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
+
 routes.use(authMiddleware);
 
 routes.use('/events', eventRouter);
+routes.use('/users', authorizationRouter);
 routes.use('/organizations', organizationRouter);
+
 routes.use('/payment', paymentRouter);
 routes.use('/payments', paymentRouter);
-routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
 
 routes.use(globalErrorHandlerMiddleware);
 

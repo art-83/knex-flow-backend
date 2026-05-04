@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import LoginService from '../../../services/auth/login.service';
-import RefreshTokenService from '../../../services/auth/refresh-token.service';
-import RegisterService from '../../../services/auth/register.service';
+import LoginService from '../../../services/authentication/login.service';
+import RefreshTokenService from '../../../services/authentication/refresh-token.service';
+import RegisterService from '../../../services/authentication/register.service';
 
 class AuthController {
   public async login(request: Request, response: Response) {

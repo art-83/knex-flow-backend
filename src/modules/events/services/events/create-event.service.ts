@@ -1,40 +1,37 @@
 import { inject, injectable } from 'tsyringe';
 import CreateOrUpdateEventDTO from '../../dtos/event/create-or-update-event.dto';
 import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import IUserOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
+import IOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import AppError from '../../../../shared/infra/http/errors/app-error';
-import UserOrganizationQueryOptions from '../../../users/dtos/user-organization/user-organization-query-options';
+import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
 
 @injectable()
 export class CreateEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    @inject('UserOrganizationRepositoryProvider')
-    private userOrganizationRepository: IUserOrganizationRepositoryProvider,
+    @inject('OrganizationRepositoryProvider')
+    private organizationRepository: IOrganizationRepositoryProvider,
+    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventDTO) {
-    const userPermissionQueryOptions = {
-      user_id: user_id,
-      organization_id: data.organization_id,
-    } as UserOrganizationQueryOptions;
+    await this.ensureUserCanActOnOrganizationService.execute(
+      user_id,
+      data.organization_id,
+      PermissionDescriptionEnum.EVENT_CREATE,
+    );
 
-    const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
+    const organization = (await this.organizationRepository.find({ id: data.organization_id })).at(0);
 
-    if (!userOrganization) {
-      throw new AppError(
-        403,
-        'User does not have permission to create event in this organization.',
-        'Usuario nao tem permissao para criar evento nesta organizacao.',
-      );
+    if (!organization) {
+      throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
     this.validateEventDateRange(data);
 
-    data.organization = userOrganization.organization;
-
-    // TODO: Criar configuração de evento, ainda definir regras de negócio
+    data.organization = organization;
 
     const event = await this.eventRepository.create(data);
     return {

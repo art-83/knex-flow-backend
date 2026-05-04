@@ -16,7 +16,7 @@ eventRouter.get(
       id: Joi.string().uuid().optional(),
       name: Joi.string().optional(),
       description: Joi.string().optional(),
-      organization_id: Joi.string().uuid().optional(),
+      organization_id: Joi.string().uuid().required(),
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     }),
@@ -50,6 +50,22 @@ eventRouter.post(
   eventController.createBatch,
 );
 
+eventRouter.patch(
+  '/batches/:batch_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      batch_id: Joi.string().uuid().required(),
+    }).required(),
+    [Segments.BODY]: Joi.object({
+      base_quantity: Joi.number().integer().min(1).optional(),
+      price: Joi.number().positive().optional(),
+    })
+      .min(1)
+      .required(),
+  }),
+  eventController.updateBatch,
+);
+
 eventRouter.get(
   '/batches',
   celebrate({
@@ -57,7 +73,7 @@ eventRouter.get(
       id: Joi.string().uuid().optional(),
       base_quantity: Joi.number().integer().min(1).optional(),
       price: Joi.number().positive().optional(),
-      event_id: Joi.string().uuid().optional(),
+      event_id: Joi.string().uuid().required(),
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     }),
@@ -70,7 +86,7 @@ eventRouter.get(
   celebrate({
     [Segments.QUERY]: Joi.object({
       id: Joi.string().uuid().optional(),
-      event_id: Joi.string().uuid().optional(),
+      event_id: Joi.string().uuid().required(),
       activity_id: Joi.string().uuid().optional(),
       hours_to_retrieve: Joi.number().integer().min(0).optional(),
       max_participants: Joi.number().integer().min(1).optional(),
@@ -88,13 +104,13 @@ eventRouter.patch(
       event_activity_id: Joi.string().uuid().required(),
     }).required(),
     [Segments.BODY]: Joi.object({
-      event_id: Joi.string().uuid().optional(),
-      activity_id: Joi.string().uuid().optional(),
       hours_to_retrieve: Joi.number().integer().min(0).optional(),
       max_participants: Joi.number().integer().min(1).optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
-    }).required(),
+    })
+      .min(1)
+      .required(),
   }),
   eventController.updateEventActivity,
 );
@@ -114,7 +130,7 @@ eventRouter.get(
   celebrate({
     [Segments.QUERY]: Joi.object({
       id: Joi.string().uuid().optional(),
-      event_id: Joi.string().uuid().optional(),
+      event_id: Joi.string().uuid().required(),
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     }),
@@ -129,8 +145,7 @@ eventRouter.patch(
       event_configuration_id: Joi.string().uuid().required(),
     }).required(),
     [Segments.BODY]: Joi.object({
-      event_id: Joi.string().uuid().optional(),
-      configuration: Joi.object().allow(null).optional(),
+      configuration: Joi.object().allow(null).required(),
     }).required(),
   }),
   eventController.updateEventConfiguration,
@@ -172,10 +187,11 @@ eventRouter.patch(
     [Segments.BODY]: Joi.object({
       name: Joi.string().optional(),
       description: Joi.string().optional(),
-      organization_id: Joi.string().uuid().optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
-    }).required(),
+    })
+      .min(1)
+      .required(),
   }),
   eventController.updateEvent,
 );

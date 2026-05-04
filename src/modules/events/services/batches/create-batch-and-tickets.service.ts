@@ -1,26 +1,28 @@
 import { inject, injectable } from 'tsyringe';
-import IUserOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import IBatchRepositoryProvider from '../../infra/orm/repositories/providers/batch-repository.provider';
 import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
 import ITicketRepositoryProvider from '../../infra/orm/repositories/providers/ticket-repository.provider';
-import UserOrganizationQueryOptions from '../../../users/dtos/user-organization/user-organization-query-options';
+import IOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import CreateOrUpdateBatchDTO from '../../dtos/batch/create-or-update-batch.dto';
 import Ticket from '../../infra/orm/entities/ticket.entity';
 import OrganizationConfiguration from '../../../users/dtos/organization/organization-configuration.dto';
+import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
 
 // TODO: talvez transformar essa logica em uma query transacional para garantir atomicidade
 @injectable()
 export class CreateBatchService {
   constructor(
-    @inject('UserOrganizationRepositoryProvider')
-    private userOrganizationRepository: IUserOrganizationRepositoryProvider,
+    @inject('OrganizationRepositoryProvider')
+    private organizationRepository: IOrganizationRepositoryProvider,
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
     @inject('TicketRepositoryProvider')
     private ticketRepository: ITicketRepositoryProvider,
+    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateBatchDTO) {
@@ -30,22 +32,19 @@ export class CreateBatchService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    const userPermissionQueryOptions = {
-      user_id: user_id,
-      organization_id: event.organization.id,
-    } as UserOrganizationQueryOptions;
+    await this.ensureUserCanActOnOrganizationService.execute(
+      user_id,
+      event.organization.id,
+      PermissionDescriptionEnum.BATCH_CREATE,
+    );
 
-    const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
+    const organization = (await this.organizationRepository.find({ id: event.organization.id })).at(0);
 
-    if (!userOrganization) {
-      throw new AppError(
-        403,
-        'User does not have permission to create batch in this organization.',
-        'Usuario nao tem permissao para criar lote nesta organizacao.',
-      );
+    if (!organization) {
+      throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    const configurationObject = userOrganization.organization.configuration as OrganizationConfiguration;
+    const configurationObject = organization.configuration as OrganizationConfiguration;
 
     if (
       configurationObject &&

@@ -16,8 +16,8 @@ class PermissionRepository implements IPermissionRepositoryProvider {
 
     if (data.id) query.andWhere('permission.id = :id', { id: data.id });
     if (data.description)
-      query.andWhere('permission.description ILIKE :description', {
-        description: `%${data.description}%`,
+      query.andWhere('permission.description = :description', {
+        description: data.description,
       });
 
     if (data.limit) query.limit(data.limit);

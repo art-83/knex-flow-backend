@@ -1,16 +1,15 @@
 import { inject, injectable } from 'tsyringe';
 import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import IUserOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
-import UserOrganizationQueryOptions from '../../../users/dtos/user-organization/user-organization-query-options';
 import AppError from '../../../../shared/infra/http/errors/app-error';
+import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
 
 @injectable()
 export class DeleteEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    @inject('UserOrganizationRepositoryProvider')
-    private userOrganizationRepository: IUserOrganizationRepositoryProvider,
+    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
   ) {}
 
   public async execute(user_id: string, event_id: string) {
@@ -20,20 +19,11 @@ export class DeleteEventService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    const userPermissionQueryOptions = {
+    await this.ensureUserCanActOnOrganizationService.execute(
       user_id,
-      organization_id: event.organization.id,
-    } as UserOrganizationQueryOptions;
-
-    const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
-
-    if (!userOrganization) {
-      throw new AppError(
-        403,
-        'User does not have permission to delete event in this organization.',
-        'Usuario nao tem permissao para deletar evento nesta organizacao.',
-      );
-    }
+      event.organization.id,
+      PermissionDescriptionEnum.EVENT_DELETE,
+    );
 
     const rowsDeleted = await this.eventRepository.delete(event_id);
     return { message: 'Event deleted successfully.', deleted: rowsDeleted };

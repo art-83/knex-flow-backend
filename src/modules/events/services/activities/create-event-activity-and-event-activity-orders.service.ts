@@ -1,20 +1,18 @@
 import { inject, injectable } from 'tsyringe';
 import IEventActivityRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-repository.provider';
-import IUserOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
 import IActivityRepositoryProvider from '../../infra/orm/repositories/providers/activity-repository.provider';
 import CreateOrUpdateEventActivityDTO from '../../dtos/event-activity/create-or-update-event-activity.dto';
-import UserOrganizationQueryOptions from '../../../users/dtos/user-organization/user-organization-query-options';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import Event from '../../infra/orm/entities/event.entity';
 import EventActivityPresence from '../../infra/orm/entities/event-activity-presence.entity';
 import IEventActivityOrderRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-order-repository.provider';
+import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
 
 @injectable()
 export class CreateEventActivityService {
   constructor(
-    @inject('UserOrganizationRepositoryProvider')
-    private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('EventActivityRepositoryProvider')
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
@@ -23,6 +21,7 @@ export class CreateEventActivityService {
     private activityRepository: IActivityRepositoryProvider,
     @inject('EventActivityOrderRepositoryProvider')
     private eventActivityOrderRepository: IEventActivityOrderRepositoryProvider,
+    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
   ) {}
 
   public async execute(user_id: string, event_id: string, data: CreateOrUpdateEventActivityDTO) {
@@ -47,20 +46,11 @@ export class CreateEventActivityService {
       );
     }
 
-    const userPermissionQueryOptions = {
+    await this.ensureUserCanActOnOrganizationService.execute(
       user_id,
-      organization_id: event.organization.id,
-    } as UserOrganizationQueryOptions;
-
-    const userOrganization = (await this.userOrganizationRepository.find(userPermissionQueryOptions)).at(0);
-
-    if (!userOrganization) {
-      throw new AppError(
-        403,
-        'User does not have permission to create event activity in this organization.',
-        'Usuario nao tem permissao para criar atividade de evento nesta organizacao.',
-      );
-    }
+      event.organization.id,
+      PermissionDescriptionEnum.EVENT_ACTIVITY_CREATE,
+    );
 
     this.validateEventActivityDateRange(data, event);
 

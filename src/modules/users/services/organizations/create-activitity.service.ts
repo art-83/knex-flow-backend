@@ -1,36 +1,35 @@
 import { inject, injectable } from 'tsyringe';
 import CreateOrUpdateActivityDTO from '../../../events/dtos/activity/create-or-update-activity.dto';
-import IUserOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/user-organization-repository.provider';
+import IOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/organization-repository.provider';
 import IActivityRepositoryProvider from '../../../events/infra/orm/repositories/providers/activity-repository.provider';
-import UserOrganizationQueryOptions from '../../dtos/user-organization/user-organization-query-options';
 import AppError from '../../../../shared/infra/http/errors/app-error';
+import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import PermissionDescriptionEnum from '../../enums/permission-description.enum';
 
 @injectable()
 export class CreateActivityService {
   constructor(
-    @inject('UserOrganizationRepositoryProvider')
-    private userOrganizationRepositoryProvider: IUserOrganizationRepositoryProvider,
+    @inject('OrganizationRepositoryProvider')
+    private organizationRepository: IOrganizationRepositoryProvider,
     @inject('ActivityRepositoryProvider')
     private activityRepositoryProvider: IActivityRepositoryProvider,
+    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
   ) {}
 
   public async execute(user_id: string, organization_id: string, data: Partial<CreateOrUpdateActivityDTO>) {
-    const userOrganizationQuery = {
+    await this.ensureUserCanActOnOrganizationService.execute(
       user_id,
       organization_id,
-    } as UserOrganizationQueryOptions;
+      PermissionDescriptionEnum.ACTIVITY_CREATE,
+    );
 
-    const userOrganization = (await this.userOrganizationRepositoryProvider.find(userOrganizationQuery)).at(0);
+    const organization = (await this.organizationRepository.find({ id: organization_id })).at(0);
 
-    if (!userOrganization) {
-      throw new AppError(
-        403,
-        'User does not have permission to create event in this organization.',
-        'Usuario nao tem permissao para criar evento nesta organizacao.',
-      );
+    if (!organization) {
+      throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    data.organization = userOrganization.organization;
+    data.organization = organization;
 
     const organizationActivity = await this.activityRepositoryProvider.create(data);
 

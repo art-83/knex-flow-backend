@@ -19,7 +19,7 @@ import { DeleteEventConfigurationService } from '../../../services/event-configu
 class EventController {
   public async findEvents(request: Request, response: Response) {
     const findEventsService = container.resolve(FindEventsService);
-    const events = await findEventsService.execute(request.query);
+    const events = await findEventsService.execute(request.user_id, request.query);
     return response.json(events);
   }
 
@@ -45,7 +45,7 @@ class EventController {
 
   public async findBatches(request: Request, response: Response) {
     const findBatchesService = container.resolve(FindBatchesService);
-    const batches = await findBatchesService.execute(request.query);
+    const batches = await findBatchesService.execute(request.user_id, request.query);
     return response.json(batches);
   }
 
@@ -71,7 +71,7 @@ class EventController {
 
   public async findEventActivities(request: Request, response: Response) {
     const findEventActivitiesService = container.resolve(FindEventActivitiesService);
-    const eventActivities = await findEventActivitiesService.execute(request.query);
+    const eventActivities = await findEventActivitiesService.execute(request.user_id, request.query);
     return response.json(eventActivities);
   }
 
@@ -98,7 +98,7 @@ class EventController {
 
   public async findEventConfigurations(request: Request, response: Response) {
     const findEventConfigurationsService = container.resolve(FindEventConfigurationsService);
-    const eventConfigurations = await findEventConfigurationsService.execute(request.query);
+    const eventConfigurations = await findEventConfigurationsService.execute(request.user_id, request.query);
     return response.json(eventConfigurations);
   }
 

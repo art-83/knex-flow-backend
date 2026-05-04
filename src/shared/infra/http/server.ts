@@ -6,10 +6,12 @@ import dataSource from '../orm/database';
 import RedisConnection from '../queue/redis-connection';
 import { IProducerProvider } from '../queue/infra/providers/producer.provider';
 import routes from './routes';
+import SyncPermissionsService from '../../../modules/users/services/permissions/sync-permissions.service';
 
 async function main() {
   const port = process.env.PORT;
   const producerProvider = container.resolve<IProducerProvider>('ProducerProvider');
+  const syncPermissionsService = new SyncPermissionsService();
 
   const app = express();
 
@@ -18,6 +20,7 @@ async function main() {
   app.use(errors());
 
   await dataSource.initialize();
+  await syncPermissionsService.execute();
 
   app.listen(port, () => {
     console.log(`http://localhost:${port}`);
