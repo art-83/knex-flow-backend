@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Eventflow API",
-    "description": "Collection rebuilt from current backend routes. Auth scripts persist accessToken/refreshToken automatically. Pure junction tables (user-permissions, organization-role-permissions) expose no PATCH; use DELETE plus POST to change links.",
+    "description": "Aligned with current backend routes. Login/Register test scripts store tokens in collection variables and, when present, in the active environment (token, refreshToken).\n\nSecurity: use HTTPS for non-local baseUrl. Do not commit real production URLs or tokens.\n\nJunction tables (user-permissions, organization-role-permissions) have no PATCH; use DELETE then POST to change links.\n\nWebhook paths are registered after auth middleware: they expect the same Bearer token as the rest of the API (manual testing only until a public webhook route exists).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -515,30 +515,8 @@
       ]
     },
     {
-      "name": "Payments (queue)",
-      "item": [
-        {
-          "name": "Enqueue payment processing",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"amount\": 99.9,\n  \"order_id\": \"{{orderId}}\"\n}"
-            },
-            "url": "{{baseUrl}}/payments/process"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Webhooks (Pix checkout)",
+      "description": "Mounted behind JWT like other protected routes. Send requests after Login so the collection Bearer token is set. Not suitable as a provider callback URL until the server exposes these without app JWT (e.g. signature verification).",
       "item": [
         {
           "name": "Checkout - any event",
