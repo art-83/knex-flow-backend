@@ -16,7 +16,7 @@ organizationRouter.get(
       id: Joi.string().uuid().optional(),
       name: Joi.string().optional(),
       description: Joi.string().optional(),
-      organization_id: Joi.string().uuid().optional(),
+      organization_id: Joi.string().uuid().required(),
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     },

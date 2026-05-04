@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 const typeOrmConfig = {
   type: String(process.env.DB_TYPE),

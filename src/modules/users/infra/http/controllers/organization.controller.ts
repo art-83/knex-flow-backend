@@ -8,7 +8,7 @@ import { DeleteActivityService } from '../../../../events/services/activities/de
 class OrganizationController {
   public async findActivities(request: Request, response: Response) {
     const findActivitiesService = container.resolve(FindActivitiesService);
-    const activities = await findActivitiesService.execute(request.query);
+    const activities = await findActivitiesService.execute(request.user_id, request.query);
     return response.json(activities);
   }
 
