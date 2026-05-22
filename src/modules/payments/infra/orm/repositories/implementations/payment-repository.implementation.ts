@@ -2,7 +2,6 @@ import Payment from '../../entities/payment.entity';
 import { Repository } from 'typeorm';
 import dataSource from '../../../../../../shared/infra/orm/database';
 import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
-import { CreateOrUpdatePaymentsDTO } from '../../../../dtos/payments/create-or-update-payment.dto';
 import { PaymentQueryOptions } from '../../../../dtos/payments/payment-query-options.dto';
 
 export class PaymentRepository implements IRepositoryProvider<Payment> {
@@ -12,7 +11,7 @@ export class PaymentRepository implements IRepositoryProvider<Payment> {
     this.repository = dataSource.getRepository(Payment);
   }
 
-  public async create(data: CreateOrUpdatePaymentsDTO): Promise<Payment> {
+  public async create(data: Partial<Payment>): Promise<Payment> {
     const create = this.repository.create(data);
     return await this.repository.save(create);
   }
@@ -36,7 +35,7 @@ export class PaymentRepository implements IRepositoryProvider<Payment> {
     return await query.getMany();
   }
 
-  public async update(id: string, data: CreateOrUpdatePaymentsDTO): Promise<Payment> {
+  public async update(id: string, data: Partial<Payment>): Promise<Payment> {
     const create = this.repository.create(data);
     await this.repository.update(id, create);
     return create;

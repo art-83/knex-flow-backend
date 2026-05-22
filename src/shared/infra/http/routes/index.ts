@@ -16,7 +16,7 @@ routes.use('/health', (request, response) => {
 });
 
 routes.use('/auth', authRouter);
-routes.use('/webhooks/pix/checkout', checkoutHooksRouter);
+routes.use('/webhook/', checkoutHooksRouter);
 
 routes.use(authMiddleware);
 

@@ -4,8 +4,8 @@ import { Worker } from 'bullmq';
 
 import Payment from '../orm/entities/payment.entity';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
-import { PaymentProcessorService } from '../../services/payment-processor.service';
 import { container } from 'tsyringe';
+import CreatePaymentService from '../../services/create-payment.service';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import RedisConnection from '../../../../shared/infra/queue/redis-connection';
 
@@ -16,8 +16,8 @@ export class PaymentProcessingWorker implements IWorkerProvider {
     this.worker = new Worker<Payment>(
       QueueNames.PAYMENT_PROCESSING,
       async job => {
-        const paymentProcessorService = container.resolve(PaymentProcessorService);
-        await paymentProcessorService.execute(job.data);
+        const createPaymentService = container.resolve(CreatePaymentService);
+        await createPaymentService.execute({ order_id: (job.data as Payment).order?.id });
       },
       {
         connection: RedisConnection.getInstance().getConnection(),

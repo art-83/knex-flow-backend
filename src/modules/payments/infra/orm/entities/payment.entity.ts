@@ -10,18 +10,17 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
-import { PaymentStatus } from '../../../enums/payment-status.enum';
+import { PaymentStatus } from '../enums/payment-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { CardInformation } from './card-information.entity';
-import { PaymentProvider } from '../enums/payment-provider.enum';
 
 @Entity({ name: 'payments' })
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'enum', enum: PaymentProvider })
-  provider: PaymentProvider;
+  @Column()
+  provider: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;

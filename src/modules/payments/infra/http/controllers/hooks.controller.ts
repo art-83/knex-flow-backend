@@ -1,58 +1,14 @@
 import { Request, Response } from 'express';
 
+import AbacatepayWebhookHandlerService from '../../../services/abacatepay-webhook-handler.service';
+import { container } from 'tsyringe';
+
 export class HooksController {
-  public async onCompleted(request: Request, response: Response): Promise<Response> {
-    return response.status(202).json({
-      accepted: true,
-      provider: 'ABACATEPAY',
-      flow: 'transparent_checkout',
-      event: 'transparent.completed',
-      payload: request.body,
-      message: 'Webhook received. Processing will be handled by a future service.',
-    });
-  }
+  public async onAbacatepay(request: Request, response: Response): Promise<Response> {
+    const abacatepayWebhookHandlerService = container.resolve(AbacatepayWebhookHandlerService);
 
-  public async onRefunded(request: Request, response: Response): Promise<Response> {
-    return response.status(202).json({
-      accepted: true,
-      provider: 'ABACATEPAY',
-      flow: 'transparent_checkout',
-      event: 'transparent.refunded',
-      payload: request.body,
-      message: 'Webhook received. Processing will be handled by a future service.',
-    });
-  }
+    await abacatepayWebhookHandlerService.execute(request.body);
 
-  public async onDisputed(request: Request, response: Response): Promise<Response> {
-    return response.status(202).json({
-      accepted: true,
-      provider: 'ABACATEPAY',
-      flow: 'transparent_checkout',
-      event: 'transparent.disputed',
-      payload: request.body,
-      message: 'Webhook received. Processing will be handled by a future service.',
-    });
-  }
-
-  public async onLost(request: Request, response: Response): Promise<Response> {
-    return response.status(202).json({
-      accepted: true,
-      provider: 'ABACATEPAY',
-      flow: 'transparent_checkout',
-      event: 'transparent.lost',
-      payload: request.body,
-      message: 'Webhook received. Processing will be handled by a future service.',
-    });
-  }
-
-  public async onAny(request: Request, response: Response): Promise<Response> {
-    return response.status(202).json({
-      accepted: true,
-      provider: 'ABACATEPAY',
-      flow: 'transparent_checkout',
-      event: request.body?.event ?? 'unknown',
-      payload: request.body,
-      message: 'Webhook received. Processing will be handled by a future service.',
-    });
+    return response.status(200).json({ message: 'Abacatepay hook received' });
   }
 }
