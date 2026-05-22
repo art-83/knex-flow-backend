@@ -25,6 +25,8 @@ class TicketRepository implements ITicketRepositoryProvider {
 
     if (data.order_id) query.andWhere('ticket.order_id = :order_id', { order_id: data.order_id });
 
+    if (data.order_is_null) query.andWhere('ticket.order_id IS NULL');
+
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
 

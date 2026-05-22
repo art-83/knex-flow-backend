@@ -1,6 +1,5 @@
 import { inject, injectable } from 'tsyringe';
 import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
-import { User } from '../../infra/orm/entities/user.entity';
 import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import IUserOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 

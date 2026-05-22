@@ -22,6 +22,14 @@ class OrderRepository implements IOrderRepositoryProvider {
 
     if (data.status) query.andWhere('order.status = :status', { status: data.status });
 
+    if (data.event_id) {
+      query
+        .innerJoin('order.tickets', 'ticket')
+        .innerJoin('ticket.batch', 'batch')
+        .andWhere('batch.event_id = :event_id', { event_id: data.event_id })
+        .distinct(true);
+    }
+
     if (data.created_at) query.andWhere('order.created_at = :created_at', { created_at: data.created_at });
 
     if (data.updated_at) query.andWhere('order.updated_at = :updated_at', { updated_at: data.updated_at });

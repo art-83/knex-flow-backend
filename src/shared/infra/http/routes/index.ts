@@ -7,6 +7,7 @@ import organizationRouter from '../../../../modules/users/infra/http/routers/org
 import checkoutHooksRouter from '../../../../modules/payments/infra/http/hooks/checkout.hooks';
 import paymentRouter from '../../../../modules/payments/infra/http/routers/payment.router';
 import eventRouter from '../../../../modules/events/infra/http/routers/event.router';
+import orderRouter from '../../../../modules/events/infra/http/routers/order.router';
 import authorizationRouter from '../../../../modules/users/infra/http/routers/authorization.router';
 
 const routes = Router();
@@ -20,6 +21,7 @@ routes.use('/webhook/', checkoutHooksRouter);
 
 routes.use(authMiddleware);
 
+routes.use('/orders', orderRouter);
 routes.use('/events', eventRouter);
 routes.use('/users', authorizationRouter);
 routes.use('/organizations', organizationRouter);

@@ -3,6 +3,7 @@ import { Order } from '../../infra/orm/entities/order.entity';
 
 interface OrderQueryOptions extends Order, DefaultQueryOptionsDTO {
   user_id: string;
+  event_id: string;
 }
 
 export default OrderQueryOptions;
