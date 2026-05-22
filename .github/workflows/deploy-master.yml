@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p deploy/dist deploy/src/config
           cp Dockerfile deploy/
-          cp docker-compose.production.yml deploy/
+          cp docker-compose.yml deploy/
           cp package.json package-lock.json deploy/
           cp -r dist/. deploy/dist/
           printf '%s\n' "$ENV_FILE" > deploy/.env
@@ -70,7 +70,7 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          ssh "${SSH_TARGET}" "cd '${APP_DIR}' && sudo docker compose -f docker-compose.production.yml up -d --build --remove-orphans"
+          ssh "${SSH_TARGET}" "cd '${APP_DIR}' && sudo docker compose up -d --build --remove-orphans"
 
       - name: Health check
         run: |
@@ -79,7 +79,7 @@ jobs:
       - name: Rollback on failed health check
         if: ${{ failure() }}
         run: |
-          ssh "${SSH_TARGET}" "if [ -d '${BACKUP_DIR}' ]; then sudo rm -rf '${APP_DIR}' && sudo mv '${BACKUP_DIR}' '${APP_DIR}' && cd '${APP_DIR}' && sudo docker compose -f docker-compose.production.yml up -d --build --remove-orphans; else echo 'Rollback skipped: no backup found' && exit 1; fi"
+          ssh "${SSH_TARGET}" "if [ -d '${BACKUP_DIR}' ]; then sudo rm -rf '${APP_DIR}' && sudo mv '${BACKUP_DIR}' '${APP_DIR}' && cd '${APP_DIR}' && sudo docker compose up -d --build --remove-orphans; else echo 'Rollback skipped: no backup found' && exit 1; fi"
 
       - name: Remove backup after successful deploy
         if: ${{ success() }}

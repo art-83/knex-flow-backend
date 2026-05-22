@@ -1,12 +1,8 @@
-version: '3.8'
-
 services:
   redis:
     image: redis:7-alpine
     container_name: eventflow-redis
     restart: always
-    env_file:
-      - .env.development
     ports:
       - '6379:6379'
     volumes:
@@ -19,11 +15,12 @@ services:
       start_period: 5s
 
   db:
+    profiles: ['local']
     image: postgres:15-alpine
     container_name: eventflow-database
     restart: always
     env_file:
-      - .env.development
+      - .env
     ports:
       - '5432:5432'
     volumes:
@@ -44,16 +41,17 @@ services:
     stop_grace_period: 60s
     stop_signal: SIGTERM
     env_file:
-      - .env.development
+      - .env
     environment:
       DB_SYNCHRONIZE: 'true'
     ports:
       - '3000:3000'
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
+      db:
+        condition: service_healthy
+        required: false
     command: ['node', 'dist/shared/infra/http/server.js']
 
   workers:
@@ -65,15 +63,16 @@ services:
     stop_grace_period: 60s
     stop_signal: SIGTERM
     env_file:
-      - .env.development
+      - .env
     environment:
       DB_SYNCHRONIZE: 'false'
     command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
+      db:
+        condition: service_healthy
+        required: false
 
 volumes:
   db-data:

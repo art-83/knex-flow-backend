@@ -5,10 +5,8 @@
 ### Pré-requisitos
 
 - Docker e Docker Compose instalados.
-- Arquivos de ambiente configurados:
-  - `.env`
-  - `.env.development`
-- Certificado SSL disponível em `src/config/prod-ca-2021.crt`.
+- Arquivo `.env` configurado (copie de `.env.example`).
+- Certificado SSL em `src/config/prod-ca-2021.crt` (necessário apenas com `ENVIRONMENT=production`).
 
 ### Passo a passo
 
@@ -24,19 +22,22 @@ npm install
 npm run build
 ```
 
-3. Suba os containers com Docker Compose (ambiente de desenvolvimento):
+3. Suba os containers com Docker Compose:
 
 ```bash
-docker compose -f docker-compose.development.yml up --build
+docker compose up --build
 ```
+
+O `.env` local define `COMPOSE_PROFILES=local`, o que sobe o PostgreSQL junto. Em produção, não inclua essa variável no secret `ENV_FILE`.
 
 Esse comando sobe:
 
 - `app`: API HTTP
-- `worker`: processamento de filas (BullMQ)
-- `db`: PostgreSQL local
+- `workers`: processamento de filas (BullMQ)
+- `db`: PostgreSQL local (quando `COMPOSE_PROFILES=local`)
+- `redis`: filas
 
 ### Observações importantes
 
-- O projeto depende dos valores definidos em `.env` e `.env.development`.
-- Sem o certificado SSL (`src/config/prod-ca-2021.crt`), a conexão segura com o banco/serviços externos pode falhar.
+- Todas as variáveis de ambiente ficam em um único `.env`.
+- Sem o certificado SSL (`src/config/prod-ca-2021.crt`), conexões com banco gerenciado em produção podem falhar.
