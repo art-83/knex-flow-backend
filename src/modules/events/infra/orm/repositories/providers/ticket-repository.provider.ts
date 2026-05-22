@@ -2,7 +2,7 @@ import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories
 import Ticket from '../../entities/ticket.entity';
 
 interface ITicketRepositoryProvider extends IRepositoryProvider<Ticket> {
-  createMany(data: Partial<Ticket>[]): Promise<Ticket[]>;
+  createMany(data: Ticket[]): Promise<Ticket[]>;
 }
 
 export default ITicketRepositoryProvider;

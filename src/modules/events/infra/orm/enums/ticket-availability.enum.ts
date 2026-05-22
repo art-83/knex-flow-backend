@@ -4,3 +4,5 @@ export enum TicketAvailability {
   USABLE = 'USABLE',
   BLOCKED = 'BLOCKED',
 }
+
+export default TicketAvailability;

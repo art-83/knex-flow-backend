@@ -15,6 +15,9 @@ class TicketRepository implements ITicketRepositoryProvider {
     const query = this.repository.createQueryBuilder('ticket');
 
     query.leftJoinAndSelect('ticket.order', 'order');
+    query.leftJoinAndSelect('order.payments', 'payments');
+
+    query.orderBy('payments.created_at', 'DESC');
 
     if (data.id) query.andWhere('ticket.id = :id', { id: data.id });
 

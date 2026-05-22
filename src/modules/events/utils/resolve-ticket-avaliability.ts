@@ -1,10 +1,13 @@
+import Ticket from '../infra/orm/entities/ticket.entity';
 import { OrderStatus } from '../infra/orm/enums/order-status.enum';
-import { TicketAvailability } from './ticket-availability.enum';
+import { TicketAvailability } from '../infra/orm/enums/ticket-availability.enum';
 
-export function resolveTicketAvailability(orderStatus: OrderStatus | null | undefined): TicketAvailability {
-  if (!orderStatus) return TicketAvailability.AVAILABLE;
+function resolveTicketAvaliability(ticket: Ticket): TicketAvailability {
+  const order = ticket.order;
 
-  switch (orderStatus) {
+  if (!order) return TicketAvailability.AVAILABLE;
+
+  switch (order.status) {
     case OrderStatus.PENDING:
       return TicketAvailability.RESERVED;
     case OrderStatus.CONFIRMED:
@@ -14,7 +17,10 @@ export function resolveTicketAvailability(orderStatus: OrderStatus | null | unde
     case OrderStatus.EXPIRED:
     case OrderStatus.CANCELLED:
     case OrderStatus.REFUNDED:
+      return TicketAvailability.AVAILABLE;
     default:
       return TicketAvailability.AVAILABLE;
   }
 }
+
+export default resolveTicketAvaliability;
