@@ -28,13 +28,11 @@ npm run build
 docker compose up --build
 ```
 
-O `.env` local define `COMPOSE_PROFILES=local`, o que sobe o PostgreSQL junto. Em produção, não inclua essa variável no secret `ENV_FILE`.
-
 Esse comando sobe:
 
 - `app`: API HTTP
 - `workers`: processamento de filas (BullMQ)
-- `db`: PostgreSQL local (quando `COMPOSE_PROFILES=local`)
+- `db`: PostgreSQL
 - `redis`: filas
 
 ### Observações importantes

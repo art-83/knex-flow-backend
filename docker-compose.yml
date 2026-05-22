@@ -15,7 +15,6 @@ services:
       start_period: 5s
 
   db:
-    profiles: ['local']
     image: postgres:15-alpine
     container_name: eventflow-database
     restart: always
@@ -47,11 +46,10 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      redis:
-        condition: service_healthy
       db:
         condition: service_healthy
-        required: false
+      redis:
+        condition: service_healthy
     command: ['node', 'dist/shared/infra/http/server.js']
 
   workers:
@@ -68,11 +66,10 @@ services:
       DB_SYNCHRONIZE: 'false'
     command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
     depends_on:
-      redis:
-        condition: service_healthy
       db:
         condition: service_healthy
-        required: false
+      redis:
+        condition: service_healthy
 
 volumes:
   db-data:
