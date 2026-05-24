@@ -14,6 +14,8 @@ class OrderRepository implements IOrderRepositoryProvider {
   public async find(data: Partial<OrderQueryOptions>): Promise<Order[]> {
     const query = this.repository.createQueryBuilder('order');
 
+    query.leftJoinAndSelect('order.user', 'user');
+
     if (data.id) query.andWhere('order.id = :id', { id: data.id });
 
     if (data.user_id) query.andWhere('order.user_id = :user_id', { user_id: data.user_id });
