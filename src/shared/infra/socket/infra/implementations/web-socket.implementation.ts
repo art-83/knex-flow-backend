@@ -47,6 +47,7 @@ class WebSocketImplementation implements IWebSocketProvider {
       socket.on('message', async (payload: WebSocketMessageDTO) => {
         const payloadWithUser: WebSocketMessageDTO = {
           ...payload,
+          channel_id: payload.channel_id,
           payload: {
             ...payload.payload,
             user_id: socket.data.user_id,
@@ -65,9 +66,9 @@ class WebSocketImplementation implements IWebSocketProvider {
   }
 
   public async sendMessage(payload: WebSocketMessageDTO): Promise<void> {
-    const connection = this.connections.get(payload.channelId);
+    const connection = this.connections.get(payload.channel_id);
     if (connection) {
-      connection.emit('message', payload.payload);
+      connection.emit('message', payload);
     }
   }
 

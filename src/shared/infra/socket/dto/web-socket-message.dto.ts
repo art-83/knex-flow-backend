@@ -1,5 +1,8 @@
+import { WebSocketType } from '../enums/web-socket-type';
+
 interface WebSocketMessageDTO {
-  channelId: string;
+  channel_id: string;
+  type: WebSocketType;
   payload: Record<string, unknown>;
 }
 

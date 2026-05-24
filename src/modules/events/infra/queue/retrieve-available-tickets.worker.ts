@@ -10,6 +10,7 @@ import IWebSocketProvider from '../../../../shared/infra/socket/infra/providers/
 import RetrieveAvailableTicketsJobPayloadDTO from '../../dtos/ticket/retrieve-available-tickets-job-payload.dto';
 import GetTicketsAvaliabilityAndMaybeCreateOrderService from '../../services/tickets/find-tickets-avaliability-and-maybe-create-order.service';
 import bullmqConfig from '../../../../config/bullmq.config';
+import { WebSocketType } from '../../../../shared/infra/socket/enums/web-socket-type';
 
 export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
   private worker: Worker<RetrieveAvailableTicketsJobPayloadDTO>;
@@ -32,9 +33,9 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
       console.log(`[worker:retrieve-available-tickets] completed job ${job.id}`);
       const webSocketProvider = container.resolve<IWebSocketProvider>('WebSocketProvider');
       await webSocketProvider.sendMessage({
-        channelId: job.data.channel_id,
+        channel_id: job.data.channel_id,
+        type: WebSocketType.RETRIEVE_AVAILABLE_TICKETS,
         payload: {
-          type: QueueNames.RETRIEVE_AVAILABLE_TICKETS,
           data: job.returnvalue,
         },
       });
@@ -46,9 +47,9 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
       if (job && job.attemptsMade === bullmqConfig.defaultJobOptions.attempts) {
         const webSocketProvider = container.resolve<IWebSocketProvider>('WebSocketProvider');
         await webSocketProvider.sendMessage({
-          channelId: job.data.channel_id,
+          channel_id: job.data.channel_id,
+          type: WebSocketType.RETRIEVE_AVAILABLE_TICKETS,
           payload: {
-            type: QueueNames.RETRIEVE_AVAILABLE_TICKETS,
             data: { error: error.message },
           },
         });

@@ -6,7 +6,7 @@ import { WebSocketType } from '../enums/web-socket-type';
 
 class SocketServicesFactory {
   public static create(payload: WebSocketMessageDTO): IWebSocketServiceAdapterProvider {
-    switch (payload.payload.type) {
+    switch (payload.type) {
       case WebSocketType.RETRIEVE_AVAILABLE_TICKETS:
         return container.resolve(GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter);
       default:
