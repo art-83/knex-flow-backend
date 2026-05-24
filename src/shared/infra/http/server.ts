@@ -3,8 +3,9 @@ import express from 'express';
 import { errors } from 'celebrate';
 import { container } from 'tsyringe';
 import dataSource from '../orm/database';
-import RedisConnection from '../queue/redis-connection';
 import { IProducerProvider } from '../queue/infra/providers/producer.provider';
+import { IRedisConnectionProvider } from '../queue/infra/providers/redis-connection.provider';
+import { closeWorkers, initializeWorkers } from '../queue/workers-bootstrap';
 import routes from './routes';
 import SyncPermissionsService from '../../../modules/users/services/permissions/sync-permissions.service';
 import cors from 'cors';
@@ -14,6 +15,7 @@ import webConnectionConfig from '../../../config/web-connection.config';
 async function main() {
   const port = webConnectionConfig.http.port;
   const producerProvider = container.resolve<IProducerProvider>('ProducerProvider');
+  const redisConnection = container.resolve<IRedisConnectionProvider>('RedisConnectionProvider');
   const syncPermissionsService = new SyncPermissionsService();
 
   const app = express();
@@ -32,13 +34,12 @@ async function main() {
 
   const webSocketProvider = container.resolve<IWebSocketProvider>('WebSocketProvider');
   await webSocketProvider.initialize(server);
+  const workers = await initializeWorkers();
 
   const shutdownResources = async (): Promise<void> => {
+    await closeWorkers(workers);
     await producerProvider.close();
-
-    if (RedisConnection.hasInstance()) {
-      await RedisConnection.getInstance().close();
-    }
+    await redisConnection.close();
 
     if (dataSource.isInitialized) {
       await dataSource.destroy();

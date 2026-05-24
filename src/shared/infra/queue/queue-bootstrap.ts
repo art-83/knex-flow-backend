@@ -1,28 +1,22 @@
 import 'reflect-metadata';
 
 import '../../containers';
-import { QueueNames } from './enums/queues-names.enum';
-import { WorkerFactory } from './factories/worker.factory';
+import { container } from 'tsyringe';
 import { IWorkerProvider } from './infra/providers/worker.provider';
 import dataSource from '../orm/database';
-import RedisConnection from './redis-connection';
+import { IRedisConnectionProvider } from './infra/providers/redis-connection.provider';
+import { closeWorkers, initializeWorkers } from './workers-bootstrap';
 
 async function main() {
-  const redisConnection = RedisConnection.getInstance();
+  const redisConnection = container.resolve<IRedisConnectionProvider>('RedisConnectionProvider');
   const workers: IWorkerProvider[] = [];
 
   try {
     await dataSource.initialize();
     await redisConnection.getConnection().ping();
-
-    for (const queueName of Object.values(QueueNames)) {
-      const worker = WorkerFactory.createWorker(queueName);
-      await worker.initialize();
-      workers.push(worker);
-      console.log(`[queue-bootstrap] worker ${queueName} started`);
-    }
+    workers.push(...(await initializeWorkers()));
   } catch (error) {
-    await Promise.allSettled(workers.map(w => w.close()));
+    await closeWorkers(workers);
     await redisConnection.close();
     if (dataSource.isInitialized) await dataSource.destroy();
     throw error;
@@ -36,13 +30,7 @@ async function main() {
     shutdownPromise = (async () => {
       console.log('[queue-bootstrap] shutting down...');
 
-      const results = await Promise.allSettled(workers.map(w => w.close()));
-      results.forEach((result, i) => {
-        if (result.status === 'rejected') {
-          console.error(`[queue-bootstrap] failed to close worker ${i}:`, result.reason);
-        }
-      });
-
+      await closeWorkers(workers);
       await redisConnection.close();
 
       if (dataSource.isInitialized) {

@@ -14,6 +14,7 @@ class TicketRepository implements ITicketRepositoryProvider {
   public async find(data: Partial<TicketQueryOptions>): Promise<Ticket[]> {
     const query = this.repository.createQueryBuilder('ticket');
 
+    query.leftJoinAndSelect('ticket.batch', 'batch');
     query.leftJoinAndSelect('ticket.order', 'order');
     query.leftJoinAndSelect('order.payments', 'payments');
 
@@ -22,6 +23,8 @@ class TicketRepository implements ITicketRepositoryProvider {
     if (data.id) query.andWhere('ticket.id = :id', { id: data.id });
 
     if (data.batch_id) query.andWhere('ticket.batch_id = :batch_id', { batch_id: data.batch_id });
+
+    if (data.event_id) query.andWhere('batch.event_id = :event_id', { event_id: data.event_id });
 
     if (data.order_id) query.andWhere('ticket.order_id = :order_id', { order_id: data.order_id });
 

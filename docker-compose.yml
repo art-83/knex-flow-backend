@@ -52,25 +52,6 @@ services:
         condition: service_healthy
     command: ['node', 'dist/shared/infra/http/server.js']
 
-  workers:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: eventflow-worker
-    restart: always
-    stop_grace_period: 60s
-    stop_signal: SIGTERM
-    env_file:
-      - .env
-    environment:
-      DB_SYNCHRONIZE: 'false'
-    command: ['node', 'dist/shared/infra/queue/queue-bootstrap.js']
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
 volumes:
   db-data:
   redis-data:

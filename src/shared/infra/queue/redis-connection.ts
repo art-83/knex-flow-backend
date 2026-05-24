@@ -1,28 +1,16 @@
 import IORedis from 'ioredis';
 
 import bullmqConfig from '../../../config/bullmq.config';
+import { IRedisConnectionProvider } from './infra/providers/redis-connection.provider';
 
-class RedisConnection {
-  private static instance: RedisConnection;
+class RedisConnection implements IRedisConnectionProvider {
   private connection: IORedis;
 
-  private constructor() {
+  constructor() {
     this.connection = new IORedis({
       ...bullmqConfig.connection,
       maxRetriesPerRequest: null,
     });
-  }
-
-  public static getInstance(): RedisConnection {
-    if (!RedisConnection.instance) {
-      RedisConnection.instance = new RedisConnection();
-    }
-
-    return RedisConnection.instance;
-  }
-
-  public static hasInstance(): boolean {
-    return Boolean(RedisConnection.instance);
   }
 
   public getConnection(): IORedis {

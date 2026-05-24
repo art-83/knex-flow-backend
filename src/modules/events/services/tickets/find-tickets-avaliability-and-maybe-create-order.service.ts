@@ -54,7 +54,10 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     return {
       message: 'Tickets available! Order created successfully.',
       data: {
-        ticket,
+        ticket: {
+          ...ticket,
+          order: order,
+        },
         ticketAvailability,
       },
     };

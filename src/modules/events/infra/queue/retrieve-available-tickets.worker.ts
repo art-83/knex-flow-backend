@@ -5,7 +5,7 @@ import { container } from 'tsyringe';
 
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
-import RedisConnection from '../../../../shared/infra/queue/redis-connection';
+import { IRedisConnectionProvider } from '../../../../shared/infra/queue/infra/providers/redis-connection.provider';
 import IWebSocketProvider from '../../../../shared/infra/socket/infra/providers/web-socket.provider';
 import RetrieveAvailableTicketsJobPayloadDTO from '../../dtos/ticket/retrieve-available-tickets-job-payload.dto';
 import GetTicketsAvaliabilityAndMaybeCreateOrderService from '../../services/tickets/find-tickets-avaliability-and-maybe-create-order.service';
@@ -15,6 +15,8 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
   private worker: Worker<RetrieveAvailableTicketsJobPayloadDTO>;
 
   public async initialize(): Promise<void> {
+    const redisConnection = container.resolve<IRedisConnectionProvider>('RedisConnectionProvider');
+
     this.worker = new Worker<RetrieveAvailableTicketsJobPayloadDTO>(
       QueueNames.RETRIEVE_AVAILABLE_TICKETS,
       async job => {
@@ -22,7 +24,7 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
         return service.execute(job.data.body.user_id, job.data.body.event_id);
       },
       {
-        connection: RedisConnection.getInstance().getConnection(),
+        connection: redisConnection.getConnection(),
       },
     );
 
@@ -36,6 +38,7 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
           data: job.returnvalue,
         },
       });
+      await webSocketProvider.closeConnection(job.data.channel_id);
     });
 
     this.worker.on('failed', async (job, error) => {
@@ -49,6 +52,7 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
             data: { error: error.message },
           },
         });
+        await webSocketProvider.closeConnection(job.data.channel_id);
       }
     });
 

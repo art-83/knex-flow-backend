@@ -53,6 +53,8 @@ import IJwtProvider from '../../modules/users/infra/jwt/providers/jwt.provider';
 import JsonWebTokenJwtProvider from '../../modules/users/infra/jwt/implementations/jsonwebtoken-jwt.implementation';
 import { IProducerProvider } from '../infra/queue/infra/providers/producer.provider';
 import { BullMQProducer } from '../infra/queue/infra/implementation/producer.implementation';
+import RedisConnection from '../infra/queue/redis-connection';
+import { IRedisConnectionProvider } from '../infra/queue/infra/providers/redis-connection.provider';
 import IWebSocketProvider from '../infra/socket/infra/providers/web-socket.provider';
 import WebSocketImplementation from '../infra/socket/infra/implementations/web-socket.implementation';
 
@@ -106,4 +108,5 @@ container.registerSingleton<IPaymentGatewayProvider<AbacatepayCreatePaymentRespo
   AbacatepayPixGatewayImplementation,
 );
 container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
+container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider', RedisConnection);
 container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);
