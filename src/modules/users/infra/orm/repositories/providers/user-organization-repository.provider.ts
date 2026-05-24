@@ -1,4 +1,4 @@
-import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
 import { UserOrganization } from '../../entities/user-organization.entity';
 import UserOrganizationQueryOptions from '../../../../dtos/user-organization/user-organization-query-options';
 

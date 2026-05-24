@@ -40,7 +40,7 @@ import IEventActivityOrderRepositoryProvider from '../../modules/events/infra/or
 import EventActivityOrderRepository from '../../modules/events/infra/orm/repositories/implementations/event-activity-order-repository.implementation';
 import { PaymentRepository } from '../../modules/payments/infra/orm/repositories/implementations/payment-repository.implementation';
 import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
-import IRepositoryProvider from '../infra/orm/repositories/providers/repository.provider';
+import IRepositoryProvider from '../infra/orm/infra/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
@@ -53,6 +53,8 @@ import IJwtProvider from '../../modules/users/infra/jwt/providers/jwt.provider';
 import JsonWebTokenJwtProvider from '../../modules/users/infra/jwt/implementations/jsonwebtoken-jwt.implementation';
 import { IProducerProvider } from '../infra/queue/infra/providers/producer.provider';
 import { BullMQProducer } from '../infra/queue/infra/implementation/producer.implementation';
+import IWebSocketProvider from '../infra/socket/infra/providers/web-socket.provider';
+import WebSocketImplementation from '../infra/socket/infra/implementations/web-socket.implementation';
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
 container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);
@@ -104,3 +106,4 @@ container.registerSingleton<IPaymentGatewayProvider<AbacatepayCreatePaymentRespo
   AbacatepayPixGatewayImplementation,
 );
 container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
+container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);

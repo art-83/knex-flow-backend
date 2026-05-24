@@ -1,7 +1,7 @@
 import CardInformation from '../../entities/card-information.entity';
 import { Repository } from 'typeorm';
 import dataSource from '../../../../../../shared/infra/orm/database';
-import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
 import { CreateOrUpdateCardInformationDTO } from '../../../../dtos/card-informations/create-or-update-card-information.dto';
 import { CardInformationQueryOptions } from '../../../../dtos/card-informations/card-information-query-options.dto';
 

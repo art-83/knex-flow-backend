@@ -1,4 +1,4 @@
-import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
 import EventConfiguration from '../../entities/event-configuration.entity';
 
 interface IEventConfigurationRepositoryProvider extends IRepositoryProvider<EventConfiguration> {}

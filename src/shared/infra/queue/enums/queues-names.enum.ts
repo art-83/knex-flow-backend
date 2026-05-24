@@ -1,4 +1,3 @@
 export enum QueueNames {
-  PROCESS_TICKET = 'process-ticket',
-  PAYMENT_PROCESSING = 'payment-processing',
+  RETRIEVE_AVAILABLE_TICKETS = 'retrieve-available-tickets',
 }

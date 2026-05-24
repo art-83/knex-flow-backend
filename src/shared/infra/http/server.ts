@@ -8,9 +8,11 @@ import { IProducerProvider } from '../queue/infra/providers/producer.provider';
 import routes from './routes';
 import SyncPermissionsService from '../../../modules/users/services/permissions/sync-permissions.service';
 import cors from 'cors';
+import IWebSocketProvider from '../socket/infra/providers/web-socket.provider';
+import webConnectionConfig from '../../../config/web-connection.config';
 
 async function main() {
-  const port = process.env.PORT;
+  const port = webConnectionConfig.http.port;
   const producerProvider = container.resolve<IProducerProvider>('ProducerProvider');
   const syncPermissionsService = new SyncPermissionsService();
 
@@ -24,9 +26,12 @@ async function main() {
   await dataSource.initialize();
   await syncPermissionsService.execute();
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`http://localhost:${port}`);
   });
+
+  const webSocketProvider = container.resolve<IWebSocketProvider>('WebSocketProvider');
+  await webSocketProvider.initialize(server);
 
   const shutdownResources = async (): Promise<void> => {
     await producerProvider.close();

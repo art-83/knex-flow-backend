@@ -1,7 +1,7 @@
 import Payment from '../../entities/payment.entity';
 import { Repository } from 'typeorm';
 import dataSource from '../../../../../../shared/infra/orm/database';
-import IRepositoryProvider from '../../../../../../shared/infra/orm/repositories/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
 import { PaymentQueryOptions } from '../../../../dtos/payments/payment-query-options.dto';
 
 export class PaymentRepository implements IRepositoryProvider<Payment> {
