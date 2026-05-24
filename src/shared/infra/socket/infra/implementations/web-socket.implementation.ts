@@ -25,6 +25,7 @@ class WebSocketImplementation implements IWebSocketProvider {
         origin: '*',
         methods: ['GET', 'POST'],
       },
+      transports: ['websocket'],
     });
 
     this.server.use((socket, next) => {
