@@ -45,14 +45,14 @@ class WebSocketImplementation implements IWebSocketProvider {
       this.connections.set(channelId, socket);
 
       socket.on('message', async (payload: WebSocketMessageDTO) => {
-        const payloadWithUser: WebSocketMessageDTO = {
-          ...payload,
+        const payloadWithUser = {
           channel_id: payload.channel_id,
+          type: payload.type,
           payload: {
             ...payload.payload,
             user_id: socket.data.user_id,
           },
-        };
+        } as WebSocketMessageDTO;
         const serviceAdapter = SocketServicesFactory.create(payloadWithUser);
         await serviceAdapter.execute(payloadWithUser);
       });
