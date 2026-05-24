@@ -8,8 +8,7 @@ import CreatePaymentService from '../../../services/create-payment.service';
 export class PaymentController {
   public async create(request: Request, response: Response): Promise<Response> {
     const createPaymentService = container.resolve(CreatePaymentService);
-
-    const result = await createPaymentService.execute(request.body);
+    const result = await createPaymentService.execute(request.user_id, request.body);
 
     return response.status(201).json(result);
   }

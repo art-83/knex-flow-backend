@@ -18,7 +18,7 @@ export class EventActivity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   hours_to_retrieve: number;
 
   @Column()
