@@ -3,6 +3,7 @@ import AbacatepayDisputedWebhookHandler from '../../services/webhooks/abacatepay
 import AbacatepayLostWebhookHandler from '../../services/webhooks/abacatepay-lost.webhook-handler';
 import AbacatepayRefundedWebhookHandler from '../../services/webhooks/abacatepay-refunded.webhook-handler';
 import { IWebhookHandlerProvider } from '../gateways/providers/webhook-handler.provider';
+import { container } from 'tsyringe';
 
 class AbacatePayWebhookHandlerFactory {
   public static create(payload: Record<string, unknown>): IWebhookHandlerProvider {
@@ -10,7 +11,7 @@ class AbacatePayWebhookHandlerFactory {
 
     switch (event) {
       case 'transparent.completed':
-        return new AbacatepayCompletedWebhookHandler();
+        return container.resolve(AbacatepayCompletedWebhookHandler);
       case 'transparent.refunded':
         return new AbacatepayRefundedWebhookHandler();
       case 'transparent.disputed':

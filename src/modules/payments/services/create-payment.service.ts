@@ -9,6 +9,9 @@ import { Order } from '../../events/infra/orm/entities/order.entity';
 import { OrderStatus } from '../../events/infra/orm/enums/order-status.enum';
 import IUserRepositoryProvider from '../../users/infra/orm/repositories/providers/user-repository.provider';
 import User from '../../users/infra/orm/entities/user.entity';
+import { PaymentStatus } from '../infra/orm/enums/payment-status.enum';
+import IRepositoryProvider from '../../../shared/infra/orm/infra/providers/repository.provider';
+import { Payment } from '../infra/orm/entities/payment.entity';
 
 @injectable()
 class CreatePaymentService {
@@ -19,9 +22,11 @@ class CreatePaymentService {
     private orderRepositoryProvider: IOrderRepositoryProvider,
     @inject('UserRepositoryProvider')
     private userRepositoryProvider: IUserRepositoryProvider,
+    @inject('PaymentRepositoryProvider')
+    private paymentRepositoryProvider: IRepositoryProvider<Payment>,
   ) {}
 
-  public async execute(user_id: string, data: Partial<CreatePaymentDTO>): Promise<AbacatepayCreatePaymentResponse> {
+  public async execute(user_id: string, data: Partial<CreatePaymentDTO>) {
     const [user, order] = await Promise.all([
       (await this.userRepositoryProvider.find({ id: user_id })).at(0),
       (await this.orderRepositoryProvider.find({ id: data.order_id })).at(0),
@@ -52,7 +57,21 @@ class CreatePaymentService {
       },
     } as CreatePaymentDTO;
 
-    return this.pixGatewayProvider.createPayment(payload);
+    const gatewayPayment = await this.pixGatewayProvider.createPayment(payload);
+
+    const payment = await this.paymentRepositoryProvider.create({
+      order: order,
+      amount: order.total_amount,
+      method: data.method,
+      status: PaymentStatus.PENDING,
+      provider: 'abacatepay',
+      external_id: gatewayPayment.id,
+    });
+
+    return {
+      payment,
+      gatewayPayment,
+    };
   }
 
   private formatDescription(user: User, order: Order): string {

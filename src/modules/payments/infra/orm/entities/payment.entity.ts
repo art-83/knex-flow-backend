@@ -31,6 +31,9 @@ export class Payment {
   @Column({ type: 'enum', enum: PaymentStatus })
   status: PaymentStatus;
 
+  @Column({ nullable: true })
+  external_id: string;
+
   @Column({ type: 'timestamptz', nullable: true })
   refunded_at: Date;
 

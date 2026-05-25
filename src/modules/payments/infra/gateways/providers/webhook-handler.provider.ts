@@ -1,5 +1,5 @@
 export interface IWebhookHandlerProvider {
-  handle(payload: Record<string, unknown>): Promise<void>;
+  handle(payload: any): Promise<void>;
 }
 
 export default IWebhookHandlerProvider;

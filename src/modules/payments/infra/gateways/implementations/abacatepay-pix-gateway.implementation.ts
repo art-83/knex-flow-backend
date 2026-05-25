@@ -4,13 +4,14 @@ import abacatepayConfig from '../../../../../config/abacatepay.config';
 import { AbacatepayCreatePaymentResponse } from '../../../dtos/gateways/abacatepay/abacatepay-create-payment-response.dto';
 import { CreatePaymentDTO } from '../../../dtos/payments/create-payment.dto';
 import { IPaymentGatewayProvider } from '../providers/payment-gateway.provider';
+import { toCents } from '../../../utils/money-parser';
 
 export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvider<AbacatepayCreatePaymentResponse> {
   public async createPayment(data: CreatePaymentDTO): Promise<AbacatepayCreatePaymentResponse> {
     const requestPayload = {
       method: data.method,
       data: {
-        amount: this.toCents(data.amount),
+        amount: toCents(data.amount),
         description: data.description,
         expiresIn: abacatepayConfig.pix.expiresIn,
         metadata: data.metadata,
@@ -39,10 +40,6 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
     };
 
     return response;
-  }
-
-  private toCents(amount: number): number {
-    return Math.round(Number(amount) * 100);
   }
 }
 
