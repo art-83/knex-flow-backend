@@ -10,7 +10,7 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
     const requestPayload = {
       method: data.method,
       data: {
-        amount: Number(data.amount),
+        amount: this.toCents(data.amount),
         description: data.description,
         expiresIn: abacatepayConfig.pix.expiresIn,
         metadata: data.metadata,
@@ -28,6 +28,10 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
     );
 
     return responseBody.data;
+  }
+
+  private toCents(amount: number): number {
+    return Math.round(Number(amount) * 100);
   }
 }
 
