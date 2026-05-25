@@ -8,16 +8,12 @@ import { IPaymentGatewayProvider } from '../providers/payment-gateway.provider';
 export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvider<AbacatepayCreatePaymentResponse> {
   public async createPayment(data: CreatePaymentDTO): Promise<AbacatepayCreatePaymentResponse> {
     const requestPayload = {
-      amount: Number(data.amount),
-      expiresIn: abacatepayConfig.pix.expiresIn,
-      metadata: {
-        ...data.metadata,
-      },
-      customer: {
-        name: data.customer_name,
-        email: data.customer_email,
-        taxId: data.customer_document,
-        cellphone: data.customer_phone,
+      method: data.method,
+      data: {
+        amount: Number(data.amount),
+        description: data.description,
+        expiresIn: abacatepayConfig.pix.expiresIn,
+        metadata: data.metadata,
       },
     };
 
