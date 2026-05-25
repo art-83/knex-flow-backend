@@ -1,6 +1,6 @@
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import { IWebhookHandlerProvider } from '../../infra/gateways/providers/webhook-handler.provider';
-import { inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import IOrderRepositoryProvider from '../../../events/infra/orm/repositories/providers/order-repository.provider';
 import IRepositoryProvider from '../../../../shared/infra/orm/infra/providers/repository.provider';
 import Payment from '../../infra/orm/entities/payment.entity';
@@ -9,6 +9,7 @@ import { OrderStatus } from '../../../events/infra/orm/enums/order-status.enum';
 import { PaymentQueryOptions } from '../../dtos/payments/payment-query-options.dto';
 import AbacatePayPixWebhookResponseDTO from '../../dtos/gateways/abacatepay/abacate-pay-pix-webhook-response.dto';
 
+@injectable()
 class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookResponseDTO> {
   constructor(
     @inject('OrderRepositoryProvider')
