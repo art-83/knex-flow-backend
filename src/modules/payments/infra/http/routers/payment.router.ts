@@ -10,7 +10,7 @@ paymentRouter.get(
   '/:id',
   celebrate({
     [Segments.PARAMS]: Joi.object({
-      user_id: Joi.string().uuid().required(),
+      id: Joi.string().uuid().required(),
     }),
   }),
   paymentController.findUserPaymentById,

@@ -8,7 +8,7 @@ import FindUserPaymentsService from '../../../services/find-user-payments.servic
 export class PaymentController {
   public async findUserPaymentById(request: Request, response: Response): Promise<Response> {
     const findUserPaymentsService = container.resolve(FindUserPaymentsService);
-    const result = await findUserPaymentsService.execute(request.user_id, request.query);
+    const result = await findUserPaymentsService.execute(request.user_id, request.params);
     return response.json(result);
   }
 
