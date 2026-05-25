@@ -12,6 +12,7 @@ import User from '../../users/infra/orm/entities/user.entity';
 import { PaymentStatus } from '../infra/orm/enums/payment-status.enum';
 import IRepositoryProvider from '../../../shared/infra/orm/infra/providers/repository.provider';
 import { Payment } from '../infra/orm/entities/payment.entity';
+import { payAbacatepayPix } from '../utils/dev-pay-abacatepay-pix';
 
 @injectable()
 class CreatePaymentService {
@@ -67,6 +68,10 @@ class CreatePaymentService {
       provider: 'abacatepay',
       external_id: gatewayPayment.id,
     });
+
+    if (process.env.ENVIRONMENT === 'development') {
+      await payAbacatepayPix(gatewayPayment.id);
+    }
 
     return {
       payment,
