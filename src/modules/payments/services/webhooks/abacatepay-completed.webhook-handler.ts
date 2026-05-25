@@ -19,7 +19,7 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
   ) {}
 
   public async handle(payload: AbacatePayPixWebhookResponseDTO): Promise<void> {
-    console.log('[Abacatepay] completed webhook received', payload);
+    console.log('[Abacatepay] completed webhook received', JSON.stringify(payload, null, 2));
     const data = payload.data;
     const orderId = String(data.metadata.order_id);
     const externalId = String(data.id);
