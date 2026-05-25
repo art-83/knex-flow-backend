@@ -19,12 +19,11 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
   ) {}
 
   public async handle(payload: AbacatePayPixWebhookResponseDTO): Promise<void> {
-    console.log('[Abacatepay] completed webhook received', JSON.stringify(payload, null, 2));
-    const data = payload.data;
-    const orderId = String(data.metadata.order_id);
-    const externalId = String(data.id);
+    const transparent = payload.data.transparent;
+    const orderId = String(transparent.metadata.order_id);
+    const externalId = String(transparent.id);
 
-    if (!orderId || !externalId || data.status !== PaymentStatus.PAID) {
+    if (!orderId || !externalId || transparent.status !== PaymentStatus.PAID) {
       throw new AppError(400, 'Invalid payload', 'Payload invalido.');
     }
 
