@@ -7,10 +7,10 @@ import Payment from '../../infra/orm/entities/payment.entity';
 import { PaymentStatus } from '../../infra/orm/enums/payment-status.enum';
 import { OrderStatus } from '../../../events/infra/orm/enums/order-status.enum';
 import { PaymentQueryOptions } from '../../dtos/payments/payment-query-options.dto';
-import AbacatePayPixWebhookResponseDTO from '../../dtos/gateways/abacatepay/abacate-pay-pix-webhook-response.dto';
+import AbacatePayPixWebhookRequestDTO from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 
 @injectable()
-class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookResponseDTO> {
+class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookRequestDTO> {
   constructor(
     @inject('OrderRepositoryProvider')
     private orderRepositoryProvider: IOrderRepositoryProvider,
@@ -18,7 +18,7 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
     private paymentRepositoryProvider: IRepositoryProvider<Payment>,
   ) {}
 
-  public async handle(payload: AbacatePayPixWebhookResponseDTO): Promise<void> {
+  public async handle(payload: AbacatePayPixWebhookRequestDTO): Promise<void> {
     const transparent = payload.data.transparent;
     const orderId = String(transparent.metadata.order_id);
     const externalId = String(transparent.id);

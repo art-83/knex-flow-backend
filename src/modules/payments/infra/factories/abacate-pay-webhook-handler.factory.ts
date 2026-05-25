@@ -4,12 +4,12 @@ import AbacatepayLostWebhookHandler from '../../services/webhooks/abacatepay-los
 import AbacatepayRefundedWebhookHandler from '../../services/webhooks/abacatepay-refunded.webhook-handler';
 import { IWebhookHandlerProvider } from '../gateways/providers/webhook-handler.provider';
 import { container } from 'tsyringe';
-import AbacatePayPixWebhookResponseDTO from '../../dtos/gateways/abacatepay/abacate-pay-pix-webhook-response.dto';
+import AbacatePayPixWebhookRequestDTO from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 
 class AbacatePayWebhookHandlerFactory {
   public static create(
-    payload: AbacatePayPixWebhookResponseDTO,
-  ): IWebhookHandlerProvider<AbacatePayPixWebhookResponseDTO> {
+    payload: AbacatePayPixWebhookRequestDTO,
+  ): IWebhookHandlerProvider<AbacatePayPixWebhookRequestDTO> {
     const event = String(payload.event);
 
     switch (event) {
