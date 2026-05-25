@@ -17,7 +17,7 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
       },
     };
 
-    const { data: responseBody } = await axios.post<{ data: AbacatepayCreatePaymentResponse }>(
+    const abacatepayResponse = await axios.post<{ data: AbacatepayCreatePaymentResponse }>(
       `${abacatepayConfig.apiUrl}/transparents/create`,
       requestPayload,
       {
@@ -27,7 +27,18 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
       },
     );
 
-    return responseBody.data;
+    const responseBody = abacatepayResponse.data;
+
+    const response: AbacatepayCreatePaymentResponse = {
+      id: responseBody.data.id,
+      status: responseBody.data.status,
+      amount: responseBody.data.amount,
+      brCode: responseBody.data.brCode,
+      brCodeBase64: responseBody.data.brCodeBase64,
+      expiresAt: responseBody.data.expiresAt,
+    };
+
+    return response;
   }
 
   private toCents(amount: number): number {
