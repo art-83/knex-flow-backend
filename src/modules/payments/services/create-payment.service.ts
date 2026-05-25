@@ -56,7 +56,8 @@ class CreatePaymentService {
   }
 
   private formatDescription(user: User, order: Order): string {
-    return `Pedido #${order.id} - ${user.email} - R$ ${order.total_amount.toFixed(2)}`;
+    const convertedAmount = Number(order.total_amount).toFixed(2);
+    return `Pedido #${order.id} - ${user.email} - R$ ${convertedAmount}`;
   }
 }
 
