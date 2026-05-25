@@ -10,9 +10,11 @@ import IWebSocketProvider from '../providers/web-socket.provider';
 class WebSocketImplementation implements IWebSocketProvider {
   private server: Server;
   private connections: Map<string, Socket>;
+  private rateLimitEntries: Map<string, { count: number; resetAt: number }>;
 
   constructor() {
     this.connections = new Map();
+    this.rateLimitEntries = new Map();
   }
 
   public async initialize(server: HttpServer): Promise<void> {
@@ -25,7 +27,6 @@ class WebSocketImplementation implements IWebSocketProvider {
         origin: '*',
         methods: ['GET', 'POST'],
       },
-      transports: ['websocket'],
     });
 
     this.server.use((socket, next) => {
@@ -46,14 +47,14 @@ class WebSocketImplementation implements IWebSocketProvider {
       this.connections.set(channelId, socket);
 
       socket.on('message', async (payload: WebSocketMessageDTO) => {
-        const payloadWithUser = {
+        const payloadWithUser: WebSocketMessageDTO = {
+          ...payload,
           channel_id: payload.channel_id,
-          type: payload.type,
           payload: {
             ...payload.payload,
             user_id: socket.data.user_id,
           },
-        } as WebSocketMessageDTO;
+        };
         const serviceAdapter = SocketServicesFactory.create(payloadWithUser);
         await serviceAdapter.execute(payloadWithUser);
       });

@@ -1,7 +1,8 @@
+import AbacatePayPixWebhookResponseDTO from '../../dtos/gateways/abacatepay/abacate-pay-pix-webhook-response.dto';
 import { IWebhookHandlerProvider } from '../../infra/gateways/providers/webhook-handler.provider';
 
-class AbacatepayLostWebhookHandler implements IWebhookHandlerProvider {
-  public async handle(payload: Record<string, unknown>): Promise<void> {
+class AbacatepayLostWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookResponseDTO> {
+  public async handle(payload: AbacatePayPixWebhookResponseDTO): Promise<void> {
     console.log('[Abacatepay] lost webhook received', payload);
   }
 }

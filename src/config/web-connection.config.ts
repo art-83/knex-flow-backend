@@ -4,6 +4,10 @@ const webConnectionConfig = {
   },
   websocket: {
     port: Number(process.env.WEBSOCKET_PORT),
+    rateLimit: {
+      maxMessages: Number(process.env.WEBSOCKET_RATE_LIMIT_MAX_MESSAGES),
+      windowMs: Number(process.env.WEBSOCKET_RATE_LIMIT_WINDOW_MS),
+    },
   },
 };
 

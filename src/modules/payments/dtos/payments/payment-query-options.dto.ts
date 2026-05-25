@@ -3,4 +3,5 @@ import Payment from '../../infra/orm/entities/payment.entity';
 
 export interface PaymentQueryOptions extends Payment, DefaultQueryOptionsDTO {
   order_id: string;
+  user_id: string;
 }
