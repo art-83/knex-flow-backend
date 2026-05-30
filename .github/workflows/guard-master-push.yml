@@ -1,0 +1,20 @@
+name: Guard master push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  verify-pusher:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify pusher is authorized
+        env:
+          ALLOWED_USER: art-83
+          PUSHER: ${{ github.event.pusher.name }}
+        run: |
+          if [ "$PUSHER" != "$ALLOWED_USER" ]; then
+            echo "::error::Push para master nao autorizado. Apenas '$ALLOWED_USER' pode fazer push. Usuario atual: $PUSHER"
+            exit 1
+          fi

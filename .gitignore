@@ -4,3 +4,5 @@ prod-ca-2021.crt
 dist
 .claude
 .cursor
+tasks
+agents

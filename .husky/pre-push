@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+
+ALLOWED_USER="art-83"
+
+pushing_to_master=false
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/master) pushing_to_master=true ;;
+  esac
+done
+
+if [ "$pushing_to_master" = false ]; then
+  exit 0
+fi
+
+if command -v gh >/dev/null 2>&1; then
+  CURRENT_USER=$(gh api user -q .login 2>/dev/null)
+fi
+
+if [ -z "$CURRENT_USER" ]; then
+  CURRENT_USER=$(git config user.name)
+fi
+
+if [ "$CURRENT_USER" != "$ALLOWED_USER" ]; then
+  echo ""
+  echo "AVISO: push para master bloqueado."
+  echo "Apenas o usuario '${ALLOWED_USER}' pode fazer push para master."
+  echo "Usuario atual: ${CURRENT_USER:-desconhecido}"
+  echo ""
+  exit 1
+fi
