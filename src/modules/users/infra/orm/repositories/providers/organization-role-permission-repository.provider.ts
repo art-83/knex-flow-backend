@@ -1,4 +1,4 @@
-import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/providers/repository.provider';
 import { OrganizationRolePermission } from '../../entities/organization-role-permission.entity';
 import OrganizationRolePermissionQueryOptions from '../../../../dtos/organization-role-permission/organization-role-permission-query-options';
 

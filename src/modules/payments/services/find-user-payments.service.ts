@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
-import IRepositoryProvider from '../../../shared/infra/orm/infra/providers/repository.provider';
+import IRepositoryProvider from '../../../shared/infra/orm/providers/repository.provider';
 import { PaymentQueryOptions } from '../dtos/payments/payment-query-options.dto';
 import { Payment } from '../infra/orm/entities/payment.entity';
 import AppError from '../../../shared/infra/http/errors/app-error';

@@ -10,7 +10,7 @@ import { OrderStatus } from '../../events/infra/orm/enums/order-status.enum';
 import IUserRepositoryProvider from '../../users/infra/orm/repositories/providers/user-repository.provider';
 import User from '../../users/infra/orm/entities/user.entity';
 import { PaymentStatus } from '../infra/orm/enums/payment-status.enum';
-import IRepositoryProvider from '../../../shared/infra/orm/infra/providers/repository.provider';
+import IRepositoryProvider from '../../../shared/infra/orm/providers/repository.provider';
 import { Payment } from '../infra/orm/entities/payment.entity';
 import { payAbacatepayPix } from '../utils/dev-pay-abacatepay-pix';
 

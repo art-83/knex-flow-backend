@@ -1,4 +1,4 @@
-import IRepositoryProvider from '../../../../../../shared/infra/orm/infra/providers/repository.provider';
+import IRepositoryProvider from '../../../../../../shared/infra/orm/providers/repository.provider';
 import Ticket from '../../entities/ticket.entity';
 
 interface ITicketRepositoryProvider extends IRepositoryProvider<Ticket> {

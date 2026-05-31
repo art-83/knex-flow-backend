@@ -40,7 +40,7 @@ import IEventActivityOrderRepositoryProvider from '../../modules/events/infra/or
 import EventActivityOrderRepository from '../../modules/events/infra/orm/repositories/implementations/event-activity-order-repository.implementation';
 import { PaymentRepository } from '../../modules/payments/infra/orm/repositories/implementations/payment-repository.implementation';
 import Payment from '../../modules/payments/infra/orm/entities/payment.entity';
-import IRepositoryProvider from '../infra/orm/infra/providers/repository.provider';
+import IRepositoryProvider from '../infra/orm/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
