@@ -50,13 +50,16 @@ jobs:
       - name: Configure SSH
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          SERVER_IPV4: ${{ secrets.SERVER_IPV4 }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "$SERVER_IPV4" >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+          EOF
 
       - name: Ensure remote directory exists
         run: |
