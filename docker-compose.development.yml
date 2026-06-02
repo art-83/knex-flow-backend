@@ -1,0 +1,71 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: eventflow-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  db:
+    image: postgres:15-alpine
+    container_name: eventflow-database
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -p 5432 -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eventflow-app
+    restart: always
+    stop_grace_period: 60s
+    stop_signal: SIGTERM
+    env_file:
+      - .env
+    environment:
+      DB_SYNCHRONIZE: 'true'
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ['node', 'dist/shared/infra/http/server.js']
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: eventflow-pgadmin
+    env_file:
+      - .env
+    ports:
+      - '5050:5050'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  redis-data:
+  pgadmin-data:

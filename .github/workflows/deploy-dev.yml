@@ -1,16 +1,14 @@
-name: Deploy to VPS
+name: Deploy Dev to VPS
 
 on:
+  push:
+    branches:
+      - dev
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'Digite "deploy" para confirmar o deploy em produção'
-        required: true
-        type: string
 
 concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+  group: deploy-dev
+  cancel-in-progress: true
 
 env:
   APP_DIR: /opt/eventflow-new-backend
@@ -19,21 +17,30 @@ env:
   SSH_TARGET: ${{ secrets.SERVER_ROOT_USER }}@${{ secrets.SERVER_IPV4 }}
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    if: github.event.inputs.confirm == 'deploy'
 
     steps:
-      - name: Verify authorized user
-        env:
-          ALLOWED_USER: art-83
-          ACTOR: ${{ github.actor }}
-        run: |
-          if [ "$ACTOR" != "$ALLOWED_USER" ]; then
-            echo "::error::Deploy nao autorizado. Apenas '$ALLOWED_USER' pode executar deploy. Usuario atual: $ACTOR"
-            exit 1
-          fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test --if-present
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -55,7 +62,7 @@ jobs:
         run: |
           mkdir -p deploy/dist
           cp Dockerfile deploy/
-          cp docker-compose.yml deploy/
+          cp docker-compose.development.yml deploy/docker-compose.yml
           cp package.json package-lock.json deploy/
           cp -r dist/. deploy/dist/
           printf '%s\n' "$ENV_FILE" > deploy/.env

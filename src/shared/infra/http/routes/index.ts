@@ -13,7 +13,8 @@ import authorizationRouter from '../../../../modules/users/infra/http/routers/au
 const routes = Router();
 
 routes.use('/health', (request, response) => {
-  return response.status(200).json({ message: 'Strawberry fields forever!', timestamp: new Date().toISOString() });
+  const timestamp = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  return response.status(200).json({ message: 'Strawberry fields forever!', timestamp });
 });
 
 routes.use('/auth', authRouter);
