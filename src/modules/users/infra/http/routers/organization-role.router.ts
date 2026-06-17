@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import OrganizationRoleController from '../controllers/organization-role.controller';
+import { OrganizationRoleController } from '../controllers/organization-role.controller';
 
 const organizationRoleRouter = Router();
 const organizationRoleController = new OrganizationRoleController();
@@ -62,5 +62,4 @@ organizationRoleRouter.delete(
   }),
   (request, response) => organizationRoleController.delete(request, response),
 );
-
-export default organizationRoleRouter;
+export { organizationRoleRouter };

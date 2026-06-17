@@ -1,8 +1,8 @@
 import { inject, injectable } from 'tsyringe';
-import IJwtProvider from '../../infra/jwt/providers/jwt.provider';
-import RefreshTokenDTO from '../../dtos/auth/refresh-token.dto';
-import RefreshTokenResponseDTO from '../../dtos/auth/refresh-token-response.dto';
-import AppError from '../../../../shared/infra/http/errors/app-error';
+import { IJwtProvider } from '../../infra/jwt/providers/jwt.provider';
+import { RefreshTokenDTO } from '../../dtos/auth/refresh-token.dto';
+import { RefreshTokenResponseDTO } from '../../dtos/auth/refresh-token-response.dto';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
 
 @injectable()
 class RefreshTokenService {
@@ -29,5 +29,4 @@ class RefreshTokenService {
     }
   }
 }
-
-export default RefreshTokenService;
+export { RefreshTokenService };

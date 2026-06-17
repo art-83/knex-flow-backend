@@ -1,8 +1,8 @@
-import IUserOrganizationRepositoryProvider from '../providers/user-organization-repository.provider';
+import { IUserOrganizationRepositoryProvider } from '../providers/user-organization-repository.provider';
 import { UserOrganization } from '../../entities/user-organization.entity';
-import UserOrganizationQueryOptions from '../../../../dtos/user-organization/user-organization-query-options';
+import { UserOrganizationQueryOptions } from '../../../../dtos/user-organization/user-organization-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class UserOrganizationRepository implements IUserOrganizationRepositoryProvider {
   private repository: Repository<UserOrganization>;
@@ -44,5 +44,4 @@ class UserOrganizationRepository implements IUserOrganizationRepositoryProvider 
     return Number(deleteResult.affected);
   }
 }
-
-export default UserOrganizationRepository;
+export { UserOrganizationRepository };

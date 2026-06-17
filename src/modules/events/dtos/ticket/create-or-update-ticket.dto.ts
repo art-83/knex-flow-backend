@@ -4,5 +4,4 @@ interface CreateOrUpdateTicketDTO extends Ticket {
   batch_id: string;
   order_id: string;
 }
-
-export default CreateOrUpdateTicketDTO;
+export { CreateOrUpdateTicketDTO };

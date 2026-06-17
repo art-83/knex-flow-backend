@@ -1,18 +1,18 @@
 import { inject, injectable } from 'tsyringe';
-import IBatchRepositoryProvider from '../../infra/orm/repositories/providers/batch-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import ITicketRepositoryProvider from '../../infra/orm/repositories/providers/ticket-repository.provider';
-import IOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import CreateOrUpdateBatchDTO from '../../dtos/batch/create-or-update-batch.dto';
-import Ticket from '../../infra/orm/entities/ticket.entity';
-import OrganizationConfiguration from '../../../users/dtos/organization/organization-configuration.dto';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
+import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
+import { Ticket } from '../../infra/orm/entities/ticket.entity';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 // TODO: talvez transformar essa logica em uma query transacional para garantir atomicidade
 @injectable()
-export class CreateBatchService {
+class CreateBatchService {
   constructor(
     @inject('OrganizationRepositoryProvider')
     private organizationRepository: IOrganizationRepositoryProvider,
@@ -84,3 +84,4 @@ export class CreateBatchService {
     return response;
   }
 }
+export { CreateBatchService };

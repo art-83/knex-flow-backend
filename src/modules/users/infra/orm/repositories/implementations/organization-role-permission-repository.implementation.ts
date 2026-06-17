@@ -1,8 +1,8 @@
-import IOrganizationRolePermissionRepositoryProvider from '../providers/organization-role-permission-repository.provider';
+import { IOrganizationRolePermissionRepositoryProvider } from '../providers/organization-role-permission-repository.provider';
 import { OrganizationRolePermission } from '../../entities/organization-role-permission.entity';
-import OrganizationRolePermissionQueryOptions from '../../../../dtos/organization-role-permission/organization-role-permission-query-options';
+import { OrganizationRolePermissionQueryOptions } from '../../../../dtos/organization-role-permission/organization-role-permission-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class OrganizationRolePermissionRepository implements IOrganizationRolePermissionRepositoryProvider {
   private repository: Repository<OrganizationRolePermission>;
@@ -54,5 +54,4 @@ class OrganizationRolePermissionRepository implements IOrganizationRolePermissio
     return Number(deleteResult.affected);
   }
 }
-
-export default OrganizationRolePermissionRepository;
+export { OrganizationRolePermissionRepository };

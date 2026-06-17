@@ -4,7 +4,7 @@ import { IProducerProvider } from '../providers/producer.provider';
 import { IRedisConnectionProvider } from '../providers/redis-connection.provider';
 
 @injectable()
-export class BullMQProducer<T> implements IProducerProvider<T, BaseJobOptions> {
+class BullMQProducer<T> implements IProducerProvider<T, BaseJobOptions> {
   private queues: Map<string, Queue>;
 
   constructor(
@@ -40,3 +40,4 @@ export class BullMQProducer<T> implements IProducerProvider<T, BaseJobOptions> {
     this.queues.clear();
   }
 }
+export { BullMQProducer };

@@ -22,5 +22,4 @@ const typeOrmConfig = {
     options: `-c timezone=${process.env.DB_TIMEZONE || 'America/Sao_Paulo'}`,
   },
 };
-
-export default typeOrmConfig;
+export { typeOrmConfig };

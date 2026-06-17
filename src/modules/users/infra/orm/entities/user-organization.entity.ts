@@ -4,7 +4,7 @@ import { User } from './user.entity';
 import { Organization } from './organization.entity';
 
 @Entity('user_organizations')
-export class UserOrganization extends SequentialGeneratedUUID {
+class UserOrganization extends SequentialGeneratedUUID {
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
@@ -22,5 +22,4 @@ export class UserOrganization extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 }
-
-export default UserOrganization;
+export { UserOrganization };

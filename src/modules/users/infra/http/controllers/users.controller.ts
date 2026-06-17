@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import GetMeService from '../../../services/users/get-me.service';
+import { GetMeService } from '../../../services/users/get-me.service';
 
 class UsersController {
   public async me(request: Request, response: Response) {
@@ -9,5 +9,4 @@ class UsersController {
     return response.json(result);
   }
 }
-
-export default UsersController;
+export { UsersController };

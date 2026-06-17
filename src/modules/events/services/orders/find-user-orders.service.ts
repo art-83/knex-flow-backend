@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
-import IOrderRepositoryProvider from '../../infra/orm/repositories/providers/order-repository.provider';
-import OrderQueryOptions from '../../dtos/order/order-query-options';
+import { IOrderRepositoryProvider } from '../../infra/orm/repositories/providers/order-repository.provider';
+import { OrderQueryOptions } from '../../dtos/order/order-query-options';
 
 @injectable()
 class FindUserOrdersService {
@@ -21,5 +21,4 @@ class FindUserOrdersService {
     };
   }
 }
-
 export { FindUserOrdersService };

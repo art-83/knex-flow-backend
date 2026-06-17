@@ -1,8 +1,7 @@
-export enum TicketAvailability {
+enum TicketAvailability {
   AVAILABLE = 'AVAILABLE',
   RESERVED = 'RESERVED',
   USABLE = 'USABLE',
   BLOCKED = 'BLOCKED',
 }
-
-export default TicketAvailability;
+export { TicketAvailability };

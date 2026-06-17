@@ -26,5 +26,4 @@ paymentRouter.post(
   }),
   paymentController.create,
 );
-
-export default paymentRouter;
+export { paymentRouter };

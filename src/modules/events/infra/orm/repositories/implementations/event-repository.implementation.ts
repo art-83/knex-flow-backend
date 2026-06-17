@@ -1,8 +1,8 @@
-import IEventRepositoryProvider from '../providers/event-repository.provider';
-import Event from '../../entities/event.entity';
-import EventQueryOptions from '../../../../dtos/event/event-query-options';
+import { IEventRepositoryProvider } from '../providers/event-repository.provider';
+import { Event } from '../../entities/event.entity';
+import { EventQueryOptions } from '../../../../dtos/event/event-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class EventRepository implements IEventRepositoryProvider {
   private repository: Repository<Event>;
@@ -55,5 +55,4 @@ class EventRepository implements IEventRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default EventRepository;
+export { EventRepository };

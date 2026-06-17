@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import CreateOrganizationRolePermissionService from '../../../services/organization-role-permissions/create-organization-role-permission.service';
-import FindOrganizationRolePermissionsService from '../../../services/organization-role-permissions/find-organization-role-permissions.service';
-import DeleteOrganizationRolePermissionService from '../../../services/organization-role-permissions/delete-organization-role-permission.service';
+import { CreateOrganizationRolePermissionService } from '../../../services/organization-role-permissions/create-organization-role-permission.service';
+import { FindOrganizationRolePermissionsService } from '../../../services/organization-role-permissions/find-organization-role-permissions.service';
+import { DeleteOrganizationRolePermissionService } from '../../../services/organization-role-permissions/delete-organization-role-permission.service';
 
 class OrganizationRolePermissionController {
   public async create(request: Request, response: Response) {
@@ -27,5 +27,4 @@ class OrganizationRolePermissionController {
     return response.json(result);
   }
 }
-
-export default OrganizationRolePermissionController;
+export { OrganizationRolePermissionController };

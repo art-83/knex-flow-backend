@@ -4,7 +4,7 @@ import { UserPermission } from './user-permission.entity';
 import { OrganizationRolePermission } from './organization-role-permission.entity';
 
 @Entity('permissions')
-export class Permission extends SequentialGeneratedUUID {
+class Permission extends SequentialGeneratedUUID {
   @Column()
   description: string;
 
@@ -23,5 +23,4 @@ export class Permission extends SequentialGeneratedUUID {
   @OneToMany(() => OrganizationRolePermission, organizationRolePermission => organizationRolePermission.permission)
   organizationRolePermissions: OrganizationRolePermission[];
 }
-
-export default Permission;
+export { Permission };

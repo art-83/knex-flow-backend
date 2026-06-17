@@ -14,7 +14,7 @@ import { Activity } from './activity.entity';
 import { EventActivityPresence } from './event-activity-presence.entity';
 
 @Entity({ name: 'event_activities' })
-export class EventActivity extends SequentialGeneratedUUID {
+class EventActivity extends SequentialGeneratedUUID {
   @Column({ nullable: true })
   hours_to_retrieve: number;
 
@@ -47,5 +47,4 @@ export class EventActivity extends SequentialGeneratedUUID {
   @OneToMany(() => EventActivityPresence, eventActivityOrder => eventActivityOrder.event_activity)
   event_activity_orders: EventActivityPresence[];
 }
-
-export default EventActivity;
+export { EventActivity };

@@ -11,7 +11,7 @@ concurrency:
 
 env:
   APP_DIR: /opt/knex-flow-backend
-  BACKUP_DIR: /opt/knex-flow-backend_backup_latest
+  IMAGE_NAME: knex-flow-app
   HEALTHCHECK_URL: http://localhost:3000/health
   SSH_TARGET: ${{ secrets.SERVER_ROOT_USER }}@${{ secrets.SERVER_IPV4 }}
 
@@ -35,16 +35,23 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: ${{ env.IMAGE_NAME }}:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Prepare deployment bundle
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
-          mkdir -p deploy/dist
-          cp Dockerfile deploy/
+          mkdir -p deploy
           cp docker-compose.yml deploy/
-          cp package.json package-lock.json deploy/
-          cp -r dist/. deploy/dist/
           printf '%s\n' "$ENV_FILE" > deploy/.env
+          docker save "${IMAGE_NAME}:latest" | gzip -1 > deploy/app-image.tar.gz
 
       - name: Configure SSH
         env:
@@ -61,17 +68,22 @@ jobs:
         run: |
           ssh "${SSH_TARGET}" "sudo mkdir -p '${APP_DIR}'"
 
-      - name: Create remote backup (rollback point)
-        run: |
-          ssh "${SSH_TARGET}" "if [ -d '${APP_DIR}' ]; then sudo rm -rf '${BACKUP_DIR}' && sudo cp -a '${APP_DIR}' '${BACKUP_DIR}'; fi"
-
       - name: Copy bundle to VPS
         run: |
           rsync -az --delete --rsync-path="sudo rsync" deploy/ "${SSH_TARGET}:${APP_DIR}/"
 
       - name: Deploy with Docker Compose
         run: |
-          ssh "${SSH_TARGET}" "cd '${APP_DIR}' && sudo docker compose up -d --build --remove-orphans"
+          ssh "${SSH_TARGET}" "
+            set -e
+            cd '${APP_DIR}'
+            if sudo docker image inspect '${IMAGE_NAME}:latest' >/dev/null 2>&1; then
+              sudo docker tag '${IMAGE_NAME}:latest' '${IMAGE_NAME}:previous'
+            fi
+            gunzip -c app-image.tar.gz | sudo docker load
+            rm -f app-image.tar.gz
+            sudo docker compose up -d --remove-orphans --no-build
+          "
 
       - name: Health check
         run: |
@@ -80,9 +92,18 @@ jobs:
       - name: Rollback on failed health check
         if: ${{ failure() }}
         run: |
-          ssh "${SSH_TARGET}" "if [ -d '${BACKUP_DIR}' ]; then sudo rm -rf '${APP_DIR}' && sudo mv '${BACKUP_DIR}' '${APP_DIR}' && cd '${APP_DIR}' && sudo docker compose up -d --build --remove-orphans; else echo 'Rollback skipped: no backup found' && exit 1; fi"
+          ssh "${SSH_TARGET}" "
+            set -e
+            if sudo docker image inspect '${IMAGE_NAME}:previous' >/dev/null 2>&1; then
+              sudo docker tag '${IMAGE_NAME}:previous' '${IMAGE_NAME}:latest'
+              cd '${APP_DIR}' && sudo docker compose up -d --no-deps --no-build app
+            else
+              echo 'Rollback skipped: no previous image found'
+              exit 1
+            fi
+          "
 
-      - name: Remove backup after successful deploy
+      - name: Prune unused images
         if: ${{ success() }}
         run: |
-          ssh "${SSH_TARGET}" "sudo rm -rf '${BACKUP_DIR}'"
+          ssh "${SSH_TARGET}" "sudo docker image prune -f"

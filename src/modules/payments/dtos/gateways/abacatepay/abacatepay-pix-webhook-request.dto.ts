@@ -1,6 +1,6 @@
 import { PaymentStatus } from '../../../infra/orm/enums/payment-status.enum';
 
-export interface AbacatePayPixWebhookRequestDTO {
+interface AbacatePayPixWebhookRequestDTO {
   id: string;
   event: string;
   apiVersion: number;
@@ -49,5 +49,4 @@ export interface AbacatePayPixWebhookRequestDTO {
     };
   };
 }
-
-export default AbacatePayPixWebhookRequestDTO;
+export { AbacatePayPixWebhookRequestDTO };

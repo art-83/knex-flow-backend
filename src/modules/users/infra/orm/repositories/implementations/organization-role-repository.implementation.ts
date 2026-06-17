@@ -1,8 +1,8 @@
-import IOrganizationRoleRepositoryProvider from '../providers/organization-role-repository.provider';
+import { IOrganizationRoleRepositoryProvider } from '../providers/organization-role-repository.provider';
 import { OrganizationRole } from '../../entities/organization-role.entity';
-import OrganizationRoleQueryOptions from '../../../../dtos/organization-role/organization-role-query-options';
+import { OrganizationRoleQueryOptions } from '../../../../dtos/organization-role/organization-role-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class OrganizationRoleRepository implements IOrganizationRoleRepositoryProvider {
   private repository: Repository<OrganizationRole>;
@@ -43,5 +43,4 @@ class OrganizationRoleRepository implements IOrganizationRoleRepositoryProvider 
     return Number(deleteResult.affected);
   }
 }
-
-export default OrganizationRoleRepository;
+export { OrganizationRoleRepository };

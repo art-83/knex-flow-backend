@@ -1,9 +1,9 @@
-import TicketQueryOptions from '../../dtos/ticket/ticket-query-options';
-import ITicketRepositoryProvider from '../../infra/orm/repositories/providers/ticket-repository.provider';
+import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
+import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { inject, injectable } from 'tsyringe';
-import resolveTicketAvaliability from '../../utils/resolve-ticket-avaliability';
-import IUserRepositoryProvider from '../../../users/infra/orm/repositories/providers/user-repository.provider';
-import IOrderRepositoryProvider from '../../infra/orm/repositories/providers/order-repository.provider';
+import { resolveTicketAvaliability } from '../../utils/resolve-ticket-avaliability';
+import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-repository.provider';
+import { IOrderRepositoryProvider } from '../../infra/orm/repositories/providers/order-repository.provider';
 import { OrderStatus } from '../../infra/orm/enums/order-status.enum';
 
 @injectable()
@@ -63,5 +63,4 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     };
   }
 }
-
-export default GetTicketsAvaliabilityAndMaybeCreateOrderService;
+export { GetTicketsAvaliabilityAndMaybeCreateOrderService };

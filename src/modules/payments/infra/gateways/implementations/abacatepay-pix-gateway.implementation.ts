@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-import abacatepayConfig from '../../../../../config/abacatepay.config';
+import { abacatepayConfig } from '../../../../../config/abacatepay.config';
 import { CreatePaymentResponseDTO } from '../../../dtos/gateways/create-payment-response.dto';
 import { CreatePaymentDTO } from '../../../dtos/payments/create-payment.dto';
 import { IPaymentGatewayProvider } from '../providers/payment-gateway.provider';
 import { toCents } from '../../../utils/money-parser';
 
-export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvider {
+class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvider {
   public async createPayment(data: CreatePaymentDTO): Promise<CreatePaymentResponseDTO> {
     const requestPayload = {
       method: data.method,
@@ -38,5 +38,4 @@ export class AbacatepayPixGatewayImplementation implements IPaymentGatewayProvid
     return response;
   }
 }
-
-export default AbacatepayPixGatewayImplementation;
+export { AbacatepayPixGatewayImplementation };

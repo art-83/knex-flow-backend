@@ -4,5 +4,4 @@ interface CreateOrUpdateEventActivityDTO extends EventActivity {
   event_id: string;
   activity_id: string;
 }
-
-export default CreateOrUpdateEventActivityDTO;
+export { CreateOrUpdateEventActivityDTO };

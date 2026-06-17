@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { container, injectable } from 'tsyringe';
 
-import CreatePaymentService from '../../../services/create-payment.service';
-import FindUserPaymentsService from '../../../services/find-user-payments.service';
+import { CreatePaymentService } from '../../../services/create-payment.service';
+import { FindUserPaymentsService } from '../../../services/find-user-payments.service';
 
 @injectable()
-export class PaymentController {
+class PaymentController {
   public async findUserPaymentById(request: Request, response: Response): Promise<Response> {
     const findUserPaymentsService = container.resolve(FindUserPaymentsService);
     const result = await findUserPaymentsService.execute(request.user_id, request.params);
@@ -19,3 +19,4 @@ export class PaymentController {
     return response.status(201).json(result);
   }
 }
+export { PaymentController };

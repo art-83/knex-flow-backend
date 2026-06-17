@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
-import PermissionDescriptionEnum from '../../../../modules/users/infra/orm/enums/permission-description.enum';
-import EnsureUserOrganizationAccessService from './ensure-user-organization-access.service';
-import EnsureUserHasPermissionService from './ensure-user-has-permission.service';
+import { PermissionDescriptionEnum } from '../../../../modules/users/infra/orm/enums/permission-description.enum';
+import { EnsureUserOrganizationAccessService } from './ensure-user-organization-access.service';
+import { EnsureUserHasPermissionService } from './ensure-user-has-permission.service';
 
 @injectable()
 class EnsureUserCanActOnOrganizationService {
@@ -19,5 +19,4 @@ class EnsureUserCanActOnOrganizationService {
     await this.ensureUserHasPermissionService.execute(user_id, organization_id, requiredPermission);
   }
 }
-
-export default EnsureUserCanActOnOrganizationService;
+export { EnsureUserCanActOnOrganizationService };

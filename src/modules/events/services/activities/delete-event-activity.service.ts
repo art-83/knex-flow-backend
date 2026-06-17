@@ -1,12 +1,12 @@
 import { inject, injectable } from 'tsyringe';
-import IEventActivityRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class DeleteEventActivityService {
+class DeleteEventActivityService {
   constructor(
     @inject('EventActivityRepositoryProvider')
     private eventActivityRepository: IEventActivityRepositoryProvider,
@@ -38,3 +38,4 @@ export class DeleteEventActivityService {
     return { message: 'Event activity deleted successfully.', deleted: rowsDeleted };
   }
 }
+export { DeleteEventActivityService };

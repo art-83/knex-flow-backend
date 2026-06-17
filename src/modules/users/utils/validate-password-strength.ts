@@ -34,5 +34,4 @@ function validatePasswordStrength(password: string): { isValid: boolean; message
 
   return { isValid: true };
 }
-
-export default validatePasswordStrength;
+export { validatePasswordStrength };

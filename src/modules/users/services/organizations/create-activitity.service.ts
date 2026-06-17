@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import CreateOrUpdateActivityDTO from '../../../events/dtos/activity/create-or-update-activity.dto';
-import IOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/organization-repository.provider';
-import IActivityRepositoryProvider from '../../../events/infra/orm/repositories/providers/activity-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { CreateOrUpdateActivityDTO } from '../../../events/dtos/activity/create-or-update-activity.dto';
+import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
+import { IActivityRepositoryProvider } from '../../../events/infra/orm/repositories/providers/activity-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class CreateActivityService {
+class CreateActivityService {
   constructor(
     @inject('OrganizationRepositoryProvider')
     private organizationRepository: IOrganizationRepositoryProvider,
@@ -43,3 +43,4 @@ export class CreateActivityService {
     };
   }
 }
+export { CreateActivityService };

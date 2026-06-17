@@ -1,4 +1,4 @@
-import Ticket from '../infra/orm/entities/ticket.entity';
+import { Ticket } from '../infra/orm/entities/ticket.entity';
 import { OrderStatus } from '../infra/orm/enums/order-status.enum';
 import { TicketAvailability } from '../infra/orm/enums/ticket-availability.enum';
 
@@ -22,5 +22,4 @@ function resolveTicketAvaliability(ticket: Ticket): TicketAvailability {
       return TicketAvailability.AVAILABLE;
   }
 }
-
-export default resolveTicketAvaliability;
+export { resolveTicketAvaliability };

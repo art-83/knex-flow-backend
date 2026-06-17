@@ -1,8 +1,8 @@
-import ITicketRepositoryProvider from '../providers/ticket-repository.provider';
-import Ticket from '../../entities/ticket.entity';
-import TicketQueryOptions from '../../../../dtos/ticket/ticket-query-options';
+import { ITicketRepositoryProvider } from '../providers/ticket-repository.provider';
+import { Ticket } from '../../entities/ticket.entity';
+import { TicketQueryOptions } from '../../../../dtos/ticket/ticket-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class TicketRepository implements ITicketRepositoryProvider {
   private repository: Repository<Ticket>;
@@ -57,5 +57,4 @@ class TicketRepository implements ITicketRepositoryProvider {
     return await this.repository.save(create);
   }
 }
-
-export default TicketRepository;
+export { TicketRepository };

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import CreateUserPermissionService from '../../../services/user-permissions/create-user-permission.service';
-import FindUserPermissionsService from '../../../services/user-permissions/find-user-permissions.service';
-import DeleteUserPermissionService from '../../../services/user-permissions/delete-user-permission.service';
+import { CreateUserPermissionService } from '../../../services/user-permissions/create-user-permission.service';
+import { FindUserPermissionsService } from '../../../services/user-permissions/find-user-permissions.service';
+import { DeleteUserPermissionService } from '../../../services/user-permissions/delete-user-permission.service';
 
 class UserPermissionController {
   public async create(request: Request, response: Response) {
@@ -27,5 +27,4 @@ class UserPermissionController {
     return response.json(result);
   }
 }
-
-export default UserPermissionController;
+export { UserPermissionController };

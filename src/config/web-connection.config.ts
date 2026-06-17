@@ -10,5 +10,4 @@ const webConnectionConfig = {
     },
   },
 };
-
-export default webConnectionConfig;
+export { webConnectionConfig };

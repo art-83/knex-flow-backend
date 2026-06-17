@@ -1,6 +1,6 @@
-import dataSource from '../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../shared/infra/orm/database';
 import { Permission } from '../../infra/orm/entities/permission.entity';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 class SyncPermissionsService {
   public async execute(): Promise<void> {
@@ -33,5 +33,4 @@ class SyncPermissionsService {
     }
   }
 }
-
-export default SyncPermissionsService;
+export { SyncPermissionsService };

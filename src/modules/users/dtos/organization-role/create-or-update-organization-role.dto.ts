@@ -5,5 +5,4 @@ interface CreateOrUpdateOrganizationRoleDTO extends OrganizationRole {
   description: string;
   organization_id: string;
 }
-
-export default CreateOrUpdateOrganizationRoleDTO;
+export { CreateOrUpdateOrganizationRoleDTO };

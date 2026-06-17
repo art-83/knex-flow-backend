@@ -1,8 +1,8 @@
-import IUserRepositoryProvider from '../providers/user-repository.provider';
+import { IUserRepositoryProvider } from '../providers/user-repository.provider';
 import { User } from '../../entities/user.entity';
-import UserQueryOptions from '../../../../dtos/user/user-query-options';
+import { UserQueryOptions } from '../../../../dtos/user/user-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class UserRepository implements IUserRepositoryProvider {
   private repository: Repository<User>;
@@ -43,5 +43,4 @@ class UserRepository implements IUserRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default UserRepository;
+export { UserRepository };

@@ -5,5 +5,4 @@ interface CreateOrUpdateUserPermissionDTO extends UserPermission {
   organization_id: string;
   permission_id: string;
 }
-
-export default CreateOrUpdateUserPermissionDTO;
+export { CreateOrUpdateUserPermissionDTO };

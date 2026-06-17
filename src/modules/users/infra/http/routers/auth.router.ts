@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import AuthController from '../controllers/auth.controller';
+import { AuthController } from '../controllers/auth.controller';
 
 const authRouter = Router();
 const authController = new AuthController();
@@ -36,5 +36,4 @@ authRouter.post(
   }),
   (request, response) => authController.refresh(request, response),
 );
-
-export default authRouter;
+export { authRouter };

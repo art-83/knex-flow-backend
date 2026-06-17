@@ -1,4 +1,4 @@
-import JwtPayloadDTO from '../../../dtos/auth/jwt-payload.dto';
+import { JwtPayloadDTO } from '../../../dtos/auth/jwt-payload.dto';
 
 interface IJwtProvider {
   signAccessToken(payload: JwtPayloadDTO): string;
@@ -6,5 +6,4 @@ interface IJwtProvider {
   verifyAccessToken(token: string): JwtPayloadDTO;
   verifyRefreshToken(token: string): JwtPayloadDTO;
 }
-
-export default IJwtProvider;
+export { IJwtProvider };

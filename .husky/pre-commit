@@ -1,2 +1,6 @@
+#!/usr/bin/env sh
+node .husky/mjs/standardize-exports.mjs
 npm run format
+npm run lint
+npm run build
 git add -A

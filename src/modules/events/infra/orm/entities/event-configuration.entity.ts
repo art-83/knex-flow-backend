@@ -3,7 +3,7 @@ import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entitie
 import { Event } from './event.entity';
 
 @Entity({ name: 'event_configurations' })
-export class EventConfiguration extends SequentialGeneratedUUID {
+class EventConfiguration extends SequentialGeneratedUUID {
   // TODO: definir tipo do configuration com o time
   @Column({ type: 'jsonb', nullable: true })
   configuration: Record<string, any>;
@@ -21,5 +21,4 @@ export class EventConfiguration extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'event_id' })
   event: Event;
 }
-
-export default EventConfiguration;
+export { EventConfiguration };

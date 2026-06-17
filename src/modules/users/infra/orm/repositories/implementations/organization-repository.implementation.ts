@@ -1,8 +1,8 @@
-import IOrganizationRepositoryProvider from '../providers/organization-repository.provider';
+import { IOrganizationRepositoryProvider } from '../providers/organization-repository.provider';
 import { Organization } from '../../entities/organization.entity';
-import OrganizationQueryOptions from '../../../../dtos/organization/organization-query-options';
+import { OrganizationQueryOptions } from '../../../../dtos/organization/organization-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class OrganizationRepository implements IOrganizationRepositoryProvider {
   private repository: Repository<Organization>;
@@ -38,5 +38,4 @@ class OrganizationRepository implements IOrganizationRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default OrganizationRepository;
+export { OrganizationRepository };

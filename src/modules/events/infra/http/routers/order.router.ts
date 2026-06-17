@@ -5,7 +5,7 @@ import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
 } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
-import OrderController from '../controllers/order.controller';
+import { OrderController } from '../controllers/order.controller';
 
 const orderRouter = Router();
 const orderController = new OrderController();
@@ -26,5 +26,4 @@ orderRouter.get(
   }),
   orderController.findUserOrders,
 );
-
-export default orderRouter;
+export { orderRouter };

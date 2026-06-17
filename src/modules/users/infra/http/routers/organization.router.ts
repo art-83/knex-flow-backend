@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import OrganizationController from '../controllers/organization.controller';
+import { OrganizationController } from '../controllers/organization.controller';
 import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
@@ -61,5 +61,4 @@ organizationRouter.delete(
   }),
   (request, response) => organizationController.deleteActivity(request, response),
 );
-
-export default organizationRouter;
+export { organizationRouter };

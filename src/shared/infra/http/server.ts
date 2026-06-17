@@ -2,15 +2,15 @@ import '../../containers';
 import express from 'express';
 import { errors } from 'celebrate';
 import { container } from 'tsyringe';
-import dataSource from '../orm/database';
+import { dataSource } from '../orm/database';
 import { IProducerProvider } from '../queue/infra/providers/producer.provider';
 import { IRedisConnectionProvider } from '../queue/infra/providers/redis-connection.provider';
 import { closeWorkers, initializeWorkers } from '../queue/workers-bootstrap';
-import routes from './routes';
-import SyncPermissionsService from '../../../modules/users/services/permissions/sync-permissions.service';
+import { routes } from './routes';
+import { SyncPermissionsService } from '../../../modules/users/services/permissions/sync-permissions.service';
 import cors from 'cors';
-import IWebSocketProvider from '../socket/infra/providers/web-socket.provider';
-import webConnectionConfig from '../../../config/web-connection.config';
+import { IWebSocketProvider } from '../socket/infra/providers/web-socket.provider';
+import { webConnectionConfig } from '../../../config/web-connection.config';
 
 async function main() {
   const port = webConnectionConfig.http.port;

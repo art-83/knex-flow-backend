@@ -4,5 +4,4 @@ interface CreateOrUpdateOrganizationRolePermissionDTO extends OrganizationRolePe
   organization_role_id: string;
   permission_id: string;
 }
-
-export default CreateOrUpdateOrganizationRolePermissionDTO;
+export { CreateOrUpdateOrganizationRolePermissionDTO };

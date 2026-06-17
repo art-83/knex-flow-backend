@@ -13,5 +13,4 @@ const bullmqConfig = {
     removeOnFail: { age: 604800, count: 5000 },
   },
 };
-
-export default bullmqConfig;
+export { bullmqConfig };

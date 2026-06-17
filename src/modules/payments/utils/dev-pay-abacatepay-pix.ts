@@ -1,7 +1,7 @@
 import axios from 'axios';
-import abacatepayConfig from '../../../config/abacatepay.config';
+import { abacatepayConfig } from '../../../config/abacatepay.config';
 
-export async function payAbacatepayPix(id: string) {
+async function payAbacatepayPix(id: string) {
   const response = await axios.post(
     `${abacatepayConfig.apiUrl}/transparents/simulate-payment`,
     { metadata: {} },
@@ -15,3 +15,4 @@ export async function payAbacatepayPix(id: string) {
 
   return response.data;
 }
+export { payAbacatepayPix };

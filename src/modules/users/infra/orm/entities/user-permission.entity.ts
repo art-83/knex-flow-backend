@@ -6,7 +6,7 @@ import { Organization } from './organization.entity';
 
 @Entity('user_permissions')
 @Unique(['user', 'organization', 'permission'])
-export class UserPermission extends SequentialGeneratedUUID {
+class UserPermission extends SequentialGeneratedUUID {
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
@@ -28,5 +28,4 @@ export class UserPermission extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'permission_id' })
   permission: Permission;
 }
-
-export default UserPermission;
+export { UserPermission };

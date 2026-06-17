@@ -39,5 +39,4 @@ interface IRepositoryProvider<T> {
    */
   delete(id: string): Promise<number>;
 }
-
-export default IRepositoryProvider;
+export { IRepositoryProvider };

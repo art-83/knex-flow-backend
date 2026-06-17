@@ -5,5 +5,4 @@ interface RetrieveAvailableTicketsJobPayloadDTO {
     event_id: string;
   };
 }
-
-export default RetrieveAvailableTicketsJobPayloadDTO;
+export { RetrieveAvailableTicketsJobPayloadDTO };

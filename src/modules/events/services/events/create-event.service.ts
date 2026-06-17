@@ -1,19 +1,22 @@
 import { inject, injectable } from 'tsyringe';
-import CreateOrUpdateEventDTO from '../../dtos/event/create-or-update-event.dto';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import IOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { IAddressRepositoryProvider } from '../../infra/orm/repositories/providers/address-repository.provider';
+import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class CreateEventService {
+class CreateEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
     @inject('OrganizationRepositoryProvider')
     private organizationRepository: IOrganizationRepositoryProvider,
     private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    @inject('AddressRepositoryProvider')
+    private addressRepository: IAddressRepositoryProvider,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventDTO) {
@@ -32,6 +35,11 @@ export class CreateEventService {
     this.validateEventDateRange(data);
 
     data.organization = organization;
+
+    if (data.address) {
+      const address = await this.addressRepository.create(data.address);
+      data.address = address;
+    }
 
     const event = await this.eventRepository.create(data);
     return {
@@ -58,3 +66,4 @@ export class CreateEventService {
     }
   }
 }
+export { CreateEventService };

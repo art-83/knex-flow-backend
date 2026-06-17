@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/providers/user-permission-repository.provider';
-import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
-import IOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/organization-repository.provider';
-import IPermissionRepositoryProvider from '../../infra/orm/repositories/providers/permission-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import CreateOrUpdateUserPermissionDTO from '../../dtos/user-permission/create-or-update-user-permission.dto';
-import EnsureUserOrganizationAccessService from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
-import EnsureUserHasPermissionService from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
+import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
+import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
+import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { CreateOrUpdateUserPermissionDTO } from '../../dtos/user-permission/create-or-update-user-permission.dto';
+import { EnsureUserOrganizationAccessService } from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
+import { EnsureUserHasPermissionService } from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class CreateUserPermissionService {
@@ -76,5 +76,4 @@ class CreateUserPermissionService {
     };
   }
 }
-
-export default CreateUserPermissionService;
+export { CreateUserPermissionService };

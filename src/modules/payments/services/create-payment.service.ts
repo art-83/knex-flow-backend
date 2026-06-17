@@ -1,15 +1,15 @@
 import { inject, injectable } from 'tsyringe';
 
-import AppError from '../../../shared/infra/http/errors/app-error';
-import IOrderRepositoryProvider from '../../events/infra/orm/repositories/providers/order-repository.provider';
+import { AppError } from '../../../shared/infra/http/errors/app-error';
+import { IOrderRepositoryProvider } from '../../events/infra/orm/repositories/providers/order-repository.provider';
 import { CreatePaymentDTO } from '../dtos/payments/create-payment.dto';
 import { IPaymentGatewayProvider } from '../infra/gateways/providers/payment-gateway.provider';
 import { Order } from '../../events/infra/orm/entities/order.entity';
 import { OrderStatus } from '../../events/infra/orm/enums/order-status.enum';
-import IUserRepositoryProvider from '../../users/infra/orm/repositories/providers/user-repository.provider';
-import User from '../../users/infra/orm/entities/user.entity';
+import { IUserRepositoryProvider } from '../../users/infra/orm/repositories/providers/user-repository.provider';
+import { User } from '../../users/infra/orm/entities/user.entity';
 import { PaymentStatus } from '../infra/orm/enums/payment-status.enum';
-import IRepositoryProvider from '../../../shared/infra/orm/providers/repository.provider';
+import { IRepositoryProvider } from '../../../shared/infra/orm/providers/repository.provider';
 import { Payment } from '../infra/orm/entities/payment.entity';
 import { payAbacatepayPix } from '../utils/dev-pay-abacatepay-pix';
 
@@ -83,5 +83,4 @@ class CreatePaymentService {
     return `Pedido #${order.id} - ${user.email} - R$ ${convertedAmount}`;
   }
 }
-
-export default CreatePaymentService;
+export { CreatePaymentService };

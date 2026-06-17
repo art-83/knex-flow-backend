@@ -9,5 +9,4 @@ class OrderController {
     return response.json(orders);
   }
 }
-
-export default OrderController;
+export { OrderController };

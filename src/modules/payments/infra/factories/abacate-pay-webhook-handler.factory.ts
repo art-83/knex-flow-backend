@@ -1,10 +1,10 @@
-import AbacatepayCompletedWebhookHandler from '../../services/webhooks/abacatepay-completed.webhook-handler';
-import AbacatepayDisputedWebhookHandler from '../../services/webhooks/abacatepay-disputed.webhook-handler';
-import AbacatepayLostWebhookHandler from '../../services/webhooks/abacatepay-lost.webhook-handler';
-import AbacatepayRefundedWebhookHandler from '../../services/webhooks/abacatepay-refunded.webhook-handler';
+import { AbacatepayCompletedWebhookHandler } from '../../services/webhooks/abacatepay-completed.webhook-handler';
+import { AbacatepayDisputedWebhookHandler } from '../../services/webhooks/abacatepay-disputed.webhook-handler';
+import { AbacatepayLostWebhookHandler } from '../../services/webhooks/abacatepay-lost.webhook-handler';
+import { AbacatepayRefundedWebhookHandler } from '../../services/webhooks/abacatepay-refunded.webhook-handler';
 import { IWebhookHandlerProvider } from '../gateways/providers/webhook-handler.provider';
 import { container } from 'tsyringe';
-import AbacatePayPixWebhookRequestDTO from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { AbacatePayPixWebhookRequestDTO } from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 
 class AbacatePayWebhookHandlerFactory {
   public static create(
@@ -26,5 +26,4 @@ class AbacatePayWebhookHandlerFactory {
     }
   }
 }
-
-export default AbacatePayWebhookHandlerFactory;
+export { AbacatePayWebhookHandlerFactory };

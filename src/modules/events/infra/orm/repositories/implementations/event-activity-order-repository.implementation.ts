@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
-import EventActivityOrderQueryOptions from '../../../../dtos/event-activity-order/event-activity-order-query-options';
-import EventActivityPresence from '../../entities/event-activity-presence.entity';
-import IEventActivityOrderRepositoryProvider from '../providers/event-activity-order-repository.provider';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
+import { EventActivityOrderQueryOptions } from '../../../../dtos/event-activity-order/event-activity-order-query-options';
+import { EventActivityPresence } from '../../entities/event-activity-presence.entity';
+import { IEventActivityOrderRepositoryProvider } from '../providers/event-activity-order-repository.provider';
 
 class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvider {
   private repository: Repository<EventActivityPresence>;
@@ -57,5 +57,4 @@ class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvi
     return await this.repository.save(create);
   }
 }
-
-export default EventActivityOrderRepository;
+export { EventActivityOrderRepository };

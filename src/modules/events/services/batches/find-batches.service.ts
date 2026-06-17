@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import BatchQueryOptions from '../../dtos/batch/batch-query-options';
-import IBatchRepositoryProvider from '../../infra/orm/repositories/providers/batch-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class FindBatchesService {
+class FindBatchesService {
   constructor(
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
@@ -37,3 +37,4 @@ export class FindBatchesService {
     return { message: 'Batches found successfully.', data: batches };
   }
 }
+export { FindBatchesService };

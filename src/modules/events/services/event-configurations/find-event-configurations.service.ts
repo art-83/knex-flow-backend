@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import EventConfigurationQueryOptions from '../../dtos/event-configuration/event-configuration-query-options';
-import IEventConfigurationRepositoryProvider from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventConfigurationQueryOptions } from '../../dtos/event-configuration/event-configuration-query-options';
+import { IEventConfigurationRepositoryProvider } from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class FindEventConfigurationsService {
+class FindEventConfigurationsService {
   constructor(
     @inject('EventConfigurationRepositoryProvider')
     private eventConfigurationRepository: IEventConfigurationRepositoryProvider,
@@ -37,3 +37,4 @@ export class FindEventConfigurationsService {
     return { message: 'Event configurations found successfully.', data: eventConfigurations };
   }
 }
+export { FindEventConfigurationsService };

@@ -1,12 +1,12 @@
 import { inject, injectable } from 'tsyringe';
-import CreateOrUpdateEventDTO from '../../dtos/event/create-or-update-event.dto';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class UpdateEventService {
+class UpdateEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
@@ -30,3 +30,4 @@ export class UpdateEventService {
     return { message: 'Event updated successfully.', data: event };
   }
 }
+export { UpdateEventService };

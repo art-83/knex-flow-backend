@@ -14,9 +14,11 @@ import { EventConfiguration } from './event-configuration.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
+import { Address } from './address.entity';
+import { EventModality } from '../enums/event-modality.enum';
 
 @Entity({ name: 'events' })
-export class Event extends SequentialGeneratedUUID {
+class Event extends SequentialGeneratedUUID {
   @Column()
   name: string;
 
@@ -32,6 +34,9 @@ export class Event extends SequentialGeneratedUUID {
 
   @Column({ type: 'timestamptz' })
   end_date: Date;
+
+  @Column({ type: 'enum', enum: EventModality })
+  modality: EventModality;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
@@ -50,6 +55,9 @@ export class Event extends SequentialGeneratedUUID {
 
   @OneToMany(() => EventActivity, ea => ea.event)
   event_activities: EventActivity[];
-}
 
-export default Event;
+  @OneToOne(() => Address, address => address.event, { nullable: true })
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
+}
+export { Event };

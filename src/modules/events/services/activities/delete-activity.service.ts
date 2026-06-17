@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
-import IActivityRepositoryProvider from '../../infra/orm/repositories/providers/activity-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { IActivityRepositoryProvider } from '../../infra/orm/repositories/providers/activity-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class DeleteActivityService {
+class DeleteActivityService {
   constructor(
     @inject('ActivityRepositoryProvider')
     private activityRepository: IActivityRepositoryProvider,
@@ -29,3 +29,4 @@ export class DeleteActivityService {
     return { message: 'Activity deleted successfully.', deleted: rowsDeleted };
   }
 }
+export { DeleteActivityService };

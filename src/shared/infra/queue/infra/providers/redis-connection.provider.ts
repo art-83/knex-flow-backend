@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 
-export interface IRedisConnectionProvider {
+interface IRedisConnectionProvider {
   getConnection(): IORedis;
   close(): Promise<void>;
 }
+export { IRedisConnectionProvider };

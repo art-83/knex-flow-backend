@@ -5,5 +5,4 @@ interface DefaultQueryOptionsDTO {
   start_date: Date;
   end_date: Date;
 }
-
-export default DefaultQueryOptionsDTO;
+export { DefaultQueryOptionsDTO };

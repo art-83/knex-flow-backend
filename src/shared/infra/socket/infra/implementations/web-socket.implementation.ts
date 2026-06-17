@@ -2,10 +2,10 @@ import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { container } from 'tsyringe';
 
-import IJwtProvider from '../../../../../modules/users/infra/jwt/providers/jwt.provider';
-import WebSocketMessageDTO from '../../dto/web-socket-message.dto';
-import SocketServicesFactory from '../../factories/web-socket-adapter-services.factory';
-import IWebSocketProvider from '../providers/web-socket.provider';
+import { IJwtProvider } from '../../../../../modules/users/infra/jwt/providers/jwt.provider';
+import { WebSocketMessageDTO } from '../../dto/web-socket-message.dto';
+import { SocketServicesFactory } from '../../factories/web-socket-adapter-services.factory';
+import { IWebSocketProvider } from '../providers/web-socket.provider';
 
 class WebSocketImplementation implements IWebSocketProvider {
   private server: Server;
@@ -95,5 +95,4 @@ class WebSocketImplementation implements IWebSocketProvider {
     return token;
   }
 }
-
-export default WebSocketImplementation;
+export { WebSocketImplementation };

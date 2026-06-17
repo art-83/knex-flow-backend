@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
-import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
-import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/providers/user-permission-repository.provider';
-import IUserOrganizationRepositoryProvider from '../../infra/orm/repositories/providers/user-organization-repository.provider';
+import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
+import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
+import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 
 @injectable()
 class GetMeService {
@@ -33,5 +33,4 @@ class GetMeService {
     return response;
   }
 }
-
-export default GetMeService;
+export { GetMeService };

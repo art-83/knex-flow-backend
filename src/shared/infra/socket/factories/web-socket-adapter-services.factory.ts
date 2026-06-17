@@ -1,6 +1,6 @@
-import WebSocketMessageDTO from '../dto/web-socket-message.dto';
-import GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter from '../infra/implementations/service-adapters/get-tickets-avaliability-and-maybe-create-order.service-adapter';
-import IWebSocketServiceAdapterProvider from '../infra/providers/web-socket-service-adapter.provider';
+import { WebSocketMessageDTO } from '../dto/web-socket-message.dto';
+import { GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter } from '../infra/implementations/service-adapters/get-tickets-avaliability-and-maybe-create-order.service-adapter';
+import { IWebSocketServiceAdapterProvider } from '../infra/providers/web-socket-service-adapter.provider';
 import { container } from 'tsyringe';
 import { WebSocketType } from '../enums/web-socket-type';
 
@@ -14,5 +14,4 @@ class SocketServicesFactory {
     }
   }
 }
-
-export default SocketServicesFactory;
+export { SocketServicesFactory };

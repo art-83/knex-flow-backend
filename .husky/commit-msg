@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+npx --no -- commitlint --config .husky/mjs/commitlint.config.mjs --edit "$1"

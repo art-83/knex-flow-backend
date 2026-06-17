@@ -1,8 +1,8 @@
 import { inject, injectable } from 'tsyringe';
-import IPermissionRepositoryProvider from '../../../../modules/users/infra/orm/repositories/providers/permission-repository.provider';
-import IUserPermissionRepositoryProvider from '../../../../modules/users/infra/orm/repositories/providers/user-permission-repository.provider';
-import AppError from '../errors/app-error';
-import PermissionDescriptionEnum from '../../../../modules/users/infra/orm/enums/permission-description.enum';
+import { IPermissionRepositoryProvider } from '../../../../modules/users/infra/orm/repositories/providers/permission-repository.provider';
+import { IUserPermissionRepositoryProvider } from '../../../../modules/users/infra/orm/repositories/providers/user-permission-repository.provider';
+import { AppError } from '../errors/app-error';
+import { PermissionDescriptionEnum } from '../../../../modules/users/infra/orm/enums/permission-description.enum';
 
 @injectable()
 class EnsureUserHasPermissionService {
@@ -41,5 +41,4 @@ class EnsureUserHasPermissionService {
     }
   }
 }
-
-export default EnsureUserHasPermissionService;
+export { EnsureUserHasPermissionService };

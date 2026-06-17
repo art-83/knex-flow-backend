@@ -4,5 +4,4 @@ const jwtConfig = {
   refreshSecret: String(process.env.JWT_REFRESH_SECRET),
   refreshExpiresIn: String(process.env.JWT_REFRESH_EXPIRES_IN),
 };
-
-export default jwtConfig;
+export { jwtConfig };

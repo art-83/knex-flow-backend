@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, UpdateDateColumn } from 'typeorm';
 import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
-import Payment from './payment.entity';
+import { Payment } from './payment.entity';
 
 @Entity({ name: 'card_informations' })
-export class CardInformation extends SequentialGeneratedUUID {
+class CardInformation extends SequentialGeneratedUUID {
   @Column({ type: 'char', length: 4 })
   last4: string;
 
@@ -32,5 +32,4 @@ export class CardInformation extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'payment_id' })
   payment: Payment;
 }
-
-export default CardInformation;
+export { CardInformation };

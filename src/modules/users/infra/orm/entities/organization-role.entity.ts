@@ -15,7 +15,7 @@ import { OrganizationRolePermission } from './organization-role-permission.entit
 
 @Entity('organization_roles')
 @Unique(['organization', 'name'])
-export class OrganizationRole extends SequentialGeneratedUUID {
+class OrganizationRole extends SequentialGeneratedUUID {
   @Column()
   name: string;
 
@@ -41,5 +41,4 @@ export class OrganizationRole extends SequentialGeneratedUUID {
   )
   organizationRolePermissions: OrganizationRolePermission[];
 }
-
-export default OrganizationRole;
+export { OrganizationRole };

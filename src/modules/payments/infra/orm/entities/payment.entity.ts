@@ -15,7 +15,7 @@ import { PaymentMethod } from '../enums/payment-method.enum';
 import { CardInformation } from './card-information.entity';
 
 @Entity({ name: 'payments' })
-export class Payment extends SequentialGeneratedUUID {
+class Payment extends SequentialGeneratedUUID {
   @Column()
   provider: string;
 
@@ -50,5 +50,4 @@ export class Payment extends SequentialGeneratedUUID {
   @OneToOne(() => CardInformation, card_information => card_information.payment)
   card_information: CardInformation;
 }
-
-export default Payment;
+export { Payment };

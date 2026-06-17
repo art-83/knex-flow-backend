@@ -1,5 +1,4 @@
 interface RefreshTokenDTO {
   refreshToken: string;
 }
-
-export default RefreshTokenDTO;
+export { RefreshTokenDTO };

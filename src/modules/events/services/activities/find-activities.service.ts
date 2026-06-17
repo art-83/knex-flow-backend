@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import ActivityQueryOptions from '../../dtos/activity/activity-query-options';
-import IActivityRepositoryProvider from '../../infra/orm/repositories/providers/activity-repository.provider';
+import { ActivityQueryOptions } from '../../dtos/activity/activity-query-options';
+import { IActivityRepositoryProvider } from '../../infra/orm/repositories/providers/activity-repository.provider';
 import { Activity } from '../../infra/orm/entities/activity.entity';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class FindActivitiesService {
+class FindActivitiesService {
   constructor(
     @inject('ActivityRepositoryProvider')
     private activityRepository: IActivityRepositoryProvider,
@@ -33,3 +33,4 @@ export class FindActivitiesService {
     return { message: 'Activities found successfully.', data: activitiesResponse };
   }
 }
+export { FindActivitiesService };

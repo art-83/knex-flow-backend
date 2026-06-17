@@ -1,13 +1,13 @@
-import AppError from '../../../../shared/infra/http/errors/app-error';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IWebhookHandlerProvider } from '../../infra/gateways/providers/webhook-handler.provider';
 import { inject, injectable } from 'tsyringe';
-import IOrderRepositoryProvider from '../../../events/infra/orm/repositories/providers/order-repository.provider';
-import IRepositoryProvider from '../../../../shared/infra/orm/providers/repository.provider';
-import Payment from '../../infra/orm/entities/payment.entity';
+import { IOrderRepositoryProvider } from '../../../events/infra/orm/repositories/providers/order-repository.provider';
+import { IRepositoryProvider } from '../../../../shared/infra/orm/providers/repository.provider';
+import { Payment } from '../../infra/orm/entities/payment.entity';
 import { PaymentStatus } from '../../infra/orm/enums/payment-status.enum';
 import { OrderStatus } from '../../../events/infra/orm/enums/order-status.enum';
 import { PaymentQueryOptions } from '../../dtos/payments/payment-query-options.dto';
-import AbacatePayPixWebhookRequestDTO from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { AbacatePayPixWebhookRequestDTO } from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 
 @injectable()
 class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookRequestDTO> {
@@ -57,5 +57,4 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
     }
   }
 }
-
-export default AbacatepayCompletedWebhookHandler;
+export { AbacatepayCompletedWebhookHandler };

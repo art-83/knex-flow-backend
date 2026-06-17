@@ -1,4 +1,4 @@
-export default class AppError {
+class AppError {
   public readonly code: number;
   public readonly message: string;
   public readonly formattedMessage: string;
@@ -9,3 +9,4 @@ export default class AppError {
     this.formattedMessage = formattedMessage;
   }
 }
+export { AppError };

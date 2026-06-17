@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
-import abacatepayConfig from '../../../config/abacatepay.config';
+import { abacatepayConfig } from '../../../config/abacatepay.config';
 
-export function validateAbacatePayHeaderMiddleware(request: Request, response: Response, next: NextFunction): void {
+function validateAbacatePayHeaderMiddleware(request: Request, response: Response, next: NextFunction): void {
   const webhookSecret = request.headers['x-webhook-secret'];
 
   if (!abacatepayConfig.webhookSecret || webhookSecret !== abacatepayConfig.webhookSecret) {
@@ -12,3 +12,4 @@ export function validateAbacatePayHeaderMiddleware(request: Request, response: R
 
   next();
 }
+export { validateAbacatePayHeaderMiddleware };

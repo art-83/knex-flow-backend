@@ -1,4 +1,4 @@
-import DefaultQueryOptionsDTO from '../../../../shared/infra/orm/dtos/default-query-options.dto';
+import { DefaultQueryOptionsDTO } from '../../../../shared/infra/orm/dtos/default-query-options.dto';
 import { Ticket } from '../../infra/orm/entities/ticket.entity';
 
 interface TicketQueryOptions extends Ticket, DefaultQueryOptionsDTO {
@@ -8,5 +8,4 @@ interface TicketQueryOptions extends Ticket, DefaultQueryOptionsDTO {
 
   order_is_null: boolean;
 }
-
-export default TicketQueryOptions;
+export { TicketQueryOptions };

@@ -8,6 +8,9 @@
     "worker:payment-processing-queue": "node dist/shared/infra/queue/queue-bootstrap.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "eslint -c .husky/mjs/eslint.config.mjs src/",
+    "standardize-exports": "node .husky/mjs/standardize-exports.mjs",
+    "commitlint": "commitlint --config .husky/mjs/commitlint.config.mjs --edit",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "node -e \"const fs=require('fs');const {execFileSync}=require('child_process');const p=require('path');const b=p.join('node_modules','husky','bin.js');if(fs.existsSync(b))execFileSync(process.execPath,[b],{stdio:'inherit'})\""
   },
@@ -15,6 +18,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
     "@swc/core": "^1.15.26",
     "@swc/helpers": "^0.5.21",
     "@types/bcryptjs": "^2.4.6",
@@ -22,8 +27,12 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.2",
+    "@typescript-eslint/parser": "^8.61.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-import": "^2.32.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
+    "ts-morph": "^28.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   },

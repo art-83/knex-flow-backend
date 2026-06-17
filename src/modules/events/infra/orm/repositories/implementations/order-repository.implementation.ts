@@ -1,8 +1,8 @@
-import IOrderRepositoryProvider from '../providers/order-repository.provider';
-import Order from '../../entities/order.entity';
-import OrderQueryOptions from '../../../../dtos/order/order-query-options';
+import { IOrderRepositoryProvider } from '../providers/order-repository.provider';
+import { Order } from '../../entities/order.entity';
+import { OrderQueryOptions } from '../../../../dtos/order/order-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class OrderRepository implements IOrderRepositoryProvider {
   private repository: Repository<Order>;
@@ -62,5 +62,4 @@ class OrderRepository implements IOrderRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default OrderRepository;
+export { OrderRepository };

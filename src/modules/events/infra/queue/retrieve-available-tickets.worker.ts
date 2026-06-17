@@ -6,13 +6,13 @@ import { container } from 'tsyringe';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
 import { IRedisConnectionProvider } from '../../../../shared/infra/queue/infra/providers/redis-connection.provider';
-import IWebSocketProvider from '../../../../shared/infra/socket/infra/providers/web-socket.provider';
-import RetrieveAvailableTicketsJobPayloadDTO from '../../dtos/ticket/retrieve-available-tickets-job-payload.dto';
-import GetTicketsAvaliabilityAndMaybeCreateOrderService from '../../services/tickets/find-tickets-avaliability-and-maybe-create-order.service';
-import bullmqConfig from '../../../../config/bullmq.config';
+import { IWebSocketProvider } from '../../../../shared/infra/socket/infra/providers/web-socket.provider';
+import { RetrieveAvailableTicketsJobPayloadDTO } from '../../dtos/ticket/retrieve-available-tickets-job-payload.dto';
+import { GetTicketsAvaliabilityAndMaybeCreateOrderService } from '../../services/tickets/find-tickets-avaliability-and-maybe-create-order.service';
+import { bullmqConfig } from '../../../../config/bullmq.config';
 import { WebSocketType } from '../../../../shared/infra/socket/enums/web-socket-type';
 
-export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
+class RetrieveAvailableTicketsWorker implements IWorkerProvider {
   private worker: Worker<RetrieveAvailableTicketsJobPayloadDTO>;
 
   public async initialize(): Promise<void> {
@@ -68,3 +68,4 @@ export class RetrieveAvailableTicketsWorker implements IWorkerProvider {
     await this.worker.close();
   }
 }
+export { RetrieveAvailableTicketsWorker };

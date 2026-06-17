@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import AppError from '../errors/app-error';
+import { AppError } from '../errors/app-error';
 import { isCelebrateError } from 'celebrate';
 
 async function globalErrorHandlerMiddleware(error: Error, request: Request, response: Response, next: NextFunction) {
@@ -14,5 +14,4 @@ async function globalErrorHandlerMiddleware(error: Error, request: Request, resp
   console.error('[globalErrorHandlerMiddleware]', error);
   return response.status(500).json({ message: 'Internal server error' });
 }
-
-export default globalErrorHandlerMiddleware;
+export { globalErrorHandlerMiddleware };

@@ -1,6 +1,6 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
-import EventController from '../controllers/event.controller';
+import { EventController } from '../controllers/event.controller';
 import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
@@ -205,5 +205,4 @@ eventRouter.delete(
   }),
   eventController.deleteEvent,
 );
-
-export default eventRouter;
+export { eventRouter };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import OrganizationRolePermissionController from '../controllers/organization-role-permission.controller';
+import { OrganizationRolePermissionController } from '../controllers/organization-role-permission.controller';
 
 const organizationRolePermissionRouter = Router();
 const organizationRolePermissionController = new OrganizationRolePermissionController();
@@ -44,5 +44,4 @@ organizationRolePermissionRouter.delete(
   }),
   (request, response) => organizationRolePermissionController.delete(request, response),
 );
-
-export default organizationRolePermissionRouter;
+export { organizationRolePermissionRouter };

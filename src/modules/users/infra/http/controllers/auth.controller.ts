@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import LoginService from '../../../services/authentication/login.service';
-import RefreshTokenService from '../../../services/authentication/refresh-token.service';
-import RegisterService from '../../../services/authentication/register.service';
+import { LoginService } from '../../../services/authentication/login.service';
+import { RefreshTokenService } from '../../../services/authentication/refresh-token.service';
+import { RegisterService } from '../../../services/authentication/register.service';
 
 class AuthController {
   public async login(request: Request, response: Response) {
@@ -23,5 +23,4 @@ class AuthController {
     return response.json(result);
   }
 }
-
-export default AuthController;
+export { AuthController };

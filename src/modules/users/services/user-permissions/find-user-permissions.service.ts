@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
-import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/providers/user-permission-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import UserPermissionQueryOptions from '../../dtos/user-permission/user-permission-query-options';
-import EnsureUserOrganizationAccessService from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
-import EnsureUserHasPermissionService from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { UserPermissionQueryOptions } from '../../dtos/user-permission/user-permission-query-options';
+import { EnsureUserOrganizationAccessService } from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
+import { EnsureUserHasPermissionService } from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class FindUserPermissionsService {
@@ -35,5 +35,4 @@ class FindUserPermissionsService {
     };
   }
 }
-
-export default FindUserPermissionsService;
+export { FindUserPermissionsService };

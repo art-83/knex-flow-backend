@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
-import AbacatePayWebhookHandlerFactory from '../infra/factories/abacate-pay-webhook-handler.factory';
-import AbacatePayPixWebhookRequestDTO from '../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { AbacatePayWebhookHandlerFactory } from '../infra/factories/abacate-pay-webhook-handler.factory';
+import { AbacatePayPixWebhookRequestDTO } from '../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 
 @injectable()
 class AbacatepayWebhookHandlerService {
@@ -9,5 +9,4 @@ class AbacatepayWebhookHandlerService {
     await handler.handle(payload);
   }
 }
-
-export default AbacatepayWebhookHandlerService;
+export { AbacatepayWebhookHandlerService };

@@ -16,7 +16,7 @@ import { Payment } from '../../../../payments/infra/orm/entities/payment.entity'
 import { EventActivityPresence } from './event-activity-presence.entity';
 
 @Entity({ name: 'orders' })
-export class Order extends SequentialGeneratedUUID {
+class Order extends SequentialGeneratedUUID {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total_amount: number;
 
@@ -45,5 +45,4 @@ export class Order extends SequentialGeneratedUUID {
   @OneToMany(() => EventActivityPresence, eventActivityOrder => eventActivityOrder.order)
   event_activity_orders: EventActivityPresence[];
 }
-
-export default Order;
+export { Order };

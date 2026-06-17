@@ -1,8 +1,8 @@
-import IActivityRepositoryProvider from '../providers/activity-repository.provider';
-import Activity from '../../entities/activity.entity';
-import ActivityQueryOptions from '../../../../dtos/activity/activity-query-options';
+import { IActivityRepositoryProvider } from '../providers/activity-repository.provider';
+import { Activity } from '../../entities/activity.entity';
+import { ActivityQueryOptions } from '../../../../dtos/activity/activity-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class ActivityRepository implements IActivityRepositoryProvider {
   private repository: Repository<Activity>;
@@ -55,5 +55,4 @@ class ActivityRepository implements IActivityRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default ActivityRepository;
+export { ActivityRepository };

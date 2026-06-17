@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import CreateOrUpdateBatchDTO from '../../dtos/batch/create-or-update-batch.dto';
-import IBatchRepositoryProvider from '../../infra/orm/repositories/providers/batch-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
+import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class UpdateBatchService {
+class UpdateBatchService {
   constructor(
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
@@ -39,3 +39,4 @@ export class UpdateBatchService {
     return { message: 'Batch updated successfully.', data: batch };
   }
 }
+export { UpdateBatchService };

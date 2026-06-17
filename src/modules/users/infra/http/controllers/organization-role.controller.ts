@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import CreateOrganizationRoleService from '../../../services/organization-roles/create-organization-role.service';
-import FindOrganizationRolesService from '../../../services/organization-roles/find-organization-roles.service';
-import UpdateOrganizationRoleService from '../../../services/organization-roles/update-organization-role.service';
-import DeleteOrganizationRoleService from '../../../services/organization-roles/delete-organization-role.service';
+import { CreateOrganizationRoleService } from '../../../services/organization-roles/create-organization-role.service';
+import { FindOrganizationRolesService } from '../../../services/organization-roles/find-organization-roles.service';
+import { UpdateOrganizationRoleService } from '../../../services/organization-roles/update-organization-role.service';
+import { DeleteOrganizationRoleService } from '../../../services/organization-roles/delete-organization-role.service';
 
 class OrganizationRoleController {
   public async create(request: Request, response: Response) {
@@ -39,5 +39,4 @@ class OrganizationRoleController {
     return response.json(result);
   }
 }
-
-export default OrganizationRoleController;
+export { OrganizationRoleController };

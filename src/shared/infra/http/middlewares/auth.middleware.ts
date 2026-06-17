@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { container } from 'tsyringe';
-import IJwtProvider from '../../../../modules/users/infra/jwt/providers/jwt.provider';
+import { IJwtProvider } from '../../../../modules/users/infra/jwt/providers/jwt.provider';
 
 function authMiddleware(request: Request, response: Response, next: NextFunction): void {
   try {
@@ -33,5 +33,4 @@ function authMiddleware(request: Request, response: Response, next: NextFunction
     response.status(401).json({ error: 'Invalid token' });
   }
 }
-
-export default authMiddleware;
+export { authMiddleware };

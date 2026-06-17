@@ -1,12 +1,12 @@
 import { inject, injectable } from 'tsyringe';
-import IBatchRepositoryProvider from '../../infra/orm/repositories/providers/batch-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class DeleteBatchService {
+class DeleteBatchService {
   constructor(
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
@@ -38,3 +38,4 @@ export class DeleteBatchService {
     return { message: 'Batch deleted successfully.', deleted: rowsDeleted };
   }
 }
+export { DeleteBatchService };

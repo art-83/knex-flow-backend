@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import CreateOrUpdateEventConfigurationDTO from '../../dtos/event-configuration/create-or-update-event-configuration.dto';
-import IEventConfigurationRepositoryProvider from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { CreateOrUpdateEventConfigurationDTO } from '../../dtos/event-configuration/create-or-update-event-configuration.dto';
+import { IEventConfigurationRepositoryProvider } from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class UpdateEventConfigurationService {
+class UpdateEventConfigurationService {
   constructor(
     @inject('EventConfigurationRepositoryProvider')
     private eventConfigurationRepository: IEventConfigurationRepositoryProvider,
@@ -46,3 +46,4 @@ export class UpdateEventConfigurationService {
     return { message: 'Event configuration updated successfully.', data: eventConfiguration };
   }
 }
+export { UpdateEventConfigurationService };

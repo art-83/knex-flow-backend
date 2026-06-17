@@ -7,7 +7,7 @@ import { Event } from '../../../../events/infra/orm/entities/event.entity';
 import { Activity } from '../../../../events/infra/orm/entities/activity.entity';
 
 @Entity('organizations')
-export class Organization extends SequentialGeneratedUUID {
+class Organization extends SequentialGeneratedUUID {
   @Column()
   name: string;
 
@@ -38,5 +38,4 @@ export class Organization extends SequentialGeneratedUUID {
   @OneToMany(() => Activity, activity => activity.organization)
   activities: Activity[];
 }
-
-export default Organization;
+export { Organization };

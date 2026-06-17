@@ -4,7 +4,7 @@ import { Order } from './order.entity';
 import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 
 @Entity({ name: 'tickets' })
-export class Ticket extends SequentialGeneratedUUID {
+class Ticket extends SequentialGeneratedUUID {
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
@@ -22,5 +22,4 @@ export class Ticket extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'order_id' })
   order: Order;
 }
-
-export default Ticket;
+export { Ticket };

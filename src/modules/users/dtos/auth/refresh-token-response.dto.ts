@@ -4,5 +4,4 @@ interface RefreshTokenResponseDTO {
     accessToken: string;
   };
 }
-
-export default RefreshTokenResponseDTO;
+export { RefreshTokenResponseDTO };

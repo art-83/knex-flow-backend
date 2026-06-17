@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
-import IHashProvider from '../../infra/hash/providers/hash.provider';
-import IJwtProvider from '../../infra/jwt/providers/jwt.provider';
-import IUserRepositoryProvider from '../../infra/orm/repositories/providers/user-repository.provider';
-import RegisterDTO from '../../dtos/auth/register.dto';
-import LoginResponseDTO from '../../dtos/auth/login-response.dto';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import validatePasswordStrength from '../../utils/validate-password-strength';
+import { IHashProvider } from '../../infra/hash/providers/hash.provider';
+import { IJwtProvider } from '../../infra/jwt/providers/jwt.provider';
+import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
+import { RegisterDTO } from '../../dtos/auth/register.dto';
+import { LoginResponseDTO } from '../../dtos/auth/login-response.dto';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { validatePasswordStrength } from '../../utils/validate-password-strength';
 import { User } from '../../infra/orm/entities/user.entity';
 
 @injectable()
@@ -55,5 +55,4 @@ class RegisterService {
     };
   }
 }
-
-export default RegisterService;
+export { RegisterService };

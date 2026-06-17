@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
-import IOrganizationRoleRepositoryProvider from '../../infra/orm/repositories/providers/organization-role-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import CreateOrUpdateOrganizationRoleDTO from '../../dtos/organization-role/create-or-update-organization-role.dto';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { CreateOrUpdateOrganizationRoleDTO } from '../../dtos/organization-role/create-or-update-organization-role.dto';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class UpdateOrganizationRoleService {
@@ -53,5 +53,4 @@ class UpdateOrganizationRoleService {
     };
   }
 }
-
-export default UpdateOrganizationRoleService;
+export { UpdateOrganizationRoleService };

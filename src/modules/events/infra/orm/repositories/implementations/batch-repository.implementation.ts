@@ -1,8 +1,8 @@
-import IBatchRepositoryProvider from '../providers/batch-repository.provider';
-import Batch from '../../entities/batch.entity';
-import BatchQueryOptions from '../../../../dtos/batch/batch-query-options';
+import { IBatchRepositoryProvider } from '../providers/batch-repository.provider';
+import { Batch } from '../../entities/batch.entity';
+import { BatchQueryOptions } from '../../../../dtos/batch/batch-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class BatchRepository implements IBatchRepositoryProvider {
   private repository: Repository<Batch>;
@@ -55,5 +55,4 @@ class BatchRepository implements IBatchRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default BatchRepository;
+export { BatchRepository };

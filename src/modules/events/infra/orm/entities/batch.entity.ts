@@ -13,7 +13,7 @@ import { Event } from './event.entity';
 import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'batches' })
-export class Batch extends SequentialGeneratedUUID {
+class Batch extends SequentialGeneratedUUID {
   @Column({ type: 'int' })
   base_quantity: number;
 
@@ -36,5 +36,4 @@ export class Batch extends SequentialGeneratedUUID {
   @OneToMany(() => Ticket, ticket => ticket.batch)
   tickets: Ticket[];
 }
-
-export default Batch;
+export { Batch };

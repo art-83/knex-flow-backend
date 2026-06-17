@@ -6,5 +6,4 @@ const checkoutHooksRouter = Router();
 const hooksController = new HooksController();
 
 checkoutHooksRouter.post('/abacatepay', validateAbacatePayHeaderMiddleware, hooksController.onAbacatepay);
-
-export default checkoutHooksRouter;
+export { checkoutHooksRouter };

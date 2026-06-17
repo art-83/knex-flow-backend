@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
-import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/providers/user-permission-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserOrganizationAccessService from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
-import EnsureUserHasPermissionService from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserOrganizationAccessService } from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
+import { EnsureUserHasPermissionService } from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class DeleteUserPermissionService {
@@ -40,5 +40,4 @@ class DeleteUserPermissionService {
     };
   }
 }
-
-export default DeleteUserPermissionService;
+export { DeleteUserPermissionService };

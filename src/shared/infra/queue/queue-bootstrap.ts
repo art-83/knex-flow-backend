@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import '../../containers';
 import { container } from 'tsyringe';
 import { IWorkerProvider } from './infra/providers/worker.provider';
-import dataSource from '../orm/database';
+import { dataSource } from '../orm/database';
 import { IRedisConnectionProvider } from './infra/providers/redis-connection.provider';
 import { closeWorkers, initializeWorkers } from './workers-bootstrap';
 

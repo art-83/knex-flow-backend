@@ -1,10 +1,10 @@
-import Payment from '../../entities/payment.entity';
+import { Payment } from '../../entities/payment.entity';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
-import IRepositoryProvider from '../../../../../../shared/infra/orm/providers/repository.provider';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
+import { IRepositoryProvider } from '../../../../../../shared/infra/orm/providers/repository.provider';
 import { PaymentQueryOptions } from '../../../../dtos/payments/payment-query-options.dto';
 
-export class PaymentRepository implements IRepositoryProvider<Payment> {
+class PaymentRepository implements IRepositoryProvider<Payment> {
   private repository: Repository<Payment>;
 
   constructor() {
@@ -54,3 +54,4 @@ export class PaymentRepository implements IRepositoryProvider<Payment> {
     return Number(deleteResult.affected);
   }
 }
+export { PaymentRepository };

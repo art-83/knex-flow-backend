@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
-import IOrganizationRolePermissionRepositoryProvider from '../../infra/orm/repositories/providers/organization-role-permission-repository.provider';
-import IOrganizationRoleRepositoryProvider from '../../infra/orm/repositories/providers/organization-role-repository.provider';
-import IPermissionRepositoryProvider from '../../infra/orm/repositories/providers/permission-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import CreateOrUpdateOrganizationRolePermissionDTO from '../../dtos/organization-role-permission/create-or-update-organization-role-permission.dto';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
+import { IOrganizationRolePermissionRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-permission-repository.provider';
+import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
+import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { CreateOrUpdateOrganizationRolePermissionDTO } from '../../dtos/organization-role-permission/create-or-update-organization-role-permission.dto';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class CreateOrganizationRolePermissionService {
@@ -69,5 +69,4 @@ class CreateOrganizationRolePermissionService {
     };
   }
 }
-
-export default CreateOrganizationRolePermissionService;
+export { CreateOrganizationRolePermissionService };

@@ -1,8 +1,8 @@
-import IUserPermissionRepositoryProvider from '../providers/user-permission-repository.provider';
+import { IUserPermissionRepositoryProvider } from '../providers/user-permission-repository.provider';
 import { UserPermission } from '../../entities/user-permission.entity';
-import UserPermissionQueryOptions from '../../../../dtos/user-permission/user-permission-query-options';
+import { UserPermissionQueryOptions } from '../../../../dtos/user-permission/user-permission-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class UserPermissionRepository implements IUserPermissionRepositoryProvider {
   private repository: Repository<UserPermission>;
@@ -46,5 +46,4 @@ class UserPermissionRepository implements IUserPermissionRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default UserPermissionRepository;
+export { UserPermissionRepository };

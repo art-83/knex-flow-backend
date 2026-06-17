@@ -1,6 +1,6 @@
 import { PaymentMethod } from '../../infra/orm/enums/payment-method.enum';
 
-export interface CreatePaymentDTO {
+interface CreatePaymentDTO {
   order_id: string;
 
   amount: number;
@@ -23,5 +23,4 @@ export interface CreatePaymentDTO {
 
   metadata: Record<string, unknown>;
 }
-
-export default CreatePaymentDTO;
+export { CreatePaymentDTO };

@@ -4,5 +4,4 @@ interface CreateOrUpdateUserOrganizationDTO extends UserOrganization {
   user_id: string;
   organization_id: string;
 }
-
-export default CreateOrUpdateUserOrganizationDTO;
+export { CreateOrUpdateUserOrganizationDTO };

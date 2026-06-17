@@ -1,4 +1,4 @@
-export enum OrderStatus {
+enum OrderStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
   EXPIRED = 'EXPIRED',
@@ -6,3 +6,4 @@ export enum OrderStatus {
   REFUNDED = 'REFUNDED',
   DISPUTED = 'DISPUTED',
 }
+export { OrderStatus };

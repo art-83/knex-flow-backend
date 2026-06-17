@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import EventActivityQueryOptions from '../../dtos/event-activity/event-activity-query-options';
-import IEventActivityRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-repository.provider';
-import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
-import AppError from '../../../../shared/infra/http/errors/app-error';
-import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
+import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
+import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
-export class FindEventActivitiesService {
+class FindEventActivitiesService {
   constructor(
     @inject('EventActivityRepositoryProvider')
     private eventActivityRepository: IEventActivityRepositoryProvider,
@@ -37,3 +37,4 @@ export class FindEventActivitiesService {
     return { message: 'Event activities found successfully.', data: eventActivities };
   }
 }
+export { FindEventActivitiesService };

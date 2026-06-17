@@ -1,8 +1,8 @@
-import IEventActivityRepositoryProvider from '../providers/event-activity-repository.provider';
-import EventActivity from '../../entities/event-activity.entity';
-import EventActivityQueryOptions from '../../../../dtos/event-activity/event-activity-query-options';
+import { IEventActivityRepositoryProvider } from '../providers/event-activity-repository.provider';
+import { EventActivity } from '../../entities/event-activity.entity';
+import { EventActivityQueryOptions } from '../../../../dtos/event-activity/event-activity-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class EventActivityRepository implements IEventActivityRepositoryProvider {
   private repository: Repository<EventActivity>;
@@ -65,5 +65,4 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default EventActivityRepository;
+export { EventActivityRepository };

@@ -4,7 +4,7 @@ import { EventActivity } from './event-activity.entity';
 import { Order } from './order.entity';
 
 @Entity({ name: 'event_activity_presences' })
-export class EventActivityPresence extends SequentialGeneratedUUID {
+class EventActivityPresence extends SequentialGeneratedUUID {
   @Column({ type: 'boolean', default: false })
   user_presence: boolean;
 
@@ -25,5 +25,4 @@ export class EventActivityPresence extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'order_id' })
   order: Order;
 }
-
-export default EventActivityPresence;
+export { EventActivityPresence };

@@ -1,6 +1,6 @@
 import IORedis from 'ioredis';
 
-import bullmqConfig from '../../../config/bullmq.config';
+import { bullmqConfig } from '../../../config/bullmq.config';
 import { IRedisConnectionProvider } from './infra/providers/redis-connection.provider';
 
 class RedisConnection implements IRedisConnectionProvider {
@@ -21,5 +21,4 @@ class RedisConnection implements IRedisConnectionProvider {
     await this.connection.quit();
   }
 }
-
-export default RedisConnection;
+export { RedisConnection };

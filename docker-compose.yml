@@ -32,6 +32,7 @@ services:
       start_period: 30s
 
   app:
+    image: knex-flow-app:latest
     build:
       context: .
       dockerfile: Dockerfile

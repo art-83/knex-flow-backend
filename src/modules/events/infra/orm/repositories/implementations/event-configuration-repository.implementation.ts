@@ -1,8 +1,8 @@
-import IEventConfigurationRepositoryProvider from '../providers/event-configuration-repository.provider';
-import EventConfiguration from '../../entities/event-configuration.entity';
-import EventConfigurationQueryOptions from '../../../../dtos/event-configuration/event-configuration-query-options';
+import { IEventConfigurationRepositoryProvider } from '../providers/event-configuration-repository.provider';
+import { EventConfiguration } from '../../entities/event-configuration.entity';
+import { EventConfigurationQueryOptions } from '../../../../dtos/event-configuration/event-configuration-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class EventConfigurationRepository implements IEventConfigurationRepositoryProvider {
   private repository: Repository<EventConfiguration>;
@@ -53,5 +53,4 @@ class EventConfigurationRepository implements IEventConfigurationRepositoryProvi
     return Number(deleteResult.affected);
   }
 }
-
-export default EventConfigurationRepository;
+export { EventConfigurationRepository };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
-import UserPermissionController from '../controllers/user-permission.controller';
+import { UserPermissionController } from '../controllers/user-permission.controller';
 
 const userPermissionRouter = Router();
 const userPermissionController = new UserPermissionController();
@@ -44,5 +44,4 @@ userPermissionRouter.delete(
   }),
   (request, response) => userPermissionController.delete(request, response),
 );
-
-export default userPermissionRouter;
+export { userPermissionRouter };

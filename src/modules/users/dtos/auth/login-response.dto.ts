@@ -5,5 +5,4 @@ interface LoginResponseDTO {
     refreshToken: string;
   };
 }
-
-export default LoginResponseDTO;
+export { LoginResponseDTO };

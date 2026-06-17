@@ -1,4 +1,4 @@
-export interface CreatePaymentResponseDTO {
+interface CreatePaymentResponseDTO {
   id: string;
   status: string;
   amount: number;
@@ -6,5 +6,4 @@ export interface CreatePaymentResponseDTO {
   brCodeBase64: string;
   expiresAt: string;
 }
-
-export default CreatePaymentResponseDTO;
+export { CreatePaymentResponseDTO };

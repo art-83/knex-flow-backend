@@ -6,5 +6,4 @@ const abacatepayConfig = {
     expiresIn: 300, // 5 minutes
   },
 };
-
-export default abacatepayConfig;
+export { abacatepayConfig };

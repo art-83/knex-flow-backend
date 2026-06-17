@@ -1,8 +1,8 @@
-import IPermissionRepositoryProvider from '../providers/permission-repository.provider';
+import { IPermissionRepositoryProvider } from '../providers/permission-repository.provider';
 import { Permission } from '../../entities/permission.entity';
-import PermissionQueryOptions from '../../../../dtos/permission/permission-query-options';
+import { PermissionQueryOptions } from '../../../../dtos/permission/permission-query-options';
 import { Repository } from 'typeorm';
-import dataSource from '../../../../../../shared/infra/orm/database';
+import { dataSource } from '../../../../../../shared/infra/orm/database';
 
 class PermissionRepository implements IPermissionRepositoryProvider {
   private repository: Repository<Permission>;
@@ -41,5 +41,4 @@ class PermissionRepository implements IPermissionRepositoryProvider {
     return Number(deleteResult.affected);
   }
 }
-
-export default PermissionRepository;
+export { PermissionRepository };

@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
-import IUserOrganizationRepositoryProvider from '../../../../modules/users/infra/orm/repositories/providers/user-organization-repository.provider';
-import AppError from '../errors/app-error';
+import { IUserOrganizationRepositoryProvider } from '../../../../modules/users/infra/orm/repositories/providers/user-organization-repository.provider';
+import { AppError } from '../errors/app-error';
 
 @injectable()
 class EnsureUserOrganizationAccessService {
@@ -42,5 +42,4 @@ class EnsureUserOrganizationAccessService {
     }
   }
 }
-
-export default EnsureUserOrganizationAccessService;
+export { EnsureUserOrganizationAccessService };

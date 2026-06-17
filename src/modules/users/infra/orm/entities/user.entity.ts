@@ -5,7 +5,7 @@ import { UserPermission } from './user-permission.entity';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
 
 @Entity('users')
-export class User extends SequentialGeneratedUUID {
+class User extends SequentialGeneratedUUID {
   @Column({ unique: true })
   email: string;
 
@@ -33,5 +33,4 @@ export class User extends SequentialGeneratedUUID {
   @OneToMany(() => Order, order => order.user)
   orders: Order[];
 }
-
-export default User;
+export { User };

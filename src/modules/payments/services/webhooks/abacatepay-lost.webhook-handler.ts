@@ -1,4 +1,4 @@
-import AbacatePayPixWebhookRequestDTO from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { AbacatePayPixWebhookRequestDTO } from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
 import { IWebhookHandlerProvider } from '../../infra/gateways/providers/webhook-handler.provider';
 
 class AbacatepayLostWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookRequestDTO> {
@@ -6,5 +6,4 @@ class AbacatepayLostWebhookHandler implements IWebhookHandlerProvider<AbacatePay
     console.log('[Abacatepay] lost webhook received', payload);
   }
 }
-
-export default AbacatepayLostWebhookHandler;
+export { AbacatepayLostWebhookHandler };

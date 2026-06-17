@@ -2,7 +2,7 @@ import { QueueNames } from './enums/queues-names.enum';
 import { WorkerFactory } from './factories/worker.factory';
 import { IWorkerProvider } from './infra/providers/worker.provider';
 
-export async function initializeWorkers(): Promise<IWorkerProvider[]> {
+async function initializeWorkers(): Promise<IWorkerProvider[]> {
   const workers: IWorkerProvider[] = [];
 
   try {
@@ -20,7 +20,7 @@ export async function initializeWorkers(): Promise<IWorkerProvider[]> {
   }
 }
 
-export async function closeWorkers(workers: IWorkerProvider[]): Promise<void> {
+async function closeWorkers(workers: IWorkerProvider[]): Promise<void> {
   const results = await Promise.allSettled(workers.map(worker => worker.close()));
 
   results.forEach((result, index) => {
@@ -29,3 +29,4 @@ export async function closeWorkers(workers: IWorkerProvider[]): Promise<void> {
     }
   });
 }
+export { closeWorkers, initializeWorkers };

@@ -35,5 +35,4 @@ class OrganizationController {
     return response.json(activity);
   }
 }
-
-export default OrganizationController;
+export { OrganizationController };

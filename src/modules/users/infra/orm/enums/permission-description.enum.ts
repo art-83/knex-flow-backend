@@ -38,5 +38,4 @@ enum PermissionDescriptionEnum {
   EVENT_CONFIGURATION_UPDATE = 'event_configuration:update',
   EVENT_CONFIGURATION_DELETE = 'event_configuration:delete',
 }
-
-export default PermissionDescriptionEnum;
+export { PermissionDescriptionEnum };

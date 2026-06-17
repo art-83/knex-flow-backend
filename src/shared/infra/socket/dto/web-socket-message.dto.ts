@@ -5,5 +5,4 @@ interface WebSocketMessageDTO {
   type: WebSocketType;
   payload: Record<string, unknown>;
 }
-
-export default WebSocketMessageDTO;
+export { WebSocketMessageDTO };

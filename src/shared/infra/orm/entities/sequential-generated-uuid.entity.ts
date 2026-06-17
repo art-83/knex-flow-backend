@@ -1,7 +1,7 @@
 import { PrimaryColumn, BeforeInsert } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 
-export abstract class SequentialGeneratedUUID {
+abstract class SequentialGeneratedUUID {
   @PrimaryColumn('uuid')
   id: string;
 
@@ -12,3 +12,4 @@ export abstract class SequentialGeneratedUUID {
     }
   }
 }
+export { SequentialGeneratedUUID };

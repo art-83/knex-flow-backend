@@ -120,5 +120,4 @@ class EventController {
     return response.json(eventConfiguration);
   }
 }
-
-export default EventController;
+export { EventController };
