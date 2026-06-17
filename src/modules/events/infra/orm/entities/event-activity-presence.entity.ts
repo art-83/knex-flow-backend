@@ -1,21 +1,10 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { EventActivity } from './event-activity.entity';
 import { Order } from './order.entity';
 
 @Entity({ name: 'event_activity_presences' })
-export class EventActivityPresence {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class EventActivityPresence extends SequentialGeneratedUUID {
   @Column({ type: 'boolean', default: false })
   user_presence: boolean;
 

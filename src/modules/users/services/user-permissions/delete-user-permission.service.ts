@@ -3,7 +3,7 @@ import IUserPermissionRepositoryProvider from '../../infra/orm/repositories/prov
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import EnsureUserOrganizationAccessService from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
 import EnsureUserHasPermissionService from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
-import PermissionDescriptionEnum from '../../enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class DeleteUserPermissionService {

@@ -7,19 +7,16 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { EventConfiguration } from './event-configuration.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
 
 @Entity({ name: 'events' })
-export class Event {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Event extends SequentialGeneratedUUID {
   @Column()
   name: string;
 

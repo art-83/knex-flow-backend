@@ -4,7 +4,7 @@ import IEventRepositoryProvider from '../../infra/orm/repositories/providers/eve
 import IOrganizationRepositoryProvider from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
 export class CreateEventService {

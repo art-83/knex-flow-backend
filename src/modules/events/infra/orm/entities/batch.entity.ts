@@ -6,17 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { Event } from './event.entity';
 import { Ticket } from './ticket.entity';
 
 @Entity({ name: 'batches' })
-export class Batch {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Batch extends SequentialGeneratedUUID {
   @Column({ type: 'int' })
   base_quantity: number;
 

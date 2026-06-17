@@ -3,7 +3,7 @@ import IOrganizationRolePermissionRepositoryProvider from '../../infra/orm/repos
 import AppError from '../../../../shared/infra/http/errors/app-error';
 import OrganizationRolePermissionQueryOptions from '../../dtos/organization-role-permission/organization-role-permission-query-options';
 import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
 class FindOrganizationRolePermissionsService {

@@ -5,7 +5,7 @@ import AppError from '../../../../shared/infra/http/errors/app-error';
 import IEventRepositoryProvider from '../../infra/orm/repositories/providers/event-repository.provider';
 import IActivityRepositoryProvider from '../../infra/orm/repositories/providers/activity-repository.provider';
 import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
 export class CreateEventActivityService {

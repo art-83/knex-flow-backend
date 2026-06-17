@@ -6,17 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
 
 @Entity({ name: 'activities' })
-export class Activity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Activity extends SequentialGeneratedUUID {
   @Column()
   name: string;
 

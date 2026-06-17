@@ -6,19 +6,16 @@ import {
   JoinColumn,
   ManyToOne,
   OneToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
 import { PaymentStatus } from '../enums/payment-status.enum';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { CardInformation } from './card-information.entity';
 
 @Entity({ name: 'payments' })
-export class Payment {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Payment extends SequentialGeneratedUUID {
   @Column()
   provider: string;
 

@@ -1,12 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, UpdateDateColumn } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { OrganizationRole } from './organization-role.entity';
 import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
@@ -14,10 +7,7 @@ import { Event } from '../../../../events/infra/orm/entities/event.entity';
 import { Activity } from '../../../../events/infra/orm/entities/activity.entity';
 
 @Entity('organizations')
-export class Organization {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Organization extends SequentialGeneratedUUID {
   @Column()
   name: string;
 

@@ -6,19 +6,16 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { Organization } from './organization.entity';
 import { OrganizationRolePermission } from './organization-role-permission.entity';
 
 @Entity('organization_roles')
 @Unique(['organization', 'name'])
-export class OrganizationRole {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class OrganizationRole extends SequentialGeneratedUUID {
   @Column()
   name: string;
 

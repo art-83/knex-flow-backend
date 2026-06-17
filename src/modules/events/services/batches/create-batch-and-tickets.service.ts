@@ -8,7 +8,7 @@ import CreateOrUpdateBatchDTO from '../../dtos/batch/create-or-update-batch.dto'
 import Ticket from '../../infra/orm/entities/ticket.entity';
 import OrganizationConfiguration from '../../../users/dtos/organization/organization-configuration.dto';
 import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
 
 // TODO: talvez transformar essa logica em uma query transacional para garantir atomicidade
 @injectable()

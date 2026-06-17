@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import PermissionDescriptionEnum from '../../../../modules/users/enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../../../modules/users/infra/orm/enums/permission-description.enum';
 import EnsureUserOrganizationAccessService from './ensure-user-organization-access.service';
 import EnsureUserHasPermissionService from './ensure-user-has-permission.service';
 

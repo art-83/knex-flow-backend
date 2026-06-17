@@ -1,22 +1,11 @@
-import {
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, Unique, UpdateDateColumn } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { OrganizationRole } from './organization-role.entity';
 import { Permission } from './permission.entity';
 
 @Entity('organization_role_permissions')
 @Unique(['organizationRole', 'permission'])
-export class OrganizationRolePermission {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class OrganizationRolePermission extends SequentialGeneratedUUID {
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 

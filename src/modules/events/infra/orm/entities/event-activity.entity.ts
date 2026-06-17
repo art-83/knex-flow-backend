@@ -6,18 +6,15 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import { Event } from './event.entity';
 import { Activity } from './activity.entity';
 import { EventActivityPresence } from './event-activity-presence.entity';
 
 @Entity({ name: 'event_activities' })
-export class EventActivity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class EventActivity extends SequentialGeneratedUUID {
   @Column({ nullable: true })
   hours_to_retrieve: number;
 

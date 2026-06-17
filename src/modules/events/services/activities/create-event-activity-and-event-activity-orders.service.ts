@@ -8,7 +8,7 @@ import Event from '../../infra/orm/entities/event.entity';
 import EventActivityPresence from '../../infra/orm/entities/event-activity-presence.entity';
 import IEventActivityOrderRepositoryProvider from '../../infra/orm/repositories/providers/event-activity-order-repository.provider';
 import EnsureUserCanActOnOrganizationService from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
-import PermissionDescriptionEnum from '../../../users/enums/permission-description.enum';
+import PermissionDescriptionEnum from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
 export class CreateEventActivityService {

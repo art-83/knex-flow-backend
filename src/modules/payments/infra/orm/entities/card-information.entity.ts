@@ -1,20 +1,9 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, UpdateDateColumn } from 'typeorm';
+import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
 import Payment from './payment.entity';
 
 @Entity({ name: 'card_informations' })
-export class CardInformation {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class CardInformation extends SequentialGeneratedUUID {
   @Column({ type: 'char', length: 4 })
   last4: string;
 
