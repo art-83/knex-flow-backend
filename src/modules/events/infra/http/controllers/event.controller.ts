@@ -104,19 +104,15 @@ class EventController {
 
   public async updateEventConfiguration(request: Request, response: Response) {
     const updateEventConfigurationService = container.resolve(UpdateEventConfigurationService);
-    const event_configuration_id = String(request.params.event_configuration_id);
-    const eventConfiguration = await updateEventConfigurationService.execute(
-      request.user_id,
-      event_configuration_id,
-      request.body,
-    );
+    const event_id = String(request.params.event_id);
+    const eventConfiguration = await updateEventConfigurationService.execute(request.user_id, event_id, request.body);
     return response.json(eventConfiguration);
   }
 
   public async deleteEventConfiguration(request: Request, response: Response) {
     const deleteEventConfigurationService = container.resolve(DeleteEventConfigurationService);
-    const event_configuration_id = String(request.params.event_configuration_id);
-    const eventConfiguration = await deleteEventConfigurationService.execute(request.user_id, event_configuration_id);
+    const event_id = String(request.params.event_id);
+    const eventConfiguration = await deleteEventConfigurationService.execute(request.user_id, event_id);
     return response.json(eventConfiguration);
   }
 }

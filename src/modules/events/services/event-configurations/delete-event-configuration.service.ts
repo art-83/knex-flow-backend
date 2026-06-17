@@ -1,5 +1,4 @@
 import { inject, injectable } from 'tsyringe';
-import { IEventConfigurationRepositoryProvider } from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
@@ -8,24 +7,20 @@ import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permis
 @injectable()
 class DeleteEventConfigurationService {
   constructor(
-    @inject('EventConfigurationRepositoryProvider')
-    private eventConfigurationRepository: IEventConfigurationRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
     private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
-  public async execute(user_id: string, event_configuration_id: string) {
-    const eventConfiguration = (await this.eventConfigurationRepository.find({ id: event_configuration_id })).at(0);
-
-    if (!eventConfiguration) {
-      throw new AppError(404, 'Event configuration not found.', 'Configuracao de evento nao encontrada.');
-    }
-
-    const event = (await this.eventRepository.find({ id: eventConfiguration.event.id })).at(0);
+  public async execute(user_id: string, event_id: string) {
+    const event = (await this.eventRepository.find({ id: event_id })).at(0);
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (!event.configuration) {
+      throw new AppError(404, 'Event configuration not found.', 'Configuracao de evento nao encontrada.');
     }
 
     await this.authorizeOrganizationActionService.authorize(
@@ -34,8 +29,9 @@ class DeleteEventConfigurationService {
       PermissionDescriptionEnum.EVENT_CONFIGURATION_DELETE,
     );
 
-    const rowsDeleted = await this.eventConfigurationRepository.delete(event_configuration_id);
-    return { message: 'Event configuration deleted successfully.', deleted: rowsDeleted };
+    await this.eventRepository.update(event_id, { configuration: null });
+
+    return { message: 'Event configuration deleted successfully.' };
   }
 }
 export { DeleteEventConfigurationService };

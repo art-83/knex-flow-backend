@@ -1,6 +1,5 @@
 import { inject, injectable } from 'tsyringe';
 import { EventConfigurationQueryOptions } from '../../dtos/event-configuration/event-configuration-query-options';
-import { IEventConfigurationRepositoryProvider } from '../../infra/orm/repositories/providers/event-configuration-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
@@ -9,8 +8,6 @@ import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permis
 @injectable()
 class FindEventConfigurationsService {
   constructor(
-    @inject('EventConfigurationRepositoryProvider')
-    private eventConfigurationRepository: IEventConfigurationRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
     private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
@@ -33,8 +30,7 @@ class FindEventConfigurationsService {
       PermissionDescriptionEnum.EVENT_CONFIGURATION_READ,
     );
 
-    const eventConfigurations = await this.eventConfigurationRepository.find(options);
-    return { message: 'Event configurations found successfully.', data: eventConfigurations };
+    return { message: 'Event configuration found successfully.', data: { configuration: event.configuration } };
   }
 }
 export { FindEventConfigurationsService };

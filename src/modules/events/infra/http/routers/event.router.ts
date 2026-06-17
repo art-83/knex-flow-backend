@@ -22,6 +22,7 @@ eventRouter.post(
       modality: Joi.string()
         .valid(...Object.values(EventModality))
         .optional(),
+      configuration: Joi.object().allow(null).optional(),
       address: Joi.object({
         street: Joi.string().required(),
         number: Joi.string().required(),
@@ -126,20 +127,17 @@ eventRouter.get(
   '/event-configurations',
   celebrate({
     [Segments.QUERY]: Joi.object({
-      id: Joi.string().uuid().optional(),
       event_id: Joi.string().uuid().required(),
-      ...timestampQueryOptionsSchema,
-      ...defaultQueryOptionsSchema,
     }),
   }),
   eventController.findEventConfigurations,
 );
 
 eventRouter.patch(
-  '/event-configurations/:event_configuration_id',
+  '/:event_id/configuration',
   celebrate({
     [Segments.PARAMS]: Joi.object({
-      event_configuration_id: Joi.string().uuid().required(),
+      event_id: Joi.string().uuid().required(),
     }).required(),
     [Segments.BODY]: Joi.object({
       configuration: Joi.object().allow(null).required(),
@@ -149,10 +147,10 @@ eventRouter.patch(
 );
 
 eventRouter.delete(
-  '/event-configurations/:event_configuration_id',
+  '/:event_id/configuration',
   celebrate({
     [Segments.PARAMS]: Joi.object({
-      event_configuration_id: Joi.string().uuid().required(),
+      event_id: Joi.string().uuid().required(),
     }).required(),
   }),
   eventController.deleteEventConfiguration,
@@ -186,6 +184,7 @@ eventRouter.patch(
       description: Joi.string().optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
+      configuration: Joi.object().allow(null).optional(),
     })
       .min(1)
       .required(),

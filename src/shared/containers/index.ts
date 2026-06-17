@@ -30,8 +30,6 @@ import { IBatchRepositoryProvider } from '../../modules/events/infra/orm/reposit
 import { BatchRepository } from '../../modules/events/infra/orm/repositories/implementations/batch-repository.implementation';
 import { IEventActivityRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-repository.provider';
 import { EventActivityRepository } from '../../modules/events/infra/orm/repositories/implementations/event-activity-repository.implementation';
-import { IEventConfigurationRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-configuration-repository.provider';
-import { EventConfigurationRepository } from '../../modules/events/infra/orm/repositories/implementations/event-configuration-repository.implementation';
 import { IOrderRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/order-repository.provider';
 import { OrderRepository } from '../../modules/events/infra/orm/repositories/implementations/order-repository.implementation';
 import { ITicketRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/ticket-repository.provider';
@@ -91,10 +89,6 @@ container.registerSingleton<IBatchRepositoryProvider>('BatchRepositoryProvider',
 container.registerSingleton<IEventActivityRepositoryProvider>(
   'EventActivityRepositoryProvider',
   EventActivityRepository,
-);
-container.registerSingleton<IEventConfigurationRepositoryProvider>(
-  'EventConfigurationRepositoryProvider',
-  EventConfigurationRepository,
 );
 container.registerSingleton<IOrderRepositoryProvider>('OrderRepositoryProvider', OrderRepository);
 container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider', TicketRepository);

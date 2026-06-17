@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
-import { EventConfiguration } from './event-configuration.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
@@ -28,8 +27,8 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   @Column({ type: 'enum', enum: EventModality, default: EventModality.OFFLINE })
   modality: EventModality;
 
-  @OneToOne(() => EventConfiguration, config => config.event)
-  configuration: EventConfiguration;
+  @Column({ type: 'jsonb', nullable: true })
+  configuration: Record<string, any> | null;
 
   @OneToMany(() => Batch, batch => batch.event)
   batches: Batch[];
