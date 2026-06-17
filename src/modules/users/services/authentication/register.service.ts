@@ -6,7 +6,10 @@ import { RegisterDTO } from '../../dtos/auth/register.dto';
 import { LoginResponseDTO } from '../../dtos/auth/login-response.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { validatePasswordStrength } from '../../utils/validate-password-strength';
-import { User } from '../../infra/orm/entities/user.entity';
+import { IProducerProvider } from '../../../../shared/infra/queue/infra/providers/producer.provider';
+import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
+import { bullmqConfig } from '../../../../config/bullmq.config';
+import { WelcomeEmailJobPayloadDTO } from '../../dtos/welcome-email/welcome-email-job-payload.dto';
 
 @injectable()
 class RegisterService {
@@ -17,6 +20,8 @@ class RegisterService {
     private hashProvider: IHashProvider,
     @inject('JwtProvider')
     private jwtProvider: IJwtProvider,
+    @inject('ProducerProvider')
+    private producerProvider: IProducerProvider,
   ) {}
 
   public async execute(data: RegisterDTO): Promise<LoginResponseDTO> {
@@ -45,6 +50,12 @@ class RegisterService {
     const tokenPayload = { user_id: createdUser.id };
     const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
     const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
+
+    await this.producerProvider.createJob(
+      QueueNames.SEND_WELCOME_EMAIL,
+      { user_id: createdUser.id } as WelcomeEmailJobPayloadDTO,
+      bullmqConfig.defaultJobOptions,
+    );
 
     return {
       message: 'Register successful.',

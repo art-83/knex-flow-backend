@@ -62,6 +62,8 @@ import { IFileRepositoryProvider } from '../../modules/files/infra/orm/repositor
 import { FileRepository } from '../../modules/files/infra/orm/repositories/implementations/file-repository.implementation';
 import { IStorageProvider } from '../../modules/files/infra/storage/providers/storage.provider';
 import { MinioStorageImplementation } from '../../modules/files/infra/storage/implementations/minio-storage.implementation';
+import { IMailerProvider } from '../infra/mailer/providers/mailer.provider';
+import { ResendMailerImplementation } from '../infra/mailer/implementations/resend-mailer.implementation';
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
 container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);
@@ -115,3 +117,4 @@ container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider',
 container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);
 container.registerSingleton<IFileRepositoryProvider>('FileRepositoryProvider', FileRepository);
 container.registerSingleton<IStorageProvider>('StorageProvider', MinioStorageImplementation);
+container.registerSingleton<IMailerProvider>('MailerProvider', ResendMailerImplementation);

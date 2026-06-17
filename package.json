@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/shared/http/server.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "worker:payment-processing-queue": "node dist/shared/infra/queue/queue-bootstrap.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -55,6 +55,6 @@
     "socket.io": "^4.8.3",
     "tsyringe": "^4.10.0",
     "typeorm": "^0.3.28",
-    "uuid": "^9.0.1"
+    "uuid": "^11.1.1"
   }
 }

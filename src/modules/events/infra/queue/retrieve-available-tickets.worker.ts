@@ -26,6 +26,7 @@ class RetrieveAvailableTicketsWorker implements IWorkerProvider {
       },
       {
         connection: redisConnection.getConnection(),
+        concurrency: bullmqConfig.defaultWorkerOptions.concurrency,
       },
     );
 

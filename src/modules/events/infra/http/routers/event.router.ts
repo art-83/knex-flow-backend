@@ -123,6 +123,22 @@ eventRouter.delete(
   eventController.deleteEventActivity,
 );
 
+eventRouter.post(
+  '/event-activities/:event_activity_id/invited',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+    }).required(),
+    [Segments.BODY]: Joi.object({
+      name: Joi.string().required(),
+      institution: Joi.string().optional(),
+      profession: Joi.string().optional(),
+      user_id: Joi.string().uuid().optional(),
+    }).required(),
+  }),
+  eventController.createEventInvited,
+);
+
 eventRouter.get(
   '/event-configurations',
   celebrate({

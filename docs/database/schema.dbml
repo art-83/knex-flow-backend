@@ -1,0 +1,271 @@
+// =============================================================================
+// Knex Flow — Database Schema (DBML)
+// =============================================================================
+// Visualize em: https://dbdiagram.io
+//   1. Abra o site
+//   2. Cole o conteúdo deste arquivo no editor
+//   3. O diagrama ER é gerado automaticamente
+//
+// Fonte: entidades TypeORM em src/**/infra/orm/entities/*.entity.ts
+// =============================================================================
+
+Project knex_flow {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Knex Flow Backend
+    IDs: UUID v7 (gerados em @BeforeInsert)
+    Soft delete: deleted_at em todas as tabelas base
+  '''
+}
+
+// --- Enums (documentação; DBML trata como comentário nas colunas) ---
+
+Table users {
+  id uuid [pk, note: 'UUID v7']
+  email varchar [unique, not null]
+  password varchar [not null, note: 'select: false na entidade']
+  phone varchar
+  cpf varchar
+  institution varchar
+  profession varchar
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz [note: 'soft delete']
+}
+
+Table organizations {
+  id uuid [pk]
+  name varchar [not null]
+  configuration jsonb
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table user_organizations {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  organization_id uuid [not null, ref: > organizations.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table permissions {
+  id uuid [pk]
+  description varchar [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table user_permissions {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  organization_id uuid [not null, ref: > organizations.id]
+  permission_id uuid [not null, ref: > permissions.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+
+  indexes {
+    (user_id, organization_id, permission_id) [unique]
+  }
+}
+
+Table organization_roles {
+  id uuid [pk]
+  name varchar [not null]
+  description varchar [not null]
+  organization_id uuid [not null, ref: > organizations.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+
+  indexes {
+    (organization_id, name) [unique]
+  }
+}
+
+Table organization_role_permissions {
+  id uuid [pk]
+  organization_role_id uuid [not null, ref: > organization_roles.id]
+  permission_id uuid [not null, ref: > permissions.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+
+  indexes {
+    (organization_role_id, permission_id) [unique]
+  }
+}
+
+Table files {
+  id uuid [pk]
+  path varchar [unique, not null]
+  mime_type varchar [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table addresses {
+  id uuid [pk]
+  street varchar [not null]
+  number varchar [not null]
+  city varchar [not null]
+  state varchar [not null]
+  country varchar [not null]
+  zip_code varchar [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table events {
+  id uuid [pk]
+  name varchar [not null]
+  description text [not null]
+  organization_id uuid [not null, ref: > organizations.id]
+  start_date timestamptz [not null]
+  end_date timestamptz [not null]
+  modality varchar [not null, default: 'offline', note: 'enum: online | offline']
+  configuration jsonb
+  address_id uuid [ref: > addresses.id, note: 'FK no lado do event (OneToOne)']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table activities {
+  id uuid [pk]
+  name varchar [not null]
+  description text [not null]
+  organization_id uuid [not null, ref: > organizations.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table event_activities {
+  id uuid [pk]
+  hours_to_retrieve integer [note: 'janela em horas para retirar vaga na atividade']
+  max_participants integer [not null]
+  start_date timestamptz [not null]
+  end_date timestamptz [not null]
+  event_id uuid [not null, ref: > events.id]
+  activity_id uuid [not null, ref: > activities.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table batches {
+  id uuid [pk]
+  base_quantity integer [not null]
+  price decimal(10,2) [not null]
+  event_id uuid [not null, ref: > events.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table orders {
+  id uuid [pk]
+  total_amount decimal(10,2) [not null]
+  user_id uuid [not null, ref: > users.id]
+  status varchar [not null, note: 'enum: PENDING|CONFIRMED|EXPIRED|CANCELLED|REFUNDED|DISPUTED']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table tickets {
+  id uuid [pk]
+  batch_id uuid [not null, ref: > batches.id]
+  order_id uuid [ref: > orders.id, note: 'null = disponível para venda']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table event_activity_presences {
+  id uuid [pk]
+  user_presence boolean [not null, default: false]
+  event_activity_id uuid [not null, ref: > event_activities.id]
+  order_id uuid [ref: > orders.id, note: 'null = slot vazio']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table event_activity_invited {
+  id uuid [pk]
+  name varchar [not null]
+  institution varchar
+  profession varchar
+  event_activity_id uuid [not null, ref: > event_activities.id]
+  user_id uuid [ref: > users.id, note: 'opcional — convidado pode ou não ter conta']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table payments {
+  id uuid [pk]
+  provider varchar [not null]
+  amount decimal(10,2) [not null]
+  method varchar [not null, note: 'enum: PIX|CREDIT|DEBIT']
+  status varchar [not null, note: 'enum PaymentStatus']
+  external_id varchar [note: 'ID no gateway (ex: AbacatePay)']
+  refunded_at timestamptz
+  order_id uuid [not null, ref: > orders.id]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table card_informations {
+  id uuid [pk]
+  last4 char(4) [not null]
+  brand varchar
+  exp_month integer [not null]
+  exp_year integer [not null]
+  holder_name varchar
+  payment_id uuid [not null, unique, ref: - payments.id, note: 'OneToOne — FK nesta tabela']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+// Agrupamentos visuais no dbdiagram.io (Table Groups)
+TableGroup users_auth {
+  users
+  organizations
+  user_organizations
+  permissions
+  user_permissions
+  organization_roles
+  organization_role_permissions
+}
+
+TableGroup events {
+  addresses
+  events
+  activities
+  event_activities
+  batches
+  tickets
+  orders
+  event_activity_presences
+  event_activity_invited
+}
+
+TableGroup payments {
+  payments
+  card_informations
+}
+
+TableGroup files {
+  files
+}

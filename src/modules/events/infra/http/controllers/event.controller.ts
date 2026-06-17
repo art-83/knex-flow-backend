@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateEventService } from '../../../services/events/create-event.service';
 import { CreateBatchService } from '../../../services/batches/create-batch-and-tickets.service';
-import { CreateEventActivityService } from '../../../services/activities/create-event-activity-and-event-activity-orders.service';
+import { CreateEventActivityService } from '../../../services/activities/create-event-activity.service';
 import { FindEventsService } from '../../../services/events/find-events.service';
 import { UpdateEventService } from '../../../services/events/update-event.service';
 import { DeleteEventService } from '../../../services/events/delete-event.service';
@@ -15,6 +15,7 @@ import { DeleteEventActivityService } from '../../../services/activities/delete-
 import { FindEventConfigurationsService } from '../../../services/event-configurations/find-event-configurations.service';
 import { UpdateEventConfigurationService } from '../../../services/event-configurations/update-event-configuration.service';
 import { DeleteEventConfigurationService } from '../../../services/event-configurations/delete-event-configuration.service';
+import { CreateEventInvitedService } from '../../../services/activities/create-event-invited.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -94,6 +95,13 @@ class EventController {
     const event_activity_id = String(request.params.event_activity_id);
     const eventActivity = await deleteEventActivityService.execute(request.user_id, event_activity_id);
     return response.json(eventActivity);
+  }
+
+  public async createEventInvited(request: Request, response: Response) {
+    const createEventInvitedService = container.resolve(CreateEventInvitedService);
+    const event_activity_id = String(request.params.event_activity_id);
+    const invited = await createEventInvitedService.execute(request.user_id, event_activity_id, request.body);
+    return response.status(201).json(invited);
   }
 
   public async findEventConfigurations(request: Request, response: Response) {

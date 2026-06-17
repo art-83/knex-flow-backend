@@ -3,6 +3,9 @@ const bullmqConfig = {
     host: String(process.env.BULLMQ_HOST),
     port: Number(process.env.BULLMQ_PORT),
   },
+  defaultWorkerOptions: {
+    concurrency: 1,
+  },
   defaultJobOptions: {
     attempts: 3,
     backoff: {
