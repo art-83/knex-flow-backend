@@ -11,7 +11,6 @@ import { eventPublicRouter } from '../../../../modules/events/infra/http/routers
 import { orderRouter } from '../../../../modules/events/infra/http/routers/order.router';
 import { authorizationRouter } from '../../../../modules/users/infra/http/routers/authorization.router';
 import { fileRouter } from '../../../../modules/files/infra/http/routers/file.router';
-import { mailerRouter } from '../../mailer/http/routers/mailer.router';
 
 const routes = Router();
 
@@ -23,10 +22,6 @@ routes.use('/health', (request, response) => {
 routes.use('/auth', authRouter);
 routes.use('/webhook/', checkoutHooksRouter);
 routes.use('/events', eventPublicRouter);
-
-if (process.env.ENVIRONMENT === 'development') {
-  routes.use('/mailer', mailerRouter);
-}
 
 routes.use(authMiddleware);
 

@@ -5,5 +5,4 @@ function welcomeEmailBodyContent(name: string) {
     <p>Your name is ${name}</p>
     `;
 }
-
 export { welcomeEmailBodyContent };
