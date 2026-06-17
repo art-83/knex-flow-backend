@@ -1,4 +1,4 @@
-# eventflow-new-backend
+# knex-flow-backend
 
 ## Rodando o projeto com Docker
 
@@ -39,7 +39,3 @@ Esse comando sobe:
 
 - Todas as variáveis de ambiente ficam em um único `.env`.
 - Sem o certificado SSL (`src/config/prod-ca-2021.crt`), conexões com banco gerenciado em produção podem falhar.
-
-# knex-flow-backend
-
-# knex-flow-backend

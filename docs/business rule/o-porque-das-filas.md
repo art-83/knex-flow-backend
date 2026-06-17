@@ -4,7 +4,7 @@
 
 Em venda de ingressos com pagamento online, varias pessoas e processos automatizados podem alterar o **mesmo recurso ao mesmo tempo** (ultimo ticket, pedido pendente, status de pagamento). Sem coordenacao, o sistema entra em **race condition** — condicao de corrida — e passa a tomar decisoes com base em um estado que ja nao e mais verdadeiro.
 
-As filas (BullMQ + Redis no Eventflow) existem para:
+As filas (BullMQ + Redis no Knex Flow) existem para:
 
 1. **Desacoplar** operacoes sensiveis do caminho sincrono (WebSocket / HTTP).
 2. **Serializar ou limitar** o processamento de tarefas concorrentes quando configurado.
@@ -26,11 +26,11 @@ Padrao classico — **TOCTOU** (_time-of-check to time-of-use_):
 3. Processo A **usa** o recurso (reserva).
 4. Processo B **usa** o recurso (reserva de novo) → inconsistencia.
 
-No Eventflow, o recurso disputado costuma ser um **ticket sem pedido** (`order_id` nulo) ou um **pedido** em transicao de status.
+No Knex Flow, o recurso disputado costuma ser um **ticket sem pedido** (`order_id` nulo) ou um **pedido** em transicao de status.
 
 ---
 
-## Onde isso aparece no fluxo do Eventflow
+## Onde isso aparece no fluxo do Knex Flow
 
 ```text
 [Cliente] --WebSocket--> [API] --enfileira--> [Redis / BullMQ]

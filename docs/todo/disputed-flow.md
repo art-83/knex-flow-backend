@@ -1,6 +1,6 @@
 # Fluxo DISPUTED
 
-Mapeamento do fluxo de disputa financeira (chargeback / contestação) no Eventflow: regra de negócio, modelo de estados e implementação atual no código.
+Mapeamento do fluxo de disputa financeira (chargeback / contestação) no Knex Flow: regra de negócio, modelo de estados e implementação atual no código.
 
 **Referência:** [order-status.md](../business%20rule/order-status.md)
 

@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Eventflow API",
+    "name": "Knex Flow API",
     "description": "Aligned with current backend routes. Login/Register test scripts store tokens in collection variables and, when present, in the active environment (token, refreshToken).\n\nSecurity: use HTTPS for non-local baseUrl. Do not commit real production URLs or tokens.\n\nJunction tables (user-permissions, organization-role-permissions) have no PATCH; use DELETE then POST to change links.\n\nWebhook paths are registered after auth middleware: they expect the same Bearer token as the rest of the API (manual testing only until a public webhook route exists).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

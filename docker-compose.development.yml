@@ -1,7 +1,7 @@
 services:
   redis:
     image: redis:7-alpine
-    container_name: eventflow-redis
+    container_name: knex-flow-redis
     restart: always
     ports:
       - '6379:6379'
@@ -16,7 +16,7 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: eventflow-database
+    container_name: knex-flow-database
     restart: always
     env_file:
       - .env
@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: eventflow-app
+    container_name: knex-flow-app
     restart: always
     stop_grace_period: 60s
     stop_signal: SIGTERM
@@ -54,7 +54,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: eventflow-pgadmin
+    container_name: knex-flow-pgadmin
     env_file:
       - .env
     ports:

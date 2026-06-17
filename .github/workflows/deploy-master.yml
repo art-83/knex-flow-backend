@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  APP_DIR: /opt/eventflow-new-backend
-  BACKUP_DIR: /opt/eventflow-new-backend_backup_latest
+  APP_DIR: /opt/knex-flow-backend
+  BACKUP_DIR: /opt/knex-flow-backend_backup_latest
   HEALTHCHECK_URL: http://localhost:3000/health
   SSH_TARGET: ${{ secrets.SERVER_ROOT_USER }}@${{ secrets.SERVER_IPV4 }}
 
