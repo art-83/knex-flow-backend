@@ -140,6 +140,26 @@ eventRouter.post(
 );
 
 eventRouter.get(
+  '/invited/:invited_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      invited_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.findEventInvitedById,
+);
+
+eventRouter.delete(
+  '/invited/:invited_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      invited_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.deleteEventInvited,
+);
+
+eventRouter.get(
   '/event-configurations',
   celebrate({
     [Segments.QUERY]: Joi.object({
@@ -170,6 +190,16 @@ eventRouter.delete(
     }).required(),
   }),
   eventController.deleteEventConfiguration,
+);
+
+eventRouter.get(
+  '/:event_id/invited',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.findEventInvited,
 );
 
 eventRouter.post(

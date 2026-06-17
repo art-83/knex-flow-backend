@@ -16,6 +16,9 @@ import { FindEventConfigurationsService } from '../../../services/event-configur
 import { UpdateEventConfigurationService } from '../../../services/event-configurations/update-event-configuration.service';
 import { DeleteEventConfigurationService } from '../../../services/event-configurations/delete-event-configuration.service';
 import { CreateEventInvitedService } from '../../../services/activities/create-event-invited.service';
+import { FindEventInvitedService } from '../../../services/activities/find-event-invited.service';
+import { FindEventInvitedByIdService } from '../../../services/activities/find-event-invited-by-id.service';
+import { DeleteEventInvitedService } from '../../../services/activities/delete-event-invited.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -102,6 +105,27 @@ class EventController {
     const event_activity_id = String(request.params.event_activity_id);
     const invited = await createEventInvitedService.execute(request.user_id, event_activity_id, request.body);
     return response.status(201).json(invited);
+  }
+
+  public async findEventInvited(request: Request, response: Response) {
+    const findEventInvitedService = container.resolve(FindEventInvitedService);
+    const event_id = String(request.params.event_id);
+    const invited = await findEventInvitedService.execute(request.user_id, event_id);
+    return response.json(invited);
+  }
+
+  public async findEventInvitedById(request: Request, response: Response) {
+    const findEventInvitedByIdService = container.resolve(FindEventInvitedByIdService);
+    const invited_id = String(request.params.invited_id);
+    const invited = await findEventInvitedByIdService.execute(request.user_id, invited_id);
+    return response.json(invited);
+  }
+
+  public async deleteEventInvited(request: Request, response: Response) {
+    const deleteEventInvitedService = container.resolve(DeleteEventInvitedService);
+    const invited_id = String(request.params.invited_id);
+    const result = await deleteEventInvitedService.execute(request.user_id, invited_id);
+    return response.json(result);
   }
 
   public async findEventConfigurations(request: Request, response: Response) {
