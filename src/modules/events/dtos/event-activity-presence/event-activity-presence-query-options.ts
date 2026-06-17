@@ -4,5 +4,6 @@ import { EventActivityPresence } from '../../infra/orm/entities/event-activity-p
 interface EventActivityPresenceQueryOptions extends EventActivityPresence, DefaultQueryOptionsDTO {
   event_activity_id: string;
   order_id: string;
+  user_id: string;
 }
 export { EventActivityPresenceQueryOptions };

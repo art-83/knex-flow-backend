@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { injectable } from 'tsyringe';
 
-import { discordConfig } from '../../../config/discord.config';
-import { DiscordErrorWebhookJobPayloadDTO } from '../dtos/discord-error-webhook/discord-error-webhook-job-payload.dto';
+import { discordConfig } from '../../../../config/discord.config';
+import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/discord-error-webhook/discord-error-webhook-job-payload.dto';
 
 @injectable()
 class SendDiscordErrorWebhookService {

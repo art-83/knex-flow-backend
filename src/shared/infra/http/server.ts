@@ -6,6 +6,7 @@ import { dataSource } from '../orm/database';
 import { IProducerProvider } from '../queue/infra/providers/producer.provider';
 import { IRedisConnectionProvider } from '../queue/infra/providers/redis-connection.provider';
 import { closeWorkers, initializeWorkers } from '../queue/workers-bootstrap';
+import { scheduleRepeatableJobs } from '../queue/schedule-repeatable-jobs';
 import { routes } from './routes';
 import { SyncPermissionsService } from '../../../modules/users/services/permissions/sync-permissions.service';
 import cors from 'cors';
@@ -35,6 +36,7 @@ async function main() {
   const webSocketProvider = container.resolve<IWebSocketProvider>('WebSocketProvider');
   await webSocketProvider.initialize(server);
   const workers = await initializeWorkers();
+  await scheduleRepeatableJobs();
 
   const shutdownResources = async (): Promise<void> => {
     await closeWorkers(workers);

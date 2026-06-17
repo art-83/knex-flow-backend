@@ -64,6 +64,9 @@ import { IStorageProvider } from '../../modules/files/infra/storage/providers/st
 import { MinioStorageImplementation } from '../../modules/files/infra/storage/implementations/minio-storage.implementation';
 import { IMailerProvider } from '../infra/mailer/providers/mailer.provider';
 import { ResendMailerImplementation } from '../infra/mailer/implementations/resend-mailer.implementation';
+import { IQRCodeProvider } from '../infra/qr-code/providers/qr-code.provider';
+import { QrcodeLibStrategyImplementation } from '../infra/qr-code/implementations/qrcode-lib-strategy.implementation';
+import { PresenceQRPayloadDTO } from '../infra/qr-code/dtos/presence-qr-payload.dto';
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
 container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);
@@ -118,3 +121,4 @@ container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketIm
 container.registerSingleton<IFileRepositoryProvider>('FileRepositoryProvider', FileRepository);
 container.registerSingleton<IStorageProvider>('StorageProvider', MinioStorageImplementation);
 container.registerSingleton<IMailerProvider>('MailerProvider', ResendMailerImplementation);
+container.registerSingleton<IQRCodeProvider<PresenceQRPayloadDTO>>('QRCodeProvider', QrcodeLibStrategyImplementation);

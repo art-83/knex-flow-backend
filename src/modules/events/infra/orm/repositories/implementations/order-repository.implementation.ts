@@ -15,6 +15,9 @@ class OrderRepository implements IOrderRepositoryProvider {
     const query = this.repository.createQueryBuilder('order');
 
     query.leftJoinAndSelect('order.user', 'user');
+    query.leftJoinAndSelect('order.tickets', 'ticket');
+    query.leftJoinAndSelect('ticket.batch', 'batch');
+    query.leftJoinAndSelect('batch.event', 'event');
 
     if (data.id) query.andWhere('order.id = :id', { id: data.id });
 
@@ -25,11 +28,8 @@ class OrderRepository implements IOrderRepositoryProvider {
     if (data.status) query.andWhere('order.status = :status', { status: data.status });
 
     if (data.event_id) {
-      query
-        .innerJoin('order.tickets', 'ticket')
-        .innerJoin('ticket.batch', 'batch')
-        .andWhere('batch.event_id = :event_id', { event_id: data.event_id })
-        .distinct(true);
+      query.andWhere('batch.event_id = :event_id', { event_id: data.event_id });
+      query.distinct(true);
     }
 
     if (data.created_at) query.andWhere('order.created_at = :created_at', { created_at: data.created_at });

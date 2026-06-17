@@ -7,20 +7,19 @@ import { bullmqConfig } from '../../../../config/bullmq.config';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
 import { IRedisConnectionProvider } from '../../../../shared/infra/queue/infra/providers/redis-connection.provider';
-import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/discord-error-webhook/discord-error-webhook-job-payload.dto';
-import { SendDiscordErrorWebhookService } from '../../services/discord-webhooks/send-discord-error-webhook.service';
+import { ExpirePendingOrdersService } from '../../services/orders/expire-pending-orders.service';
 
-class DiscordErrorWebhookWorker implements IWorkerProvider {
-  private worker: Worker<DiscordErrorWebhookJobPayloadDTO>;
+class ExpirePendingOrdersWorker implements IWorkerProvider {
+  private worker: Worker<Record<string, never>>;
 
   public async initialize(): Promise<void> {
     const redisConnection = container.resolve<IRedisConnectionProvider>('RedisConnectionProvider');
 
-    this.worker = new Worker<DiscordErrorWebhookJobPayloadDTO>(
-      QueueNames.DISCORD_ERROR_WEBHOOK,
-      async job => {
-        const service = container.resolve(SendDiscordErrorWebhookService);
-        return service.execute(job.data);
+    this.worker = new Worker<Record<string, never>>(
+      QueueNames.EXPIRE_PENDING_ORDERS,
+      async () => {
+        const service = container.resolve(ExpirePendingOrdersService);
+        return service.execute();
       },
       {
         connection: redisConnection.getConnection(),
@@ -28,16 +27,16 @@ class DiscordErrorWebhookWorker implements IWorkerProvider {
       },
     );
 
-    this.worker.on('completed', job => {
-      console.log(`[worker:discord-error-webhook] completed job ${job.id}`);
+    this.worker.on('completed', (job, result) => {
+      console.log(`[worker:expire-pending-orders] completed job ${job.id} (expired=${result?.expired_count ?? 0})`);
     });
 
     this.worker.on('failed', (job, error) => {
-      console.log(`[worker:discord-error-webhook] failed job ${job?.id ?? 'unknown'}: ${error.message}`);
+      console.log(`[worker:expire-pending-orders] failed job ${job?.id ?? 'unknown'}: ${error.message}`);
     });
 
     this.worker.on('error', error => {
-      console.error('[worker:discord-error-webhook] error:', error);
+      console.error('[worker:expire-pending-orders] error:', error);
     });
 
     await this.worker.waitUntilReady();
@@ -47,4 +46,4 @@ class DiscordErrorWebhookWorker implements IWorkerProvider {
     await this.worker.close();
   }
 }
-export { DiscordErrorWebhookWorker };
+export { ExpirePendingOrdersWorker };

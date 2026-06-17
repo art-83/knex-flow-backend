@@ -15,6 +15,7 @@ class UserOrganizationRepository implements IUserOrganizationRepositoryProvider 
     const query = this.repository.createQueryBuilder('userOrganization');
 
     query.leftJoinAndSelect('userOrganization.organization', 'organization');
+    query.leftJoinAndSelect('userOrganization.user', 'user');
 
     if (data.id) query.andWhere('userOrganization.id = :id', { id: data.id });
     if (data.user_id) query.andWhere('userOrganization.user_id = :user_id', { user_id: data.user_id });

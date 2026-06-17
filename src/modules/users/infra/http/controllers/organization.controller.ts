@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { CreateActivityService } from '../../../services/organizations/create-activitity.service';
+import { CreateActivityService } from '../../../services/activities/create-activitity.service';
 import { FindActivitiesService } from '../../../../events/services/activities/find-activities.service';
 import { UpdateActivityService } from '../../../../events/services/activities/update-activity.service';
 import { DeleteActivityService } from '../../../../events/services/activities/delete-activity.service';

@@ -10,6 +10,21 @@ import { EventModality } from '../../orm/enums/event-modality.enum';
 const eventRouter = Router();
 const eventController = new EventController();
 
+eventRouter.get(
+  '/',
+  celebrate({
+    [Segments.QUERY]: Joi.object({
+      id: Joi.string().uuid().optional(),
+      name: Joi.string().optional(),
+      description: Joi.string().optional(),
+      organization_id: Joi.string().uuid().required(),
+      ...timestampQueryOptionsSchema,
+      ...defaultQueryOptionsSchema,
+    }),
+  }),
+  eventController.findEvents,
+);
+
 eventRouter.post(
   '/',
   celebrate({
@@ -79,6 +94,16 @@ eventRouter.get(
   eventController.findBatches,
 );
 
+eventRouter.delete(
+  '/batches/:batch_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      batch_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.deleteBatch,
+);
+
 eventRouter.get(
   '/event-activities',
   celebrate({
@@ -137,6 +162,58 @@ eventRouter.post(
     }).required(),
   }),
   eventController.createEventInvited,
+);
+
+eventRouter.get(
+  '/event-activities/:event_activity_id/invited',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.findEventInvitedByEventActivity,
+);
+
+eventRouter.get(
+  '/event-activities/:event_activity_id/presence/qr-code',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.generatePresenceQRCode,
+);
+
+eventRouter.post(
+  '/event-activities/:event_activity_id/presence/validate',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+    }).required(),
+    [Segments.BODY]: Joi.object({
+      qr_code: Joi.string().required(),
+    }).required(),
+  }),
+  eventController.validatePresenceQRCode,
+);
+
+eventRouter.patch(
+  '/event-activities/:event_activity_id/invited/:invited_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+      invited_id: Joi.string().uuid().required(),
+    }).required(),
+    [Segments.BODY]: Joi.object({
+      name: Joi.string().optional(),
+      institution: Joi.string().optional().allow(null),
+      profession: Joi.string().optional().allow(null),
+      user_id: Joi.string().uuid().optional().allow(null),
+    })
+      .min(1)
+      .required(),
+  }),
+  eventController.updateEventInvited,
 );
 
 eventRouter.get(

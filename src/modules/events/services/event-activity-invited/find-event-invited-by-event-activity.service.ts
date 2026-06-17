@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
+import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
@@ -7,10 +7,14 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
+import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
 
 @injectable()
-class FindEventActivitiesService {
+class FindEventInvitedByEventActivityService {
   constructor(
+    @inject('EventActivityInvitedRepositoryProvider')
+    private eventActivityInvitedRepository: IEventActivityInvitedRepositoryProvider,
     @inject('EventActivityRepositoryProvider')
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
@@ -23,12 +27,14 @@ class FindEventActivitiesService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, options: Partial<EventActivityQueryOptions>) {
-    if (!options.event_id) {
-      throw new AppError(400, 'event_id is required.', 'event_id e obrigatorio.');
+  public async execute(user_id: string, event_activity_id: string) {
+    const eventActivity = (await this.eventActivityRepository.find({ id: event_activity_id })).at(0);
+
+    if (!eventActivity) {
+      throw new AppError(404, 'Event activity not found.', 'Atividade de evento nao encontrada.');
     }
 
-    const event = (await this.eventRepository.find({ id: options.event_id })).at(0);
+    const event = (await this.eventRepository.find({ id: eventActivity.event.id })).at(0);
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
@@ -70,8 +76,25 @@ class FindEventActivitiesService {
       );
     }
 
-    const eventActivities = await this.eventActivityRepository.find(options);
-    return { message: 'Event activities found successfully.', data: eventActivities };
+    const invited = await this.eventActivityInvitedRepository.find({
+      event_activity_id,
+    } as Partial<EventActivityInvitedQueryOptions>);
+
+    return {
+      message: 'Event invited found successfully.',
+      data: invited.map(item => this.mapInvited(item)),
+    };
+  }
+
+  private mapInvited(invited: EventActivityInvited) {
+    return {
+      id: invited.id,
+      event_activity_id: invited.event_activity.id,
+      name: invited.name,
+      institution: invited.institution,
+      profession: invited.profession,
+      user_id: invited.user?.id ?? null,
+    };
   }
 }
-export { FindEventActivitiesService };
+export { FindEventInvitedByEventActivityService };

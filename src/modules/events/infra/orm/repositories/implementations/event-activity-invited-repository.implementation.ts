@@ -15,6 +15,7 @@ class EventActivityInvitedRepository implements IEventActivityInvitedRepositoryP
     const query = this.repository.createQueryBuilder('event_activity_invited');
 
     query.leftJoinAndSelect('event_activity_invited.event_activity', 'event_activity');
+    query.leftJoinAndSelect('event_activity.event', 'event');
     query.leftJoinAndSelect('event_activity_invited.user', 'user');
 
     if (data.id) query.andWhere('event_activity_invited.id = :id', { id: data.id });

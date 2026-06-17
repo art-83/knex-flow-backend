@@ -150,13 +150,13 @@ Pré-requisito: usuário com permissões na organização (`event:create`, `batc
 
 | Capacidade                                                 | Situação                             |
 | ---------------------------------------------------------- | ------------------------------------ |
-| Criar organização via API                                  | Ausente                              |
+| Criar organização via API                                  | Ausente (SQL manual no piloto)       |
 | Convidar/adicionar membro à organização                    | Ausente                              |
-| CRUD de convidados de atividade (`event_activity_invited`) | Service existe, sem rota             |
+| CRUD de convidados de atividade (`event_activity_invited`) | Implementado                         |
 | Vincular pedido confirmado a slot de presença              | Ausente                              |
 | Check-in (`user_presence = true`)                          | Ausente                              |
 | Lógica de `hours_to_retrieve`                              | Campo persistido, sem automação      |
-| Expirar pedido/PIX e liberar ticket                        | Status existem, sem job/cron         |
+| Expirar pedido/PIX e liberar ticket                        | Job BullMQ `expire-pending-orders`   |
 | Pagamento cartão (CREDIT/DEBIT)                            | Enum e entidade existem, gateway não |
 | Webhooks refunded/disputed/lost                            | Stub                                 |
 | Testes E2E/unitários                                       | Ausente                              |

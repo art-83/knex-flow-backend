@@ -7,12 +7,6 @@ Rotas abaixo de **Autenticadas** exigem header `Authorization: Bearer <access_to
 
 ## Públicas (sem JWT)
 
-### Health
-
-| Método | Rota      | Descrição                  |
-| ------ | --------- | -------------------------- |
-| GET    | `/health` | Health check com timestamp |
-
 ### Autenticação — `/auth`
 
 | Método | Rota             | Body                  | Descrição           |
@@ -21,21 +15,23 @@ Rotas abaixo de **Autenticadas** exigem header `Authorization: Bearer <access_to
 | POST   | `/auth/login`    | `{ email, password }` | Login + tokens      |
 | POST   | `/auth/refresh`  | `{ refreshToken }`    | Renova access token |
 
-### Eventos públicos — `/events`
-
-| Método | Rota      | Query                                         | Descrição                                                                  |
-| ------ | --------- | --------------------------------------------- | -------------------------------------------------------------------------- |
-| GET    | `/events` | `organization_id` (obrig.), filtros opcionais | Lista eventos com atividades, convidados e contagem de tickets disponíveis |
-
 ### Webhooks — `/webhook`
 
 | Método | Rota                  | Descrição                                                |
 | ------ | --------------------- | -------------------------------------------------------- |
 | POST   | `/webhook/abacatepay` | Webhook AbacatePay (header validado). Roteia por `event` |
 
+> Demais rotas exigem `Authorization: Bearer <access_token>`.
+
 ---
 
 ## Autenticadas
+
+### Health
+
+| Método | Rota      | Descrição    |
+| ------ | --------- | ------------ |
+| GET    | `/health` | Health check |
 
 ### Usuário — `/users`
 
@@ -81,18 +77,25 @@ Rotas abaixo de **Autenticadas** exigem header `Authorization: Bearer <access_to
 
 ### Eventos (gestão) — `/events`
 
-| Método | Rota                                          | Descrição                                 |
-| ------ | --------------------------------------------- | ----------------------------------------- |
-| POST   | `/events`                                     | Cria evento (+ endereço opcional)         |
-| PATCH  | `/events/:event_id`                           | Atualiza evento                           |
-| DELETE | `/events/:event_id`                           | Soft delete                               |
-| POST   | `/events/:event_id/activity`                  | Cria `event_activity` + slots de presença |
-| GET    | `/events/event-activities`                    | Lista (`event_id` obrig.)                 |
-| PATCH  | `/events/event-activities/:event_activity_id` | Atualiza programação                      |
-| DELETE | `/events/event-activities/:event_activity_id` | Remove                                    |
-| GET    | `/events/event-configurations`                | Lê `configuration` do evento              |
-| PATCH  | `/events/:event_id/configuration`             | Atualiza `configuration` (jsonb)          |
-| DELETE | `/events/:event_id/configuration`             | Limpa configuração                        |
+| Método | Rota                                                              | Descrição                                                     |
+| ------ | ----------------------------------------------------------------- | ------------------------------------------------------------- |
+| GET    | `/events`                                                         | Lista eventos (`organization_id` obrig., `events:read`)       |
+| POST   | `/events`                                                         | Cria evento (+ endereço opcional)                             |
+| PATCH  | `/events/:event_id`                                               | Atualiza evento                                               |
+| DELETE | `/events/:event_id`                                               | Soft delete                                                   |
+| POST   | `/events/:event_id/activity`                                      | Cria `event_activity` + slots de presença                     |
+| GET    | `/events/event-activities`                                        | Lista programação (`event_id` obrig., inclui `activity.name`) |
+| PATCH  | `/events/event-activities/:event_activity_id`                     | Atualiza programação                                          |
+| DELETE | `/events/event-activities/:event_activity_id`                     | Remove                                                        |
+| POST   | `/events/event-activities/:event_activity_id/invited`             | Cria convidado                                                |
+| GET    | `/events/event-activities/:event_activity_id/invited`             | Lista convidados da atividade                                 |
+| PATCH  | `/events/event-activities/:event_activity_id/invited/:invited_id` | Atualiza convidado                                            |
+| GET    | `/events/:event_id/invited`                                       | Lista convidados do evento                                    |
+| GET    | `/events/invited/:invited_id`                                     | Busca convidado por id                                        |
+| DELETE | `/events/invited/:invited_id`                                     | Remove convidado                                              |
+| GET    | `/events/event-configurations`                                    | Lê `configuration` do evento                                  |
+| PATCH  | `/events/:event_id/configuration`                                 | Atualiza `configuration` (jsonb)                              |
+| DELETE | `/events/:event_id/configuration`                                 | Limpa configuração                                            |
 
 ### Lotes — `/events/batches`
 
@@ -105,9 +108,9 @@ Rotas abaixo de **Autenticadas** exigem header `Authorization: Bearer <access_to
 
 ### Pedidos — `/orders`
 
-| Método | Rota      | Descrição                                                |
-| ------ | --------- | -------------------------------------------------------- |
-| GET    | `/orders` | Lista pedidos do usuário autenticado (filtros opcionais) |
+| Método | Rota      | Descrição                                       |
+| ------ | --------- | ----------------------------------------------- |
+| GET    | `/orders` | Lista pedidos do usuário com `ticket` e `event` |
 
 > **Ausente:** cancelar pedido, detalhe por id, endpoint admin.
 
@@ -170,15 +173,7 @@ Mesma origem/porta do HTTP. Autenticação via `handshake.auth.token = "Bearer <
 3. Aguardar webhook ou simulação em dev
 4. `GET /orders` ou `GET /payments/:id` para confirmar status
 
----
-
-## Serviços sem exposição HTTP
-
-Existem no código mas **não têm rota**:
-
-| Service                     | Arquivo                                           |
-| --------------------------- | ------------------------------------------------- |
-| `CreateEventInvitedService` | `services/events/create-event-invited.service.ts` |
+Pedidos `PENDING` expiram após `ORDER_PENDING_TTL_MINUTES` (job BullMQ `expire-pending-orders`).
 
 ---
 
@@ -194,8 +189,8 @@ Existem no código mas **não têm rota**:
 | Entrar na organização   | —                               | ❌     |
 | Catálogo de atividades  | `/organizations/.../activities` | ✅     |
 | CRUD eventos            | `/events`                       | ✅     |
-| Vender ingressos        | WebSocket + `/payments`         | ⚠️     |
+| Vender ingressos        | WebSocket + `/payments`         | ✅     |
 | Listar meus pedidos     | `GET /orders`                   | ✅     |
-| Convidados de atividade | —                               | ❌     |
+| Convidados de atividade | `/events/.../invited`           | ✅     |
 | Check-in / presença     | —                               | ❌     |
 | Upload de mídia         | `POST /files`                   | ✅     |

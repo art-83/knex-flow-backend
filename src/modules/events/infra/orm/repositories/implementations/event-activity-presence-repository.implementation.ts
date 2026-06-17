@@ -14,6 +14,15 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
   public async find(data: Partial<EventActivityPresenceQueryOptions>): Promise<EventActivityPresence[]> {
     const query = this.repository.createQueryBuilder('event_activity_presence');
 
+    if (data.user_id) {
+      query.innerJoinAndSelect('event_activity_presence.order', 'order');
+      query.andWhere('order.user_id = :user_id', { user_id: data.user_id });
+      query.andWhere('event_activity_presence.order_id IS NOT NULL');
+    } else if (data.id) {
+      query.leftJoinAndSelect('event_activity_presence.order', 'order');
+      query.leftJoinAndSelect('order.user', 'user');
+    }
+
     if (data.id) query.andWhere('event_activity_presence.id = :id', { id: data.id });
 
     if (data.event_activity_id) {

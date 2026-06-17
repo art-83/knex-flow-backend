@@ -103,10 +103,10 @@ Legenda: ✅ pronto · ⚠️ parcial
 
 ### Convidados
 
-| Capacidade                       | Status | Observação                              |
-| -------------------------------- | ------ | --------------------------------------- |
-| Exibir convidados na vitrine     | ✅     | `FindEventsService` já inclui `invited` |
-| Cadastrar / gerenciar convidados | ❌     | Service existe, **sem rotas HTTP**      |
+| Capacidade                       | Status | Observação                                  |
+| -------------------------------- | ------ | ------------------------------------------- |
+| Exibir convidados na vitrine     | ✅     | `FindEventsService` inclui `invited`        |
+| Cadastrar / gerenciar convidados | ✅     | CRUD HTTP (`events:read` / `events:manage`) |
 
 ---
 
@@ -114,28 +114,21 @@ Legenda: ✅ pronto · ⚠️ parcial
 
 ### P0 — bloqueia o mínimo
 
-| #     | Gap                         | Situação                                                                | Ação                                   |
-| ----- | --------------------------- | ----------------------------------------------------------------------- | -------------------------------------- |
-| **1** | **API de convidados**       | `CreateEventInvitedService` sem rota; sem find/update/delete            | Rotas + services (ver abaixo)          |
-| **2** | **Bug no create convidado** | `user_id` busca por id de `event_activity_invited` em vez de `users.id` | Corrigir vínculo opcional com `User`   |
-| **3** | **DTO de convidado**        | `user_id` obrigatório no DTO                                            | `user_id` opcional; `name` obrigatório |
-
-**Rotas sugeridas:**
-
-| Método | Rota                                                      | Permissão              |
-| ------ | --------------------------------------------------------- | ---------------------- |
-| POST   | `/events/event-activities/:event_activity_id/invited`     | `event_invited:create` |
-| GET    | `/events/event-activities/:event_activity_id/invited`     | `event_invited:read`   |
-| PATCH  | `/events/event-activities/:event_activity_id/invited/:id` | `event_invited:update` |
-| DELETE | `/events/event-activities/:event_activity_id/invited/:id` | `event_invited:delete` |
+**Concluído** (Fase A).
 
 ### P1 — qualidade do mínimo (demo ok; piloto precisa)
 
-| #     | Gap                                   | Por quê importa                                                                    |
-| ----- | ------------------------------------- | ---------------------------------------------------------------------------------- |
-| **4** | **Pedidos com contexto do ingresso**  | `GET /orders` sem `tickets` → evento. Front não monta “seu ingresso do evento X”   |
-| **5** | **Expiração de pedido/PIX**           | `PENDING` segura ticket indefinidamente                                            |
-| **6** | **Programação com nome da atividade** | `GET /events/event-activities` sem `activity.name` — útil no painel do organizador |
+| #     | Gap                                   | Status |
+| ----- | ------------------------------------- | ------ |
+| **4** | **Pedidos com contexto do ingresso**  | ✅     |
+| **5** | **Expiração de pedido/PIX**           | ✅     |
+| **6** | **Programação com nome da atividade** | ✅     |
+
+### Pendente
+
+| Item       | Descrição                                             |
+| ---------- | ----------------------------------------------------- |
+| **Fase C** | Validação manual ponta a ponta (ver checklist abaixo) |
 
 ### Fora deste plano (registrado)
 
@@ -233,21 +226,13 @@ IDs de `permissions` vêm da tabela `permissions` após `SyncPermissionsService`
 
 ## Resumo
 
-| Área                      | Pronto                | Falta para o mínimo                                   |
-| ------------------------- | --------------------- | ----------------------------------------------------- |
-| Criar e configurar evento | ✅                    | —                                                     |
-| Programar atividades      | ✅                    | Nome da activity no GET (nice-to-have)                |
-| Um lote por evento        | ✅                    | Disciplina operacional: não abrir 2º lote em paralelo |
-| Convidados                | ⚠️ só leitura pública | CRUD HTTP + corrigir service/DTO                      |
-| Compra PIX                | ✅                    | Com um lote, fluxo atual (`event_id`) basta           |
-| Pós-compra                | ⚠️                    | Orders com ticket/evento; expiração                   |
+| Área                      | Pronto | Falta para o mínimo                                   |
+| ------------------------- | ------ | ----------------------------------------------------- |
+| Criar e configurar evento | ✅     | —                                                     |
+| Programar atividades      | ✅     | Nome da activity no GET (nice-to-have)                |
+| Um lote por evento        | ✅     | Disciplina operacional: não abrir 2º lote em paralelo |
+| Convidados                | ✅     | CRUD HTTP completo                                    |
+| Compra PIX                | ✅     | Com um lote, fluxo atual (`event_id`) basta           |
+| Pós-compra                | ✅     | Orders com ticket/evento; expiração automática        |
 
-**Trabalho crítico:** Fase A (convidados). Compra e lote já cobrem o escopo sem lotes simultâneos.
-
----
-
-## Próximos passos imediatos
-
-1. Implementar **Fase A** (convidados)
-2. Validar fluxo manual (organizador → vitrine → compra → orders)
-3. **Fase B** antes de tráfego real prolongado (expiração + orders enriquecidos)
+**Próximo passo:** Fase C — validação manual com [bootstrap.sql](../bootstrap.sql).

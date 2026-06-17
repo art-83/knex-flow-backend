@@ -2,10 +2,10 @@ import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { AuthController } from '../controllers/auth.controller';
 
-const authRouter = Router();
+const authPublicRouter = Router();
 const authController = new AuthController();
 
-authRouter.post(
+authPublicRouter.post(
   '/login',
   celebrate({
     [Segments.BODY]: Joi.object({
@@ -16,7 +16,7 @@ authRouter.post(
   (request, response) => authController.login(request, response),
 );
 
-authRouter.post(
+authPublicRouter.post(
   '/register',
   celebrate({
     [Segments.BODY]: Joi.object({
@@ -27,7 +27,7 @@ authRouter.post(
   (request, response) => authController.register(request, response),
 );
 
-authRouter.post(
+authPublicRouter.post(
   '/refresh',
   celebrate({
     [Segments.BODY]: Joi.object({
@@ -36,4 +36,4 @@ authRouter.post(
   }),
   (request, response) => authController.refresh(request, response),
 );
-export { authRouter };
+export { authPublicRouter };

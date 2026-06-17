@@ -9,6 +9,7 @@ Documentação do **estado atual** da aplicação: o que ela faz hoje, como os f
 | [Visão geral](./overview.md)            | O que é o produto, stack, módulos e fluxos implementados |
 | [Inventário de API](./api-inventory.md) | Rotas HTTP e WebSocket disponíveis                       |
 | [Gap para MVP](./mvp-gap.md)            | O que falta, priorizado, para fechar um MVP funcional    |
+| [Bootstrap SQL](./bootstrap.sql)        | Template SQL para org + permissões no piloto             |
 
 ## Documentação relacionada
 
@@ -25,18 +26,18 @@ O Knex Flow Backend é uma API de **gestão e venda de ingressos para eventos**,
 
 ## Status por área
 
-| Área                   | Status              | Nota                                                     |
-| ---------------------- | ------------------- | -------------------------------------------------------- |
-| Autenticação           | ✅ Implementado     | Register, login, refresh, JWT                            |
-| Organizações           | ⚠️ Parcial          | Sem CRUD de org nem membership via API                   |
-| Autorização            | ✅ Implementado     | Permissões, roles, guards por org                        |
-| Catálogo de atividades | ✅ Implementado     | CRUD em `/organizations/.../activities`                  |
-| Eventos                | ✅ Implementado     | CRUD, config JSONB, lotes, programação                   |
-| Venda de ingressos     | ⚠️ Parcial          | WebSocket + fila + PIX; sem expiração/idempotência forte |
-| Pagamentos             | ⚠️ Parcial          | PIX + webhook `completed`; outros webhooks são stub      |
-| Dia do evento          | ❌ Não implementado | Presença, check-in, convidados sem rota                  |
-| Arquivos               | ✅ Implementado     | Upload MinIO                                             |
-| Testes automatizados   | ❌ Não implementado | `npm test` é placeholder                                 |
-| Migrations             | ❌ Não implementado | `DB_SYNCHRONIZE=true` em dev                             |
+| Área                   | Status              | Nota                                                |
+| ---------------------- | ------------------- | --------------------------------------------------- |
+| Autenticação           | ✅ Implementado     | Register, login, refresh, JWT                       |
+| Organizações           | ⚠️ Parcial          | Sem CRUD de org nem membership via API              |
+| Autorização            | ✅ Implementado     | Permissões, roles, guards por org                   |
+| Catálogo de atividades | ✅ Implementado     | CRUD em `/organizations/.../activities`             |
+| Eventos                | ✅ Implementado     | CRUD, config JSONB, lotes, programação              |
+| Venda de ingressos     | ✅ Implementado     | WebSocket + fila + PIX + expiração de pedidos       |
+| Pagamentos             | ⚠️ Parcial          | PIX + webhook `completed`; outros webhooks são stub |
+| Dia do evento          | ❌ Não implementado | Presença, check-in                                  |
+| Arquivos               | ✅ Implementado     | Upload MinIO                                        |
+| Testes automatizados   | ❌ Não implementado | `npm test` é placeholder                            |
+| Migrations             | ❌ Não implementado | `DB_SYNCHRONIZE=true` em dev                        |
 
 Legenda: ✅ pronto · ⚠️ parcial · ❌ ausente

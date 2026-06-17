@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { AbacatepayWebhookHandlerService } from '../../../services/abacatepay-webhook-handler.service';
+import { AbacatepayWebhookHandlerService } from '../../../services/webhooks/abacatepay-webhook-handler.service';
 import { container } from 'tsyringe';
 
 class HooksController {

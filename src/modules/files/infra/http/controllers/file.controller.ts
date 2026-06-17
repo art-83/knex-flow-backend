@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { UploadFileService } from '../../../services/files/upload-file.service';
+import { UploadFileService } from '../../../services/uploads/upload-file.service';
 
 class FileController {
   public async upload(request: Request, response: Response): Promise<Response> {
