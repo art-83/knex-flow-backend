@@ -10,6 +10,7 @@ import { eventRouter } from '../../../../modules/events/infra/http/routers/event
 import { eventPublicRouter } from '../../../../modules/events/infra/http/routers/event-public.router';
 import { orderRouter } from '../../../../modules/events/infra/http/routers/order.router';
 import { authorizationRouter } from '../../../../modules/users/infra/http/routers/authorization.router';
+import { fileRouter } from '../../../../modules/files/infra/http/routers/file.router';
 
 const routes = Router();
 
@@ -28,6 +29,7 @@ routes.use('/orders', orderRouter);
 routes.use('/events', eventRouter);
 routes.use('/users', authorizationRouter);
 routes.use('/organizations', organizationRouter);
+routes.use('/files', fileRouter);
 
 routes.use('/payment', paymentRouter);
 routes.use('/payments', paymentRouter);

@@ -60,6 +60,10 @@ import { RedisConnection } from '../infra/queue/redis-connection';
 import { IRedisConnectionProvider } from '../infra/queue/infra/providers/redis-connection.provider';
 import { IWebSocketProvider } from '../infra/socket/infra/providers/web-socket.provider';
 import { WebSocketImplementation } from '../infra/socket/infra/implementations/web-socket.implementation';
+import { IFileRepositoryProvider } from '../../modules/files/infra/orm/repositories/providers/file-repository.provider';
+import { FileRepository } from '../../modules/files/infra/orm/repositories/implementations/file-repository.implementation';
+import { IStorageProvider } from '../../modules/files/infra/storage/providers/storage.provider';
+import { MinioStorageImplementation } from '../../modules/files/infra/storage/implementations/minio-storage.implementation';
 
 container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
 container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);
@@ -115,3 +119,5 @@ container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', Abaca
 container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
 container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider', RedisConnection);
 container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);
+container.registerSingleton<IFileRepositoryProvider>('FileRepositoryProvider', FileRepository);
+container.registerSingleton<IStorageProvider>('StorageProvider', MinioStorageImplementation);
