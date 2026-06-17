@@ -3,10 +3,17 @@ import { container } from 'tsyringe';
 import { CreateUserPermissionService } from '../../../services/user-permissions/create-user-permission.service';
 import { FindUserPermissionsService } from '../../../services/user-permissions/find-user-permissions.service';
 import { DeleteUserPermissionService } from '../../../services/user-permissions/delete-user-permission.service';
+import { ApplyOrganizationRoleToUserService } from '../../../services/user-permissions/apply-organization-role-to-user.service';
 
 class UserPermissionController {
   public async create(request: Request, response: Response) {
     const service = container.resolve(CreateUserPermissionService);
+    const result = await service.execute(request.user_id, request.body);
+    return response.status(201).json(result);
+  }
+
+  public async applyRole(request: Request, response: Response) {
+    const service = container.resolve(ApplyOrganizationRoleToUserService);
     const result = await service.execute(request.user_id, request.body);
     return response.status(201).json(result);
   }

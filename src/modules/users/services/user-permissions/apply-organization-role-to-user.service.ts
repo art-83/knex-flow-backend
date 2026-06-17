@@ -2,14 +2,22 @@ import { inject, injectable } from 'tsyringe';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
-import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
+import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
+import { IOrganizationRolePermissionRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { CreateOrUpdateUserPermissionDTO } from '../../dtos/user-permission/create-or-update-user-permission.dto';
+import { ApplyOrganizationRoleDTO } from '../../dtos/user-permission/apply-organization-role.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
+import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
+/**
+ * Applies an organization role (a saved permission policy template) to a user
+ * by materializing the role's permissions into `user_permissions`. This is a
+ * one-time snapshot: later edits to the role do NOT propagate. Existing grants
+ * are kept (additive), so the operation is idempotent.
+ */
 @injectable()
-class CreateUserPermissionService {
+class ApplyOrganizationRoleToUserService {
   constructor(
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
@@ -17,15 +25,19 @@ class CreateUserPermissionService {
     private userRepository: IUserRepositoryProvider,
     @inject('OrganizationRepositoryProvider')
     private organizationRepository: IOrganizationRepositoryProvider,
-    @inject('PermissionRepositoryProvider')
-    private permissionRepository: IPermissionRepositoryProvider,
+    @inject('OrganizationRoleRepositoryProvider')
+    private organizationRoleRepository: IOrganizationRoleRepositoryProvider,
+    @inject('OrganizationRolePermissionRepositoryProvider')
+    private organizationRolePermissionRepository: IOrganizationRolePermissionRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
+    @inject('PermissionRepositoryProvider')
+    private permissionRepository: IPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, data: CreateOrUpdateUserPermissionDTO) {
+  public async execute(actor_user_id: string, data: ApplyOrganizationRoleDTO) {
     const userOrganization = (
-      await this.userOrganizationRepository.find({ user_id, organization_id: data.organization_id })
+      await this.userOrganizationRepository.find({ user_id: actor_user_id, organization_id: data.organization_id })
     ).at(0);
 
     if (!userOrganization) {
@@ -46,7 +58,7 @@ class CreateUserPermissionService {
 
     const permissionGrant = (
       await this.userPermissionRepository.find({
-        user_id,
+        user_id: actor_user_id,
         organization_id: data.organization_id,
         permission_id: requiredPermission.id,
       })
@@ -72,12 +84,6 @@ class CreateUserPermissionService {
       throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    const permission = (await this.permissionRepository.find({ id: data.permission_id })).at(0);
-
-    if (!permission) {
-      throw new AppError(404, 'Permission not found.', 'Permissao nao encontrada.');
-    }
-
     const targetUserOrganization = (
       await this.userOrganizationRepository.find({ user_id: data.user_id, organization_id: data.organization_id })
     ).at(0);
@@ -90,28 +96,60 @@ class CreateUserPermissionService {
       );
     }
 
-    const conflictingRelation = (
-      await this.userPermissionRepository.find({
-        user_id: data.user_id,
+    const organizationRole = (
+      await this.organizationRoleRepository.find({
+        id: data.organization_role_id,
         organization_id: data.organization_id,
-        permission_id: data.permission_id,
       })
     ).at(0);
 
-    if (conflictingRelation) {
-      throw new AppError(409, 'User permission already exists.', 'Permissao do usuario ja existe.');
+    if (!organizationRole) {
+      throw new AppError(404, 'Organization role not found.', 'Papel da organizacao nao encontrado.');
     }
 
-    const userPermission = await this.userPermissionRepository.create({
-      user,
-      organization,
-      permission,
+    const rolePermissions = await this.organizationRolePermissionRepository.find({
+      organization_role_id: data.organization_role_id,
+      organization_id: data.organization_id,
     });
 
+    let applied = 0;
+    let skipped = 0;
+
+    for (const rolePermission of rolePermissions) {
+      const permission = rolePermission.permission;
+
+      const existingGrant = (
+        await this.userPermissionRepository.find({
+          user_id: data.user_id,
+          organization_id: data.organization_id,
+          permission_id: permission.id,
+        })
+      ).at(0);
+
+      if (existingGrant) {
+        skipped += 1;
+        continue;
+      }
+
+      await this.userPermissionRepository.create({
+        user,
+        organization,
+        permission,
+      });
+
+      applied += 1;
+    }
+
     return {
-      message: 'User permission created successfully.',
-      data: userPermission,
+      message: 'Organization role applied to user successfully.',
+      data: {
+        organization_role_id: data.organization_role_id,
+        user_id: data.user_id,
+        applied,
+        skipped,
+        total: rolePermissions.length,
+      },
     };
   }
 }
-export { CreateUserPermissionService };
+export { ApplyOrganizationRoleToUserService };

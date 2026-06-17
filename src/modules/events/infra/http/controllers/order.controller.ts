@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { FindUserOrdersService } from '../../../services/orders/find-user-orders.service';
+import { FindUserOrdersService } from '../../../services/me/find-user-orders.service';
 
 class OrderController {
   public async findUserOrders(request: Request, response: Response) {

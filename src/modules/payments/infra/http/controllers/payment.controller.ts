@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { container, injectable } from 'tsyringe';
 
 import { CreatePaymentService } from '../../../services/create-payment.service';
-import { FindUserPaymentsService } from '../../../services/find-user-payments.service';
+import { FindUserPaymentsService } from '../../../services/me/find-user-payments.service';
 
 @injectable()
 class PaymentController {

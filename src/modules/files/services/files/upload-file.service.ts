@@ -5,6 +5,7 @@ import { UploadFileResponseDTO } from '../../dtos/file/upload-file-response.dto'
 import { IFileRepositoryProvider } from '../../infra/orm/repositories/providers/file-repository.provider';
 import { IStorageProvider } from '../../infra/storage/providers/storage.provider';
 import { buildFilePath } from '../../utils/build-file-path';
+import { User } from '../../../users/infra/orm/entities/user.entity';
 
 @injectable()
 class UploadFileService {
@@ -15,7 +16,7 @@ class UploadFileService {
     private storageProvider: IStorageProvider,
   ) {}
 
-  public async execute(file?: UploadFileDTO): Promise<UploadFileResponseDTO> {
+  public async execute(user_id: string, file?: UploadFileDTO): Promise<UploadFileResponseDTO> {
     if (!file) {
       throw new AppError(400, 'File is required.', 'Arquivo e obrigatorio.');
     }
@@ -32,10 +33,17 @@ class UploadFileService {
     const storedFile = await this.fileRepository.create({
       path: filePath,
       mime_type,
+      user: { id: user_id } as User,
     });
 
     return {
-      ...storedFile,
+      id: storedFile.id,
+      path: storedFile.path,
+      mime_type: storedFile.mime_type,
+      user_id,
+      created_at: storedFile.created_at,
+      updated_at: storedFile.updated_at,
+      deleted_at: storedFile.deleted_at ?? null,
       url: this.storageProvider.getPublicUrl(filePath),
     };
   }

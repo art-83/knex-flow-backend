@@ -15,8 +15,20 @@ import { fileRouter } from '../../../../modules/files/infra/http/routers/file.ro
 const routes = Router();
 
 routes.use('/health', (request, response) => {
-  const timestamp = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-  return response.status(200).json({ message: 'Strawberry fields forever!', timestamp });
+  const lupeDeLupeSongs = [
+    'Cabo Frio',
+    'Gaúcha',
+    'Fogo-Fátuo',
+    'A Escrava Isaura',
+    'Pavimento',
+    '17',
+    'Eu Já Venci',
+    'Redenção (Três Gatos e um Cachorro)',
+    'Dalila',
+    'SP (Pais Solteiros)',
+  ];
+  const randomSong = lupeDeLupeSongs[Math.floor(Math.random() * lupeDeLupeSongs.length)];
+  return response.status(200).json({ messagem: 'lula livre #lula2026', som_da_vez: `lupe de lupe - ${randomSong}` });
 });
 
 routes.use('/auth', authRouter);

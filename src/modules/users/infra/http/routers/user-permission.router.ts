@@ -17,6 +17,18 @@ userPermissionRouter.post(
   (request, response) => userPermissionController.create(request, response),
 );
 
+userPermissionRouter.post(
+  '/apply-role',
+  celebrate({
+    [Segments.BODY]: Joi.object({
+      user_id: Joi.string().uuid().required(),
+      organization_id: Joi.string().uuid().required(),
+      organization_role_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  (request, response) => userPermissionController.applyRole(request, response),
+);
+
 userPermissionRouter.get(
   '/',
   celebrate({

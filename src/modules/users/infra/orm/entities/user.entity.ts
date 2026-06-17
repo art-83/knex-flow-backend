@@ -4,6 +4,7 @@ import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
 import { EventActivityInvited } from '../../../../events/infra/orm/entities/event-activity-invited.entity';
+import { StoredFile } from '../../../../files/infra/orm/entities/file.entity';
 
 @Entity('users')
 class User extends BaseEntitySequentialGeneratedUUID {
@@ -36,5 +37,8 @@ class User extends BaseEntitySequentialGeneratedUUID {
 
   @OneToMany(() => EventActivityInvited, eventActivityInvited => eventActivityInvited.user)
   event_activity_invited: EventActivityInvited[];
+
+  @OneToMany(() => StoredFile, storedFile => storedFile.user)
+  files: StoredFile[];
 }
 export { User };

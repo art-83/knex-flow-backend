@@ -5,7 +5,7 @@ import { UploadFileService } from '../../../services/files/upload-file.service';
 class FileController {
   public async upload(request: Request, response: Response): Promise<Response> {
     const uploadFileService = container.resolve(UploadFileService);
-    const file = await uploadFileService.execute(request.file);
+    const file = await uploadFileService.execute(request.user_id, request.file);
     return response.status(201).json(file);
   }
 }

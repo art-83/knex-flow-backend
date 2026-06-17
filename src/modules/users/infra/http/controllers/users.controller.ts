@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { GetMeService } from '../../../services/users/get-me.service';
+import { GetMeService } from '../../../services/me/get-me.service';
 
 class UsersController {
   public async me(request: Request, response: Response) {

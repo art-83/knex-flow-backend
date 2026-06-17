@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
+import { User } from '../../../../users/infra/orm/entities/user.entity';
 
 @Entity({ name: 'files' })
 class StoredFile extends BaseEntitySequentialGeneratedUUID {
@@ -8,5 +9,9 @@ class StoredFile extends BaseEntitySequentialGeneratedUUID {
 
   @Column()
   mime_type: string;
+
+  @ManyToOne(() => User, user => user.files)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
 export { StoredFile };

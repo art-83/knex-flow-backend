@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { CreateEventService } from '../../../services/events/create-event.service';
 import { CreateBatchService } from '../../../services/batches/create-batch-and-tickets.service';
 import { CreateEventActivityService } from '../../../services/activities/create-event-activity.service';
-import { FindEventsService } from '../../../services/events/find-events.service';
+import { FindEventsService } from '../../../services/public/find-events.service';
 import { UpdateEventService } from '../../../services/events/update-event.service';
 import { DeleteEventService } from '../../../services/events/delete-event.service';
 import { FindBatchesService } from '../../../services/batches/find-batches.service';
