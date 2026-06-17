@@ -3,7 +3,7 @@ import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -13,7 +13,7 @@ class UpdateEventActivityService {
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, event_activity_id: string, data: Partial<CreateOrUpdateEventActivityDTO>) {
@@ -29,7 +29,7 @@ class UpdateEventActivityService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       event.organization.id,
       PermissionDescriptionEnum.EVENT_ACTIVITY_UPDATE,

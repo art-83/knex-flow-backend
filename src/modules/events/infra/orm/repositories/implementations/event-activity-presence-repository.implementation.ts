@@ -1,33 +1,35 @@
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
-import { EventActivityOrderQueryOptions } from '../../../../dtos/event-activity-order/event-activity-order-query-options';
+import { EventActivityPresenceQueryOptions } from '../../../../dtos/event-activity-presence/event-activity-presence-query-options';
 import { EventActivityPresence } from '../../entities/event-activity-presence.entity';
-import { IEventActivityOrderRepositoryProvider } from '../providers/event-activity-order-repository.provider';
+import { IEventActivityPresenceRepositoryProvider } from '../providers/event-activity-presence-repository.provider';
 
-class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvider {
+class EventActivityPresenceRepository implements IEventActivityPresenceRepositoryProvider {
   private repository: Repository<EventActivityPresence>;
 
   constructor() {
     this.repository = dataSource.getRepository(EventActivityPresence);
   }
 
-  public async find(data: Partial<EventActivityOrderQueryOptions>): Promise<EventActivityPresence[]> {
-    const query = this.repository.createQueryBuilder('event_activity_order');
+  public async find(data: Partial<EventActivityPresenceQueryOptions>): Promise<EventActivityPresence[]> {
+    const query = this.repository.createQueryBuilder('event_activity_presence');
 
-    if (data.id) query.andWhere('event_activity_order.id = :id', { id: data.id });
+    if (data.id) query.andWhere('event_activity_presence.id = :id', { id: data.id });
 
     if (data.event_activity_id) {
-      query.andWhere('event_activity_order.event_activity_id = :event_activity_id', {
+      query.andWhere('event_activity_presence.event_activity_id = :event_activity_id', {
         event_activity_id: data.event_activity_id,
       });
     }
 
     if (data.order_id) {
-      query.andWhere('event_activity_order.order_id = :order_id', { order_id: data.order_id });
+      query.andWhere('event_activity_presence.order_id = :order_id', { order_id: data.order_id });
     }
 
     if (data.user_presence !== undefined) {
-      query.andWhere('event_activity_order.user_presence = :user_presence', { user_presence: data.user_presence });
+      query.andWhere('event_activity_presence.user_presence = :user_presence', {
+        user_presence: data.user_presence,
+      });
     }
 
     if (data.limit) query.limit(data.limit);
@@ -57,4 +59,4 @@ class EventActivityOrderRepository implements IEventActivityOrderRepositoryProvi
     return await this.repository.save(create);
   }
 }
-export { EventActivityOrderRepository };
+export { EventActivityPresenceRepository };

@@ -22,7 +22,7 @@ class PaymentRepository implements IRepositoryProvider<Payment> {
     query
       .leftJoinAndSelect('payment.order', 'order')
       .leftJoinAndSelect('order.user', 'user')
-      .leftJoinAndSelect('payment.card_information', 'card_information');
+      .leftJoinAndSelect('payment.card_informations', 'card_informations');
 
     if (options.id) query.andWhere('payment.id = :id', { id: options.id });
     if (options.amount) query.andWhere('payment.amount = :amount', { amount: options.amount });

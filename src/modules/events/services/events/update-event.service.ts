@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -10,7 +10,7 @@ class UpdateEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, event_id: string, data: Partial<CreateOrUpdateEventDTO>) {
@@ -20,7 +20,7 @@ class UpdateEventService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       eventExists.organization.id,
       PermissionDescriptionEnum.EVENT_UPDATE,

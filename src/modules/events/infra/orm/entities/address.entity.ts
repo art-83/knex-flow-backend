@@ -1,9 +1,9 @@
 import { Column, Entity, OneToOne } from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { Event } from './event.entity';
 
 @Entity({ name: 'addresses' })
-class Address extends SequentialGeneratedUUID {
+class Address extends BaseEntitySequentialGeneratedUUID {
   @Column()
   street: string;
 

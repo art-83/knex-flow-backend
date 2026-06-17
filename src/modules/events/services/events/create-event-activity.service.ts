@@ -4,7 +4,7 @@ import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IActivityRepositoryProvider } from '../../infra/orm/repositories/providers/activity-repository.provider';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -16,7 +16,7 @@ class CreateEventActivityService {
     private eventRepositoryProvider: IEventRepositoryProvider,
     @inject('ActivityRepositoryProvider')
     private activityRepositoryProvider: IActivityRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventActivityDTO) {
@@ -41,7 +41,7 @@ class CreateEventActivityService {
       );
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       event.organization.id,
       PermissionDescriptionEnum.EVENT_ACTIVITY_CREATE,

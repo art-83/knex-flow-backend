@@ -1,8 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserOrganizationAccessService } from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
-import { EnsureUserHasPermissionService } from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -10,13 +9,11 @@ class DeleteUserPermissionService {
   constructor(
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
-    private ensureUserOrganizationAccessService: EnsureUserOrganizationAccessService,
-    private ensureUserHasPermissionService: EnsureUserHasPermissionService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, id: string, organization_id: string) {
-    await this.ensureUserOrganizationAccessService.execute(user_id, organization_id);
-    await this.ensureUserHasPermissionService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       organization_id,
       PermissionDescriptionEnum.USER_PERMISSION_DELETE,

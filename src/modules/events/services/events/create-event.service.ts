@@ -4,7 +4,7 @@ import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers
 import { IAddressRepositoryProvider } from '../../infra/orm/repositories/providers/address-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -14,13 +14,13 @@ class CreateEventService {
     private eventRepository: IEventRepositoryProvider,
     @inject('OrganizationRepositoryProvider')
     private organizationRepository: IOrganizationRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
     @inject('AddressRepositoryProvider')
     private addressRepository: IAddressRepositoryProvider,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventDTO) {
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       data.organization_id,
       PermissionDescriptionEnum.EVENT_CREATE,
@@ -48,6 +48,7 @@ class CreateEventService {
         id: event.id,
         name: event.name,
         description: event.description,
+        address: event.address,
       },
     };
   }

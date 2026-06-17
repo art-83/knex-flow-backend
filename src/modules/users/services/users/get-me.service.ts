@@ -15,7 +15,7 @@ class GetMeService {
   ) {}
 
   async execute(userId: string) {
-    const [user, userPermissions, userOrganizations] = await Promise.all([
+    const [user, user_permissions, user_organizations] = await Promise.all([
       this.userRepository.find({ id: userId }),
       this.userPermissionRepository.find({ user_id: userId }),
       this.userOrganizationRepository.find({ user_id: userId }),
@@ -25,8 +25,8 @@ class GetMeService {
       message: 'User retrieved successfully.',
       data: {
         user,
-        userPermissions,
-        userOrganizations,
+        user_permissions,
+        user_organizations,
       },
     };
 

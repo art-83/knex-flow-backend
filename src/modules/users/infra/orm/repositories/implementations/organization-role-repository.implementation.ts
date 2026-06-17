@@ -12,12 +12,12 @@ class OrganizationRoleRepository implements IOrganizationRoleRepositoryProvider 
   }
 
   public async find(data: Partial<OrganizationRoleQueryOptions>): Promise<OrganizationRole[]> {
-    const query = this.repository.createQueryBuilder('organizationRole');
+    const query = this.repository.createQueryBuilder('organization_role');
 
-    if (data.id) query.andWhere('organizationRole.id = :id', { id: data.id });
-    if (data.name) query.andWhere('organizationRole.name ILIKE :name', { name: `%${data.name}%` });
+    if (data.id) query.andWhere('organization_role.id = :id', { id: data.id });
+    if (data.name) query.andWhere('organization_role.name ILIKE :name', { name: `%${data.name}%` });
     if (data.organization_id)
-      query.andWhere('organizationRole.organization_id = :organization_id', {
+      query.andWhere('organization_role.organization_id = :organization_id', {
         organization_id: data.organization_id,
       });
 

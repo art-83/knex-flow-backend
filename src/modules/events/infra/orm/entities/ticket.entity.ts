@@ -1,19 +1,10 @@
-import { CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Batch } from './batch.entity';
 import { Order } from './order.entity';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 
 @Entity({ name: 'tickets' })
-class Ticket extends SequentialGeneratedUUID {
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
-
+class Ticket extends BaseEntitySequentialGeneratedUUID {
   @ManyToOne(() => Batch, batch => batch.tickets, { nullable: false })
   @JoinColumn({ name: 'batch_id' })
   batch: Batch;

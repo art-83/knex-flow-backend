@@ -6,8 +6,8 @@ import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { EventActivityPresence } from '../../infra/orm/entities/event-activity-presence.entity';
-import { IEventActivityOrderRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-order-repository.provider';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -19,9 +19,9 @@ class CreateEventActivityService {
     private eventRepository: IEventRepositoryProvider,
     @inject('ActivityRepositoryProvider')
     private activityRepository: IActivityRepositoryProvider,
-    @inject('EventActivityOrderRepositoryProvider')
-    private eventActivityOrderRepository: IEventActivityOrderRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    @inject('EventActivityPresenceRepositoryProvider')
+    private eventActivityPresenceRepository: IEventActivityPresenceRepositoryProvider,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, event_id: string, data: CreateOrUpdateEventActivityDTO) {
@@ -46,7 +46,7 @@ class CreateEventActivityService {
       );
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       event.organization.id,
       PermissionDescriptionEnum.EVENT_ACTIVITY_CREATE,
@@ -59,14 +59,14 @@ class CreateEventActivityService {
 
     const eventActivity = await this.eventActivityRepository.create(data);
 
-    const eventActivityOrders = Array.from({ length: data.max_participants }).map(
+    const eventActivityPresences = Array.from({ length: data.max_participants }).map(
       () =>
         ({
           event_activity: eventActivity,
         }) as EventActivityPresence,
     );
 
-    await this.eventActivityOrderRepository.createMany(eventActivityOrders);
+    await this.eventActivityPresenceRepository.createMany(eventActivityPresences);
 
     return {
       message: 'Event activity created successfully.',
@@ -77,7 +77,7 @@ class CreateEventActivityService {
         start_date: eventActivity.start_date,
         end_date: eventActivity.end_date,
       },
-      event_activity_orders_created: eventActivityOrders.length,
+      event_activity_presences_created: eventActivityPresences.length,
     };
   }
 

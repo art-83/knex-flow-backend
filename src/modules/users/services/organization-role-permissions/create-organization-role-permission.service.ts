@@ -4,7 +4,7 @@ import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositorie
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { CreateOrUpdateOrganizationRolePermissionDTO } from '../../dtos/organization-role-permission/create-or-update-organization-role-permission.dto';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -16,11 +16,11 @@ class CreateOrganizationRolePermissionService {
     private organizationRoleRepository: IOrganizationRoleRepositoryProvider,
     @inject('PermissionRepositoryProvider')
     private permissionRepository: IPermissionRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, organization_id: string, data: CreateOrUpdateOrganizationRolePermissionDTO) {
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       organization_id,
       PermissionDescriptionEnum.ORGANIZATION_ROLE_PERMISSION_CREATE,
@@ -59,7 +59,7 @@ class CreateOrganizationRolePermissionService {
     }
 
     const organizationRolePermission = await this.organizationRolePermissionRepository.create({
-      organizationRole,
+      organization_role: organizationRole,
       permission,
     });
 

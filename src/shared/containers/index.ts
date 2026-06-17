@@ -36,8 +36,8 @@ import { IOrderRepositoryProvider } from '../../modules/events/infra/orm/reposit
 import { OrderRepository } from '../../modules/events/infra/orm/repositories/implementations/order-repository.implementation';
 import { ITicketRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/ticket-repository.provider';
 import { TicketRepository } from '../../modules/events/infra/orm/repositories/implementations/ticket-repository.implementation';
-import { IEventActivityOrderRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-order-repository.provider';
-import { EventActivityOrderRepository } from '../../modules/events/infra/orm/repositories/implementations/event-activity-order-repository.implementation';
+import { IEventActivityPresenceRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-presence-repository.provider';
+import { EventActivityPresenceRepository } from '../../modules/events/infra/orm/repositories/implementations/event-activity-presence-repository.implementation';
 import { IAddressRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/address-repository.provider';
 import { AddressRepository } from '../../modules/events/infra/orm/repositories/implementations/address-repository.implementation';
 import { PaymentRepository } from '../../modules/payments/infra/orm/repositories/implementations/payment-repository.implementation';
@@ -92,9 +92,9 @@ container.registerSingleton<IEventConfigurationRepositoryProvider>(
 );
 container.registerSingleton<IOrderRepositoryProvider>('OrderRepositoryProvider', OrderRepository);
 container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider', TicketRepository);
-container.registerSingleton<IEventActivityOrderRepositoryProvider>(
-  'EventActivityOrderRepositoryProvider',
-  EventActivityOrderRepository,
+container.registerSingleton<IEventActivityPresenceRepositoryProvider>(
+  'EventActivityPresenceRepositoryProvider',
+  EventActivityPresenceRepository,
 );
 container.registerSingleton<IAddressRepositoryProvider>('AddressRepositoryProvider', AddressRepository);
 

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -9,11 +9,11 @@ class DeleteOrganizationRoleService {
   constructor(
     @inject('OrganizationRoleRepositoryProvider')
     private organizationRoleRepository: IOrganizationRoleRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, id: string, organization_id: string) {
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       organization_id,
       PermissionDescriptionEnum.ORGANIZATION_ROLE_DELETE,

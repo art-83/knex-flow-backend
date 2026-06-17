@@ -1,11 +1,12 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, UpdateDateColumn } from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
+import { EventActivityInvited } from '../../../../events/infra/orm/entities/event-activity-invited.entity';
 
 @Entity('users')
-class User extends SequentialGeneratedUUID {
+class User extends BaseEntitySequentialGeneratedUUID {
   @Column({ unique: true })
   email: string;
 
@@ -15,22 +16,25 @@ class User extends SequentialGeneratedUUID {
   @Column({ nullable: true })
   phone: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
+  @Column({ nullable: true })
+  cpf: string;
 
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
+  @Column({ nullable: true })
+  institution: string;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
+  @Column({ nullable: true })
+  profession: string;
 
   @OneToMany(() => UserOrganization, userOrganization => userOrganization.user)
-  userOrganizations: UserOrganization[];
+  user_organizations: UserOrganization[];
 
   @OneToMany(() => UserPermission, userPermission => userPermission.user)
-  userPermissions: UserPermission[];
+  user_permissions: UserPermission[];
 
   @OneToMany(() => Order, order => order.user)
   orders: Order[];
+
+  @OneToMany(() => EventActivityInvited, eventActivityInvited => eventActivityInvited.user)
+  event_activity_invited: EventActivityInvited[];
 }
 export { User };

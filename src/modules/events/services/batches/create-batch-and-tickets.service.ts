@@ -7,7 +7,7 @@ import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
 import { Ticket } from '../../infra/orm/entities/ticket.entity';
 import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 // TODO: talvez transformar essa logica em uma query transacional para garantir atomicidade
@@ -22,7 +22,7 @@ class CreateBatchService {
     private eventRepository: IEventRepositoryProvider,
     @inject('TicketRepositoryProvider')
     private ticketRepository: ITicketRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateBatchDTO) {
@@ -32,7 +32,7 @@ class CreateBatchService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       event.organization.id,
       PermissionDescriptionEnum.BATCH_CREATE,

@@ -15,9 +15,9 @@ class OrganizationRolePermissionRepository implements IOrganizationRolePermissio
     const query = this.repository.createQueryBuilder('orgRolePerm');
 
     query
-      .leftJoinAndSelect('orgRolePerm.organizationRole', 'organizationRole')
+      .leftJoinAndSelect('orgRolePerm.organization_role', 'organization_role')
       .leftJoinAndSelect('orgRolePerm.permission', 'permission')
-      .leftJoinAndSelect('organizationRole.organization', 'organization');
+      .leftJoinAndSelect('organization_role.organization', 'organization');
 
     if (data.id) query.andWhere('orgRolePerm.id = :id', { id: data.id });
     if (data.organization_id)

@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -12,7 +12,7 @@ class DeleteBatchService {
     private batchRepository: IBatchRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, batch_id: string) {
@@ -28,7 +28,7 @@ class DeleteBatchService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       event.organization.id,
       PermissionDescriptionEnum.BATCH_DELETE,

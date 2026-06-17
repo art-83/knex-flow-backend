@@ -1,15 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  UpdateDateColumn,
-} from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { EventConfiguration } from './event-configuration.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
@@ -18,7 +8,7 @@ import { Address } from './address.entity';
 import { EventModality } from '../enums/event-modality.enum';
 
 @Entity({ name: 'events' })
-class Event extends SequentialGeneratedUUID {
+class Event extends BaseEntitySequentialGeneratedUUID {
   @Column()
   name: string;
 
@@ -37,15 +27,6 @@ class Event extends SequentialGeneratedUUID {
 
   @Column({ type: 'enum', enum: EventModality })
   modality: EventModality;
-
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
 
   @OneToOne(() => EventConfiguration, config => config.event)
   configuration: EventConfiguration;

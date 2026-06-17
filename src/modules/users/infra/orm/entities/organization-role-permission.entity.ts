@@ -1,25 +1,16 @@
-import { CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, Unique, UpdateDateColumn } from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { OrganizationRole } from './organization-role.entity';
 import { Permission } from './permission.entity';
 
 @Entity('organization_role_permissions')
-@Unique(['organizationRole', 'permission'])
-class OrganizationRolePermission extends SequentialGeneratedUUID {
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
-
-  @ManyToOne(() => OrganizationRole, organizationRole => organizationRole.organizationRolePermissions)
+@Unique(['organization_role', 'permission'])
+class OrganizationRolePermission extends BaseEntitySequentialGeneratedUUID {
+  @ManyToOne(() => OrganizationRole, organizationRole => organizationRole.organization_role_permissions)
   @JoinColumn({ name: 'organization_role_id' })
-  organizationRole: OrganizationRole;
+  organization_role: OrganizationRole;
 
-  @ManyToOne(() => Permission, permission => permission.organizationRolePermissions)
+  @ManyToOne(() => Permission, permission => permission.organization_role_permissions)
   @JoinColumn({ name: 'permission_id' })
   permission: Permission;
 }

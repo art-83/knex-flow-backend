@@ -1,26 +1,17 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, UpdateDateColumn } from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { UserPermission } from './user-permission.entity';
 import { OrganizationRolePermission } from './organization-role-permission.entity';
 
 @Entity('permissions')
-class Permission extends SequentialGeneratedUUID {
+class Permission extends BaseEntitySequentialGeneratedUUID {
   @Column()
   description: string;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
-
   @OneToMany(() => UserPermission, userPermission => userPermission.permission)
-  userPermissions: UserPermission[];
+  user_permissions: UserPermission[];
 
   @OneToMany(() => OrganizationRolePermission, organizationRolePermission => organizationRolePermission.permission)
-  organizationRolePermissions: OrganizationRolePermission[];
+  organization_role_permissions: OrganizationRolePermission[];
 }
 export { Permission };

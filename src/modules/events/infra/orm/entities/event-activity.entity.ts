@@ -1,20 +1,12 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  UpdateDateColumn,
-} from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { Event } from './event.entity';
 import { Activity } from './activity.entity';
 import { EventActivityPresence } from './event-activity-presence.entity';
+import { EventActivityInvited } from './event-activity-invited.entity';
 
 @Entity({ name: 'event_activities' })
-class EventActivity extends SequentialGeneratedUUID {
+class EventActivity extends BaseEntitySequentialGeneratedUUID {
   @Column({ nullable: true })
   hours_to_retrieve: number;
 
@@ -27,15 +19,6 @@ class EventActivity extends SequentialGeneratedUUID {
   @Column({ type: 'timestamptz' })
   end_date: Date;
 
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
-
   @ManyToOne(() => Event, event => event.event_activities, { nullable: false })
   @JoinColumn({ name: 'event_id' })
   event: Event;
@@ -44,7 +27,10 @@ class EventActivity extends SequentialGeneratedUUID {
   @JoinColumn({ name: 'activity_id' })
   activity: Activity;
 
-  @OneToMany(() => EventActivityPresence, eventActivityOrder => eventActivityOrder.event_activity)
-  event_activity_orders: EventActivityPresence[];
+  @OneToMany(() => EventActivityPresence, eventActivityPresence => eventActivityPresence.event_activity)
+  event_activity_presences: EventActivityPresence[];
+
+  @OneToMany(() => EventActivityInvited, eventActivityInvited => eventActivityInvited.event_activity)
+  event_activity_invited: EventActivityInvited[];
 }
 export { EventActivity };

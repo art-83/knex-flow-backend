@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { CreateOrUpdateActivityDTO } from '../../dtos/activity/create-or-update-activity.dto';
 import { IActivityRepositoryProvider } from '../../infra/orm/repositories/providers/activity-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -10,7 +10,7 @@ class UpdateActivityService {
   constructor(
     @inject('ActivityRepositoryProvider')
     private activityRepository: IActivityRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(user_id: string, activity_id: string, data: Partial<CreateOrUpdateActivityDTO>) {
@@ -20,7 +20,7 @@ class UpdateActivityService {
       throw new AppError(404, 'Activity not found.', 'Atividade nao encontrada.');
     }
 
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       activityExists.organization.id,
       PermissionDescriptionEnum.ACTIVITY_UPDATE,

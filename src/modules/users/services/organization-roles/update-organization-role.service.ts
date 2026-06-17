@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { CreateOrUpdateOrganizationRoleDTO } from '../../dtos/organization-role/create-or-update-organization-role.dto';
-import { EnsureUserCanActOnOrganizationService } from '../../../../shared/infra/http/authorization/ensure-user-can-act-on-organization.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -10,7 +10,7 @@ class UpdateOrganizationRoleService {
   constructor(
     @inject('OrganizationRoleRepositoryProvider')
     private organizationRoleRepository: IOrganizationRoleRepositoryProvider,
-    private ensureUserCanActOnOrganizationService: EnsureUserCanActOnOrganizationService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async execute(
@@ -19,7 +19,7 @@ class UpdateOrganizationRoleService {
     organization_id: string,
     data: Partial<CreateOrUpdateOrganizationRoleDTO>,
   ) {
-    await this.ensureUserCanActOnOrganizationService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       organization_id,
       PermissionDescriptionEnum.ORGANIZATION_ROLE_UPDATE,

@@ -1,24 +1,15 @@
-import { CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
-import { SequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/sequential-generated-uuid.entity';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
 import { User } from './user.entity';
 import { Organization } from './organization.entity';
 
 @Entity('user_organizations')
-class UserOrganization extends SequentialGeneratedUUID {
-  @CreateDateColumn({ type: 'timestamptz' })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamptz' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deleted_at: Date;
-
-  @ManyToOne(() => User, user => user.userOrganizations)
+class UserOrganization extends BaseEntitySequentialGeneratedUUID {
+  @ManyToOne(() => User, user => user.user_organizations)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Organization, organization => organization.userOrganizations)
+  @ManyToOne(() => Organization, organization => organization.user_organizations)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 }

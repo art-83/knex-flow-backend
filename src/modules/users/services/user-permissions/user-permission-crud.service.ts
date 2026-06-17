@@ -6,8 +6,7 @@ import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/prov
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { CreateOrUpdateUserPermissionDTO } from '../../dtos/user-permission/create-or-update-user-permission.dto';
 import { UserPermissionQueryOptions } from '../../dtos/user-permission/user-permission-query-options';
-import { EnsureUserOrganizationAccessService } from '../../../../shared/infra/http/authorization/ensure-user-organization-access.service';
-import { EnsureUserHasPermissionService } from '../../../../shared/infra/http/authorization/ensure-user-has-permission.service';
+import { AuthorizeOrganizationActionService } from '../../../../shared/infra/http/authorization';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 
 @injectable()
@@ -21,13 +20,11 @@ class UserPermissionCrudService {
     private organizationRepository: IOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
     private permissionRepository: IPermissionRepositoryProvider,
-    private ensureUserOrganizationAccessService: EnsureUserOrganizationAccessService,
-    private ensureUserHasPermissionService: EnsureUserHasPermissionService,
+    private authorizeOrganizationActionService: AuthorizeOrganizationActionService,
   ) {}
 
   public async create(user_id: string, data: CreateOrUpdateUserPermissionDTO) {
-    await this.ensureUserOrganizationAccessService.execute(user_id, data.organization_id);
-    await this.ensureUserHasPermissionService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       data.organization_id,
       PermissionDescriptionEnum.USER_PERMISSION_CREATE,
@@ -51,7 +48,7 @@ class UserPermissionCrudService {
       throw new AppError(404, 'Permission not found.', 'Permissao nao encontrada.');
     }
 
-    await this.ensureUserOrganizationAccessService.execute(data.user_id, data.organization_id, 'subject');
+    await this.authorizeOrganizationActionService.ensureUserBelongsToOrganization(data.user_id, data.organization_id);
 
     const conflictingRelation = (
       await this.userPermissionRepository.find({
@@ -82,8 +79,7 @@ class UserPermissionCrudService {
       throw new AppError(400, 'organization_id is required.', 'organization_id e obrigatorio.');
     }
 
-    await this.ensureUserOrganizationAccessService.execute(user_id, data.organization_id);
-    await this.ensureUserHasPermissionService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       data.organization_id,
       PermissionDescriptionEnum.USER_PERMISSION_READ,
@@ -98,8 +94,7 @@ class UserPermissionCrudService {
   }
 
   public async delete(user_id: string, id: string, organization_id: string) {
-    await this.ensureUserOrganizationAccessService.execute(user_id, organization_id);
-    await this.ensureUserHasPermissionService.execute(
+    await this.authorizeOrganizationActionService.authorize(
       user_id,
       organization_id,
       PermissionDescriptionEnum.USER_PERMISSION_DELETE,

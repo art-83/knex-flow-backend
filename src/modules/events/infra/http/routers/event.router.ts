@@ -5,6 +5,7 @@ import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
 } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
+import { EventModality } from '../../orm/enums/event-modality.enum';
 
 const eventRouter = Router();
 const eventController = new EventController();
@@ -33,6 +34,17 @@ eventRouter.post(
       organization_id: Joi.string().uuid().required(),
       start_date: Joi.date().required(),
       end_date: Joi.date().required(),
+      modality: Joi.string()
+        .valid(...Object.values(EventModality))
+        .required(),
+      address: Joi.object({
+        street: Joi.string().required(),
+        number: Joi.string().required(),
+        city: Joi.string().required(),
+        state: Joi.string().required(),
+        country: Joi.string().required(),
+        zip_code: Joi.string().required(),
+      }).optional(),
     }).required(),
   }),
   eventController.createEvent,
