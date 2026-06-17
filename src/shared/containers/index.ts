@@ -44,7 +44,6 @@ import IRepositoryProvider from '../infra/orm/providers/repository.provider';
 import { CardInformationRepository } from '../../modules/payments/infra/orm/repositories/implementations/card-information-repository.implementation';
 import CardInformation from '../../modules/payments/infra/orm/entities/card-information.entity';
 import { IPaymentGatewayProvider } from '../../modules/payments/infra/gateways/providers/payment-gateway.provider';
-import { AbacatepayCreatePaymentResponse } from '../../modules/payments/dtos/gateways/abacatepay/abacatepay-create-payment-response.dto';
 import { AbacatepayPixGatewayImplementation } from '../../modules/payments/infra/gateways/implementations/abacatepay-pix-gateway.implementation';
 
 import IHashProvider from '../../modules/users/infra/hash/providers/hash.provider';
@@ -103,10 +102,7 @@ container.registerSingleton<IRepositoryProvider<CardInformation>>(
 );
 container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
 container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
-container.registerSingleton<IPaymentGatewayProvider<AbacatepayCreatePaymentResponse>>(
-  'PixGatewayProvider',
-  AbacatepayPixGatewayImplementation,
-);
+container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);
 container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
 container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider', RedisConnection);
 container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);

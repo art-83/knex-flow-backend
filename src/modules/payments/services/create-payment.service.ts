@@ -3,7 +3,6 @@ import { inject, injectable } from 'tsyringe';
 import AppError from '../../../shared/infra/http/errors/app-error';
 import IOrderRepositoryProvider from '../../events/infra/orm/repositories/providers/order-repository.provider';
 import { CreatePaymentDTO } from '../dtos/payments/create-payment.dto';
-import { AbacatepayCreatePaymentResponse } from '../dtos/gateways/abacatepay/abacatepay-create-payment-response.dto';
 import { IPaymentGatewayProvider } from '../infra/gateways/providers/payment-gateway.provider';
 import { Order } from '../../events/infra/orm/entities/order.entity';
 import { OrderStatus } from '../../events/infra/orm/enums/order-status.enum';
@@ -18,7 +17,7 @@ import { payAbacatepayPix } from '../utils/dev-pay-abacatepay-pix';
 class CreatePaymentService {
   constructor(
     @inject('PixGatewayProvider')
-    private pixGatewayProvider: IPaymentGatewayProvider<AbacatepayCreatePaymentResponse>,
+    private pixGatewayProvider: IPaymentGatewayProvider,
     @inject('OrderRepositoryProvider')
     private orderRepositoryProvider: IOrderRepositoryProvider,
     @inject('UserRepositoryProvider')

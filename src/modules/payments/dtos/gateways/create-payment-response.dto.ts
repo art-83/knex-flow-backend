@@ -1,4 +1,4 @@
-export interface AbacatepayCreatePaymentResponse {
+export interface CreatePaymentResponseDTO {
   id: string;
   status: string;
   amount: number;
@@ -7,4 +7,4 @@ export interface AbacatepayCreatePaymentResponse {
   expiresAt: string;
 }
 
-export default AbacatepayCreatePaymentResponse;
+export default CreatePaymentResponseDTO;

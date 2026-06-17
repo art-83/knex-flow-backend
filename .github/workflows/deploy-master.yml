@@ -1,16 +1,13 @@
 name: Deploy to VPS
 
 on:
-  workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'Digite "deploy" para confirmar o deploy em produção'
-        required: true
-        type: string
+  push:
+    branches:
+      - master
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   APP_DIR: /opt/knex-flow-backend
@@ -21,19 +18,8 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.inputs.confirm == 'deploy'
 
     steps:
-      - name: Verify authorized user
-        env:
-          ALLOWED_USER: art-83
-          ACTOR: ${{ github.actor }}
-        run: |
-          if [ "$ACTOR" != "$ALLOWED_USER" ]; then
-            echo "::error::Deploy nao autorizado. Apenas '$ALLOWED_USER' pode executar deploy. Usuario atual: $ACTOR"
-            exit 1
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
