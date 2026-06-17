@@ -35,6 +35,20 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SERVER_IPV4: ${{ secrets.SERVER_IPV4 }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$SERVER_IPV4" >> ~/.ssh/known_hosts
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
@@ -52,17 +66,6 @@ jobs:
           cp docker-compose.yml deploy/
           printf '%s\n' "$ENV_FILE" > deploy/.env
           docker save "${IMAGE_NAME}:latest" | gzip -1 > deploy/app-image.tar.gz
-
-      - name: Configure SSH
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          SERVER_IPV4: ${{ secrets.SERVER_IPV4 }}
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "$SERVER_IPV4" >> ~/.ssh/known_hosts
 
       - name: Ensure remote directory exists
         run: |
@@ -86,11 +89,12 @@ jobs:
           "
 
       - name: Health check
+        id: health-check
         run: |
           ssh "${SSH_TARGET}" "for i in {1..15}; do if curl -fsS '${HEALTHCHECK_URL}' > /dev/null; then exit 0; fi; sleep 5; done; exit 1"
 
       - name: Rollback on failed health check
-        if: ${{ failure() }}
+        if: failure() && steps.health-check.outcome == 'failure'
         run: |
           ssh "${SSH_TARGET}" "
             set -e
