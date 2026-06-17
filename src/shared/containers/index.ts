@@ -38,6 +38,8 @@ import { ITicketRepositoryProvider } from '../../modules/events/infra/orm/reposi
 import { TicketRepository } from '../../modules/events/infra/orm/repositories/implementations/ticket-repository.implementation';
 import { IEventActivityPresenceRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { EventActivityPresenceRepository } from '../../modules/events/infra/orm/repositories/implementations/event-activity-presence-repository.implementation';
+import { IEventActivityInvitedRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-invited-repository.provider';
+import { EventActivityInvitedRepository } from '../../modules/events/infra/orm/repositories/implementations/event-activity-invited-repository.implementation';
 import { IAddressRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/address-repository.provider';
 import { AddressRepository } from '../../modules/events/infra/orm/repositories/implementations/address-repository.implementation';
 import { PaymentRepository } from '../../modules/payments/infra/orm/repositories/implementations/payment-repository.implementation';
@@ -95,6 +97,10 @@ container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider
 container.registerSingleton<IEventActivityPresenceRepositoryProvider>(
   'EventActivityPresenceRepositoryProvider',
   EventActivityPresenceRepository,
+);
+container.registerSingleton<IEventActivityInvitedRepositoryProvider>(
+  'EventActivityInvitedRepositoryProvider',
+  EventActivityInvitedRepository,
 );
 container.registerSingleton<IAddressRepositoryProvider>('AddressRepositoryProvider', AddressRepository);
 

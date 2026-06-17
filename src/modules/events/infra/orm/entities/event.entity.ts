@@ -25,7 +25,7 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   @Column({ type: 'timestamptz' })
   end_date: Date;
 
-  @Column({ type: 'enum', enum: EventModality })
+  @Column({ type: 'enum', enum: EventModality, default: EventModality.OFFLINE })
   modality: EventModality;
 
   @OneToOne(() => EventConfiguration, config => config.event)

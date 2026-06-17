@@ -7,6 +7,7 @@ import { organizationRouter } from '../../../../modules/users/infra/http/routers
 import { checkoutHooksRouter } from '../../../../modules/payments/infra/http/hooks/abacate-pay.hooks';
 import { paymentRouter } from '../../../../modules/payments/infra/http/routers/payment.router';
 import { eventRouter } from '../../../../modules/events/infra/http/routers/event.router';
+import { eventPublicRouter } from '../../../../modules/events/infra/http/routers/event-public.router';
 import { orderRouter } from '../../../../modules/events/infra/http/routers/order.router';
 import { authorizationRouter } from '../../../../modules/users/infra/http/routers/authorization.router';
 
@@ -19,6 +20,7 @@ routes.use('/health', (request, response) => {
 
 routes.use('/auth', authRouter);
 routes.use('/webhook/', checkoutHooksRouter);
+routes.use('/events', eventPublicRouter);
 
 routes.use(authMiddleware);
 

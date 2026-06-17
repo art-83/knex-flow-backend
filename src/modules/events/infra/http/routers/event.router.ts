@@ -10,21 +10,6 @@ import { EventModality } from '../../orm/enums/event-modality.enum';
 const eventRouter = Router();
 const eventController = new EventController();
 
-eventRouter.get(
-  '/',
-  celebrate({
-    [Segments.QUERY]: Joi.object({
-      id: Joi.string().uuid().optional(),
-      name: Joi.string().optional(),
-      description: Joi.string().optional(),
-      organization_id: Joi.string().uuid().required(),
-      ...timestampQueryOptionsSchema,
-      ...defaultQueryOptionsSchema,
-    }),
-  }),
-  eventController.findEvents,
-);
-
 eventRouter.post(
   '/',
   celebrate({
@@ -36,7 +21,7 @@ eventRouter.post(
       end_date: Joi.date().required(),
       modality: Joi.string()
         .valid(...Object.values(EventModality))
-        .required(),
+        .optional(),
       address: Joi.object({
         street: Joi.string().required(),
         number: Joi.string().required(),

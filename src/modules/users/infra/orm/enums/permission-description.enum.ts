@@ -37,5 +37,10 @@ enum PermissionDescriptionEnum {
   EVENT_CONFIGURATION_READ = 'event_configuration:read',
   EVENT_CONFIGURATION_UPDATE = 'event_configuration:update',
   EVENT_CONFIGURATION_DELETE = 'event_configuration:delete',
+
+  EVENT_INVITED_CREATE = 'event_invited:create',
+  EVENT_INVITED_READ = 'event_invited:read',
+  EVENT_INVITED_UPDATE = 'event_invited:update',
+  EVENT_INVITED_DELETE = 'event_invited:delete',
 }
 export { PermissionDescriptionEnum };

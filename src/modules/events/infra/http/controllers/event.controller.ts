@@ -19,7 +19,7 @@ import { DeleteEventConfigurationService } from '../../../services/event-configu
 class EventController {
   public async findEvents(request: Request, response: Response) {
     const findEventsService = container.resolve(FindEventsService);
-    const events = await findEventsService.execute(request.user_id, request.query);
+    const events = await findEventsService.execute(request.query);
     return response.json(events);
   }
 
