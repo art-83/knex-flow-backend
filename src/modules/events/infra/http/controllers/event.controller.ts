@@ -23,6 +23,7 @@ import { UpdateEventInvitedService } from '../../../services/event-activity-invi
 import { FindEventInvitedByEventActivityService } from '../../../services/event-activity-invited/find-event-invited-by-event-activity.service';
 import { GeneratePresenceQRCodeService } from '../../../services/qr-code/generate-presence-qr-code.service';
 import { ValidateQRCodePresenceService } from '../../../services/qr-code/validate-qr-code-presence.service';
+import { PublishEventService } from '../../../services/events/publish-event.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -191,6 +192,13 @@ class EventController {
     const event_id = String(request.params.event_id);
     const eventConfiguration = await deleteEventConfigurationService.execute(request.user_id, event_id);
     return response.json(eventConfiguration);
+  }
+
+  public async publishEvent(request: Request, response: Response) {
+    const publishEventService = container.resolve(PublishEventService);
+    const event_id = String(request.params.event_id);
+    const result = await publishEventService.execute(request.user_id, event_id);
+    return response.json(result);
   }
 }
 export { EventController };

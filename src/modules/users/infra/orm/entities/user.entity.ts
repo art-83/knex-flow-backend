@@ -5,6 +5,7 @@ import { UserPermission } from './user-permission.entity';
 import { Order } from '../../../../events/infra/orm/entities/order.entity';
 import { EventActivityInvited } from '../../../../events/infra/orm/entities/event-activity-invited.entity';
 import { File } from '../../../../files/infra/orm/entities/file.entity';
+import { EventActivityPresence } from '../../../../events/infra/orm/entities/event-activity-presence.entity';
 
 @Entity('users')
 class User extends BaseEntitySequentialGeneratedUUID {
@@ -40,5 +41,8 @@ class User extends BaseEntitySequentialGeneratedUUID {
 
   @OneToMany(() => File, file => file.user)
   files: File[];
+
+  @OneToMany(() => EventActivityPresence, eventActivityPresence => eventActivityPresence.user)
+  event_activity_presences: EventActivityPresence[];
 }
 export { User };

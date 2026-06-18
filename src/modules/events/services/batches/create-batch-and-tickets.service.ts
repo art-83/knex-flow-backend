@@ -1,18 +1,18 @@
 import { inject, injectable } from 'tsyringe';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
-import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
-import { Ticket } from '../../infra/orm/entities/ticket.entity';
 import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
+import { Ticket } from '../../infra/orm/entities/ticket.entity';
 
-// TODO: talvez transformar essa logica em uma query transacional para garantir atomicidade
 @injectable()
 class CreateBatchService {
   constructor(
@@ -22,14 +22,14 @@ class CreateBatchService {
     private batchRepository: IBatchRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    @inject('TicketRepositoryProvider')
-    private ticketRepository: ITicketRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('TicketRepositoryProvider')
+    private ticketRepository: ITicketRepositoryProvider,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateBatchDTO) {
@@ -97,28 +97,29 @@ class CreateBatchService {
 
     data.event = event;
 
+    // TODO: quando event.status === ACTIVE, envolver create do lote + createMany de tickets em uma unica transacao.
+
     const batch = await this.batchRepository.create(data);
 
-    const ticketToCreate = Array.from({ length: data.base_quantity }).map(
-      () =>
-        ({
-          batch: batch,
-        }) as Ticket,
-    );
+    if (event.status === EventStatus.ACTIVE) {
+      const ticketToCreate = Array.from(
+        { length: batch.base_quantity },
+        () =>
+          ({
+            batch: batch,
+          }) as Ticket,
+      );
+      await this.ticketRepository.createMany(ticketToCreate);
+    }
 
-    const createBatchTickets = await this.ticketRepository.createMany(ticketToCreate);
-
-    const response = {
+    return {
       message: 'Batch created successfully.',
       batch: {
         id: batch.id,
         price: batch.price,
         base_quantity: batch.base_quantity,
       },
-      tickets_created: createBatchTickets.length,
     };
-
-    return response;
   }
 }
 export { CreateBatchService };

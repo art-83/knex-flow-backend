@@ -85,12 +85,14 @@ class CreateEventService {
     data.organization = organization;
     data.status = data.status ?? EventStatus.DRAFT;
 
-    if (data.address) {
-      const address = await this.addressRepository.create(data.address);
-      data.address = address;
+    const { address: addressData, ...eventData } = data;
+    const event = await this.eventRepository.create(eventData);
+
+    if (addressData) {
+      await this.addressRepository.create({ ...addressData, event });
     }
 
-    const event = await this.eventRepository.create(data);
+    const eventWithRelations = (await this.eventRepository.find({ id: event.id })).at(0);
     return {
       message: 'Event created successfully.',
       event: {
@@ -99,7 +101,7 @@ class CreateEventService {
         description: event.description,
         url_path: event.url_path,
         status: event.status,
-        address: event.address,
+        address: eventWithRelations?.address ?? null,
       },
     };
   }

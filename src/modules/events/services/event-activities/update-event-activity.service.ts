@@ -11,6 +11,7 @@ import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
 import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
 @injectable()
 class UpdateEventActivityService {
@@ -42,6 +43,10 @@ class UpdateEventActivityService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status !== EventStatus.DRAFT) {
+      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
     }
 
     const userOrganization = (

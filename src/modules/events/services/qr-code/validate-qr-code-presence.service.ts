@@ -9,6 +9,13 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-repository.provider';
+import {
+  CreateEventActivityPresenceDTO,
+  EventActivityPresenceQueryOptions,
+} from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
+import { User } from '../../../users/infra/orm/entities/user.entity';
 
 @injectable()
 class ValidateQRCodePresenceService {
@@ -21,6 +28,8 @@ class ValidateQRCodePresenceService {
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
+    @inject('UserRepositoryProvider')
+    private userRepository: IUserRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
@@ -42,26 +51,57 @@ class ValidateQRCodePresenceService {
       );
     }
 
-    const presence = (
-      await this.eventActivityPresenceRepository.find({
-        id: payload.presence_id,
-        event_activity_id,
-      })
-    ).at(0);
+    const eventActivity = (await this.eventActivityRepository.find({ id: event_activity_id })).at(0);
 
-    if (!presence?.order) {
-      throw new AppError(404, 'Presence not found.', 'Presenca nao encontrada.');
+    if (!eventActivity) {
+      throw new AppError(404, 'Event activity not found.', 'Atividade de evento nao encontrada.');
     }
 
-    if (presence.order.id !== payload.order_id || presence.order.user.id !== payload.user_id) {
-      throw new AppError(400, 'Invalid QR code payload.', 'Payload do QR code invalido.');
+    const user = (await this.userRepository.find({ id: payload.user_id })).at(0);
+
+    if (!user) {
+      throw new AppError(404, 'User not found.', 'Usuario nao encontrado.');
     }
 
-    if (presence.user_presence) {
-      throw new AppError(400, 'Presence already validated.', 'Presenca ja validada.');
+    const presenceQueryOptions: Partial<EventActivityPresenceQueryOptions> = {
+      event_activity_id,
+      user_id: payload.user_id,
+      limit: 1,
+    };
+
+    const existingPresence = (await this.eventActivityPresenceRepository.find(presenceQueryOptions)).at(0);
+
+    if (existingPresence) {
+      throw new AppError(
+        409,
+        'User already checked in for this event activity.',
+        'Usuario ja registrou presenca nesta atividade do evento.',
+      );
     }
 
-    await this.eventActivityPresenceRepository.update(presence.id, { user_presence: true });
+    const presenceCount = await this.eventActivityPresenceRepository.countByEventActivity(event_activity_id);
+
+    if (presenceCount >= eventActivity.max_participants) {
+      throw new AppError(
+        409,
+        'Event activity has reached maximum participants.',
+        'Atividade do evento atingiu o numero maximo de participantes.',
+      );
+    }
+
+    const [foundUser, foundEventActivity] = await Promise.all([
+      (await this.userRepository.find({ id: payload.user_id })).at(0),
+      (await this.eventActivityRepository.find({ id: event_activity_id })).at(0),
+    ]);
+
+    if (!foundUser || !foundEventActivity) {
+      throw new AppError(404, 'User or event activity not found.', 'Usuario ou atividade de evento nao encontrada.');
+    }
+
+    const presence = await this.eventActivityPresenceRepository.create({
+      user: foundUser,
+      event_activity: foundEventActivity,
+    });
 
     return {
       message: 'Presence validated successfully.',
@@ -69,7 +109,6 @@ class ValidateQRCodePresenceService {
         presence_id: presence.id,
         event_activity_id,
         user_id: payload.user_id,
-        user_presence: true,
       },
     };
   }

@@ -8,6 +8,7 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { EventModality } from '../../infra/orm/enums/event-modality.enum';
 
 @injectable()
 class UpdateEventService {
@@ -77,16 +78,32 @@ class UpdateEventService {
       }
     }
 
-    const event = await this.eventRepository.update(event_id, await this.buildUpdatePayload(eventExists, data));
+    const isSwitchingToOnline =
+      data.modality === EventModality.ONLINE &&
+      eventExists.modality === EventModality.OFFLINE &&
+      Boolean(eventExists.address?.id);
+
+    if (isSwitchingToOnline && eventExists.address?.id) {
+      await this.addressRepository.delete(eventExists.address.id);
+    }
+
+    const updatePayload = await this.buildUpdatePayload(eventExists, data, isSwitchingToOnline);
+    const event = await this.eventRepository.update(event_id, updatePayload);
+
     return { message: 'Event updated successfully.', data: event };
   }
 
   private async buildUpdatePayload(
     eventExists: NonNullable<Awaited<ReturnType<IEventRepositoryProvider['find']>>[number]>,
     data: Partial<CreateOrUpdateEventDTO>,
+    isSwitchingToOnline: boolean,
   ) {
     const { address, ...rest } = data;
     const updatePayload: Partial<CreateOrUpdateEventDTO> = { ...rest };
+
+    if (isSwitchingToOnline) {
+      return updatePayload;
+    }
 
     if (!address) {
       return updatePayload;
@@ -97,8 +114,7 @@ class UpdateEventService {
       return updatePayload;
     }
 
-    const createdAddress = await this.addressRepository.create(address);
-    updatePayload.address = createdAddress;
+    await this.addressRepository.create({ ...address, event: eventExists });
     return updatePayload;
   }
 }

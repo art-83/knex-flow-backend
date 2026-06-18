@@ -43,8 +43,7 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   @OneToMany(() => EventActivity, ea => ea.event)
   event_activities: EventActivity[];
 
-  @OneToOne(() => Address, address => address.event, { nullable: true })
-  @JoinColumn({ name: 'address_id' })
+  @OneToOne(() => Address, address => address.event)
   address: Address;
 }
 export { Event };

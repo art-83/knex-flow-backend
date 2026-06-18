@@ -5,12 +5,11 @@ import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
-import { EventActivityPresence } from '../../infra/orm/entities/event-activity-presence.entity';
-import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 
 @injectable()
@@ -20,8 +19,6 @@ class CreateEventActivityService {
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    @inject('EventActivityPresenceRepositoryProvider')
-    private eventActivityPresenceRepository: IEventActivityPresenceRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
@@ -37,6 +34,10 @@ class CreateEventActivityService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status !== EventStatus.DRAFT) {
+      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
     }
 
     const userOrganization = (
@@ -81,19 +82,9 @@ class CreateEventActivityService {
 
     const eventActivity = await this.eventActivityRepository.create(data);
 
-    const eventActivityPresences = Array.from({ length: data.max_participants }).map(
-      () =>
-        ({
-          event_activity: eventActivity,
-        }) as EventActivityPresence,
-    );
-
-    await this.eventActivityPresenceRepository.createMany(eventActivityPresences);
-
     return {
       message: 'Event activity created successfully.',
       event_activity: this.mapEventActivity(eventActivity),
-      event_activity_presences_created: eventActivityPresences.length,
     };
   }
 

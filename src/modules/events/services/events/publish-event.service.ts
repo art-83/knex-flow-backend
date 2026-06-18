@@ -1,20 +1,25 @@
 import { inject, injectable } from 'tsyringe';
-import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
+import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { Ticket } from '../../infra/orm/entities/ticket.entity';
+import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
-import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
-import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 
 @injectable()
-class DeleteEventActivityService {
+class PublishEventService {
   constructor(
-    @inject('EventActivityRepositoryProvider')
-    private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
+    @inject('BatchRepositoryProvider')
+    private batchRepository: IBatchRepositoryProvider,
+    @inject('TicketRepositoryProvider')
+    private ticketRepository: ITicketRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
@@ -23,21 +28,11 @@ class DeleteEventActivityService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, event_activity_id: string) {
-    const eventActivity = (await this.eventActivityRepository.find({ id: event_activity_id })).at(0);
-
-    if (!eventActivity) {
-      throw new AppError(404, 'Event activity not found.', 'Atividade de evento nao encontrada.');
-    }
-
-    const event = (await this.eventRepository.find({ id: eventActivity.event.id })).at(0);
+  public async execute(user_id: string, event_id: string) {
+    const event = (await this.eventRepository.find({ id: event_id })).at(0);
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
-    }
-
-    if (event.status !== EventStatus.DRAFT) {
-      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
     }
 
     const userOrganization = (
@@ -60,7 +55,7 @@ class DeleteEventActivityService {
       throw new AppError(404, 'Permission not found.', 'Permissao nao encontrada.');
     }
 
-    const permissionGrant = (
+    const userPermission = (
       await this.userPermissionRepository.find({
         user_id,
         organization_id: event.organization.id,
@@ -68,7 +63,7 @@ class DeleteEventActivityService {
       })
     ).at(0);
 
-    if (!permissionGrant) {
+    if (!userPermission) {
       throw new AppError(
         403,
         'You do not have permission to perform this action.',
@@ -76,8 +71,40 @@ class DeleteEventActivityService {
       );
     }
 
-    const rowsDeleted = await this.eventActivityRepository.delete(event_activity_id);
-    return { message: 'Event activity deleted successfully.', deleted: rowsDeleted };
+    if (event.status !== EventStatus.DRAFT) {
+      throw new AppError(400, 'Event is not draft.', 'Evento nao esta em draft.');
+    }
+
+    // TODO: validar se existe ao menos um lote antes de publicar.
+    // TODO: persistir configuration.published = true junto com status ACTIVE, se o frontend/consumidores dependerem disso.
+    // TODO: envolver update do evento + createMany de tickets em uma unica transacao.
+
+    event.status = EventStatus.ACTIVE;
+    await this.eventRepository.update(event_id, event);
+
+    const batchQueryOptions = {
+      event_id: event.id,
+    } as BatchQueryOptions;
+
+    const batches = await this.batchRepository.find(batchQueryOptions);
+
+    const ticketsToCreate = batches.flatMap(batch =>
+      Array.from({ length: batch.base_quantity }, () => ({ batch }) as Ticket),
+    );
+
+    if (ticketsToCreate.length > 0) {
+      await this.ticketRepository.createMany(ticketsToCreate);
+    }
+
+    return {
+      message: 'Event published successfully.',
+      data: {
+        event_id,
+        status: EventStatus.ACTIVE,
+        tickets_created: ticketsToCreate.length,
+      },
+    };
   }
 }
-export { DeleteEventActivityService };
+
+export { PublishEventService };

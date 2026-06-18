@@ -318,6 +318,16 @@ eventRouter.post(
   eventController.createEventActivity,
 );
 
+eventRouter.post(
+  '/:event_id/publish',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.publishEvent,
+);
+
 eventRouter.patch(
   '/:event_id',
   celebrate({
@@ -329,6 +339,9 @@ eventRouter.patch(
       description: Joi.string().optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
+      modality: Joi.string()
+        .valid(...Object.values(EventModality))
+        .optional(),
       url_path: eventUrlPathSchema,
       status: eventStatusFilterSchema,
       configuration: Joi.object().allow(null).optional(),

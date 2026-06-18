@@ -14,14 +14,8 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
   public async find(data: Partial<EventActivityPresenceQueryOptions>): Promise<EventActivityPresence[]> {
     const query = this.repository.createQueryBuilder('event_activity_presence');
 
-    if (data.user_id) {
-      query.innerJoinAndSelect('event_activity_presence.order', 'order');
-      query.andWhere('order.user_id = :user_id', { user_id: data.user_id });
-      query.andWhere('event_activity_presence.order_id IS NOT NULL');
-    } else if (data.id) {
-      query.leftJoinAndSelect('event_activity_presence.order', 'order');
-      query.leftJoinAndSelect('order.user', 'user');
-    }
+    query.leftJoinAndSelect('event_activity_presence.user', 'user');
+    query.leftJoinAndSelect('event_activity_presence.event_activity', 'event_activity');
 
     if (data.id) query.andWhere('event_activity_presence.id = :id', { id: data.id });
 
@@ -31,20 +25,18 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
       });
     }
 
-    if (data.order_id) {
-      query.andWhere('event_activity_presence.order_id = :order_id', { order_id: data.order_id });
-    }
-
-    if (data.user_presence !== undefined) {
-      query.andWhere('event_activity_presence.user_presence = :user_presence', {
-        user_presence: data.user_presence,
-      });
+    if (data.user_id) {
+      query.andWhere('event_activity_presence.user_id = :user_id', { user_id: data.user_id });
     }
 
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
 
     return await query.getMany();
+  }
+
+  public async countByEventActivity(event_activity_id: string): Promise<number> {
+    return this.repository.count({ where: { event_activity: { id: event_activity_id } } });
   }
 
   public async create(data: Partial<EventActivityPresence>): Promise<EventActivityPresence> {
@@ -61,11 +53,6 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
   public async delete(id: string): Promise<number> {
     const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
-  }
-
-  public async createMany(data: Partial<EventActivityPresence>[]): Promise<EventActivityPresence[]> {
-    const create = this.repository.create(data);
-    return await this.repository.save(create);
   }
 }
 export { EventActivityPresenceRepository };

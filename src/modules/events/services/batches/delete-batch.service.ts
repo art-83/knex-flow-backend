@@ -6,6 +6,7 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
 @injectable()
 class DeleteBatchService {
@@ -33,6 +34,10 @@ class DeleteBatchService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status !== EventStatus.DRAFT) {
+      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
     }
 
     const userOrganization = (
