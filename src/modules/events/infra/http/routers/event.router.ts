@@ -130,7 +130,7 @@ eventRouter.get(
     [Segments.QUERY]: Joi.object({
       id: Joi.string().uuid().optional(),
       event_id: Joi.string().uuid().required(),
-      activity_id: Joi.string().uuid().optional(),
+      name: Joi.string().optional(),
       hours_to_retrieve: Joi.number().integer().min(0).optional(),
       max_participants: Joi.number().integer().min(1).optional(),
       ...timestampQueryOptionsSchema,
@@ -147,6 +147,8 @@ eventRouter.patch(
       event_activity_id: Joi.string().uuid().required(),
     }).required(),
     [Segments.BODY]: Joi.object({
+      name: Joi.string().optional(),
+      file_id: Joi.string().uuid().allow(null).optional(),
       hours_to_retrieve: Joi.number().integer().min(0).optional(),
       max_participants: Joi.number().integer().min(1).optional(),
       start_date: Joi.date().optional(),
@@ -306,7 +308,7 @@ eventRouter.post(
       event_id: Joi.string().uuid().required(),
     }).required(),
     [Segments.BODY]: Joi.object({
-      activity_id: Joi.string().uuid().required(),
+      name: Joi.string().required(),
       hours_to_retrieve: Joi.number().integer().min(0).required(),
       max_participants: Joi.number().integer().min(1).required(),
       start_date: Joi.date().required(),

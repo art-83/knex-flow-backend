@@ -1,16 +1,17 @@
 import { inject, injectable } from 'tsyringe';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
-import { IActivityRepositoryProvider } from '../../infra/orm/repositories/providers/activity-repository.provider';
 import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create-or-update-event-activity.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Event } from '../../infra/orm/entities/event.entity';
+import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { EventActivityPresence } from '../../infra/orm/entities/event-activity-presence.entity';
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 
 @injectable()
 class CreateEventActivityService {
@@ -19,8 +20,6 @@ class CreateEventActivityService {
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
-    @inject('ActivityRepositoryProvider')
-    private activityRepository: IActivityRepositoryProvider,
     @inject('EventActivityPresenceRepositoryProvider')
     private eventActivityPresenceRepository: IEventActivityPresenceRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
@@ -29,28 +28,15 @@ class CreateEventActivityService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, event_id: string, data: CreateOrUpdateEventActivityDTO) {
-    const [event, activity] = await Promise.all([
-      (await this.eventRepository.find({ id: event_id })).at(0),
-      (await this.activityRepository.find({ id: data.activity_id })).at(0),
-    ]);
+    const event = (await this.eventRepository.find({ id: event_id })).at(0);
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
-    }
-
-    if (!activity) {
-      throw new AppError(404, 'Activity not found.', 'Atividade nao encontrada.');
-    }
-
-    if (event.organization.id !== activity.organization.id) {
-      throw new AppError(
-        403,
-        'Activity does not belong to the same organization as the event.',
-        'Atividade nao pertence a mesma organizacao do evento.',
-      );
     }
 
     const userOrganization = (
@@ -92,7 +78,6 @@ class CreateEventActivityService {
     this.validateEventActivityDateRange(data, event);
 
     data.event = event;
-    data.activity = activity;
 
     const eventActivity = await this.eventActivityRepository.create(data);
 
@@ -107,14 +92,30 @@ class CreateEventActivityService {
 
     return {
       message: 'Event activity created successfully.',
-      event_activity: {
-        id: eventActivity.id,
-        hours_to_retrieve: eventActivity.hours_to_retrieve,
-        max_participants: eventActivity.max_participants,
-        start_date: eventActivity.start_date,
-        end_date: eventActivity.end_date,
-      },
+      event_activity: this.mapEventActivity(eventActivity),
       event_activity_presences_created: eventActivityPresences.length,
+    };
+  }
+
+  private mapEventActivity(eventActivity: EventActivity) {
+    let file = null;
+
+    if (eventActivity.file) {
+      file = {
+        id: eventActivity.file.id,
+        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
+        mime_type: eventActivity.file.mime_type,
+      };
+    }
+
+    return {
+      id: eventActivity.id,
+      name: eventActivity.name,
+      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      max_participants: eventActivity.max_participants,
+      start_date: eventActivity.start_date,
+      end_date: eventActivity.end_date,
+      file,
     };
   }
 

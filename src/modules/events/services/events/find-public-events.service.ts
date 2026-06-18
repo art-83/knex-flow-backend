@@ -15,6 +15,7 @@ import { Event } from '../../infra/orm/entities/event.entity';
 import { Address } from '../../infra/orm/entities/address.entity';
 import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
 import { Batch } from '../../infra/orm/entities/batch.entity';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
@@ -31,6 +32,8 @@ class FindPublicEventsService {
     private ticketRepository: ITicketRepositoryProvider,
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(options: Partial<PublicEventQueryOptions>) {
@@ -107,7 +110,7 @@ class FindPublicEventsService {
               base_quantity: lowestBatch.base_quantity,
             }
           : null,
-        activities: activities.map(activity => this.mapActivity(activity)),
+        activities: activities.map(activity => this.mapEventActivity(activity)),
         invited: invited.map(item => this.mapInvited(item)),
       };
     });
@@ -118,6 +121,28 @@ class FindPublicEventsService {
     return batches.reduce((lowest, batch) => (batch.price < lowest.price ? batch : lowest));
   }
 
+  private mapEventActivity(eventActivity: EventActivity) {
+    let file = null;
+
+    if (eventActivity.file) {
+      file = {
+        id: eventActivity.file.id,
+        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
+        mime_type: eventActivity.file.mime_type,
+      };
+    }
+
+    return {
+      id: eventActivity.id,
+      name: eventActivity.name,
+      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      max_participants: eventActivity.max_participants,
+      start_date: eventActivity.start_date,
+      end_date: eventActivity.end_date,
+      file,
+    };
+  }
+
   private mapAddress(address: Address) {
     return {
       street: address.street,
@@ -126,23 +151,6 @@ class FindPublicEventsService {
       state: address.state,
       country: address.country,
       zip_code: address.zip_code,
-    };
-  }
-
-  private mapActivity(activity: EventActivity) {
-    return {
-      id: activity.id,
-      hours_to_retrieve: activity.hours_to_retrieve,
-      max_participants: activity.max_participants,
-      start_date: activity.start_date,
-      end_date: activity.end_date,
-      activity: activity.activity
-        ? {
-            id: activity.activity.id,
-            name: activity.activity.name,
-            description: activity.activity.description,
-          }
-        : null,
     };
   }
 

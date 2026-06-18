@@ -7,6 +7,10 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
+import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
+import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
 
 @injectable()
 class UpdateEventActivityService {
@@ -21,6 +25,10 @@ class UpdateEventActivityService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
+    @inject('FileRepositoryProvider')
+    private fileRepository: IFileRepositoryProvider,
   ) {}
 
   public async execute(user_id: string, event_activity_id: string, data: Partial<CreateOrUpdateEventActivityDTO>) {
@@ -72,8 +80,63 @@ class UpdateEventActivityService {
       );
     }
 
-    const eventActivity = await this.eventActivityRepository.update(event_activity_id, data);
-    return { message: 'Event activity updated successfully.', data: eventActivity };
+    const updatePayload = await this.buildUpdatePayload(user_id, data);
+    const eventActivity = await this.eventActivityRepository.update(event_activity_id, updatePayload);
+
+    return {
+      message: 'Event activity updated successfully.',
+      data: this.mapEventActivity(eventActivity),
+    };
+  }
+
+  private mapEventActivity(eventActivity: EventActivity) {
+    let file = null;
+
+    if (eventActivity.file) {
+      file = {
+        id: eventActivity.file.id,
+        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
+        mime_type: eventActivity.file.mime_type,
+      };
+    }
+
+    return {
+      id: eventActivity.id,
+      name: eventActivity.name,
+      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      max_participants: eventActivity.max_participants,
+      start_date: eventActivity.start_date,
+      end_date: eventActivity.end_date,
+      file,
+    };
+  }
+
+  private async buildUpdatePayload(
+    user_id: string,
+    data: Partial<CreateOrUpdateEventActivityDTO>,
+  ): Promise<Partial<EventActivity>> {
+    const { file_id, event_id, ...rest } = data;
+    const updatePayload: Partial<EventActivity> = { ...rest };
+
+    if (file_id === undefined) {
+      return updatePayload;
+    }
+
+    if (file_id === null) {
+      updatePayload.file = null;
+      return updatePayload;
+    }
+
+    const fileQueryOptions = {
+      id: file_id,
+      user_id,
+    } as FileQueryOptions;
+
+    const files = await this.fileRepository.find(fileQueryOptions);
+    const file = files.at(0);
+
+    updatePayload.file = file;
+    return updatePayload;
   }
 }
 export { UpdateEventActivityService };

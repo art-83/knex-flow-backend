@@ -1,6 +1,10 @@
 import { IOrderRepositoryProvider } from '../providers/order-repository.provider';
 import { Order } from '../../entities/order.entity';
 import { OrderQueryOptions } from '../../../../dtos/order/order-query-options';
+import { OrderStatus } from '../../enums/order-status.enum';
+import { Ticket } from '../../entities/ticket.entity';
+import { Payment } from '../../../../../payments/infra/orm/entities/payment.entity';
+import { PaymentStatus } from '../../../../../payments/infra/orm/enums/payment-status.enum';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -60,6 +64,27 @@ class OrderRepository implements IOrderRepositoryProvider {
   public async delete(id: string): Promise<number> {
     const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
+  }
+
+  public async expirePendingOrder(orderId: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      await manager.update(Order, orderId, { status: OrderStatus.EXPIRED });
+
+      await manager
+        .createQueryBuilder()
+        .update(Ticket)
+        .set({ order: null })
+        .where('order_id = :orderId', { orderId })
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .update(Payment)
+        .set({ status: PaymentStatus.EXPIRED })
+        .where('order_id = :orderId', { orderId })
+        .andWhere('status = :status', { status: PaymentStatus.PENDING })
+        .execute();
+    });
   }
 }
 export { OrderRepository };

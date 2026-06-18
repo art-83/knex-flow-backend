@@ -8,6 +8,7 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 
 @injectable()
 class FindEventActivitiesService {
@@ -22,6 +23,8 @@ class FindEventActivitiesService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, options: Partial<EventActivityQueryOptions>) {
@@ -79,19 +82,24 @@ class FindEventActivitiesService {
   }
 
   private mapEventActivity(eventActivity: EventActivity) {
+    let file = null;
+
+    if (eventActivity.file) {
+      file = {
+        id: eventActivity.file.id,
+        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
+        mime_type: eventActivity.file.mime_type,
+      };
+    }
+
     return {
       id: eventActivity.id,
+      name: eventActivity.name,
       hours_to_retrieve: eventActivity.hours_to_retrieve,
       max_participants: eventActivity.max_participants,
       start_date: eventActivity.start_date,
       end_date: eventActivity.end_date,
-      activity: eventActivity.activity
-        ? {
-            id: eventActivity.activity.id,
-            name: eventActivity.activity.name,
-            description: eventActivity.activity.description,
-          }
-        : null,
+      file,
     };
   }
 }

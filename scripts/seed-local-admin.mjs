@@ -24,16 +24,7 @@ const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? 'arthurfmedeiros77@gmail.com
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? 'Arthur098.';
 const ORG_NAME = process.env.SEED_ORG_NAME ?? 'KnexTech Corp';
 
-const PERMISSIONS = [
-  'events:read',
-  'events:manage',
-  'activities:read',
-  'activities:manage',
-  'batches:read',
-  'batches:manage',
-  'team:read',
-  'team:manage',
-];
+const PERMISSIONS = ['events:read', 'events:manage', 'batches:read', 'batches:manage', 'team:read', 'team:manage'];
 
 const client = new pg.Client({
   host: process.env.SEED_DB_HOST ?? 'localhost',

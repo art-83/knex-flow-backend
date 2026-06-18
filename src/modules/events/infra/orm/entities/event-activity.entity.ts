@@ -1,12 +1,15 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
+import { File } from '../../../../files/infra/orm/entities/file.entity';
 import { Event } from './event.entity';
-import { Activity } from './activity.entity';
 import { EventActivityPresence } from './event-activity-presence.entity';
 import { EventActivityInvited } from './event-activity-invited.entity';
 
 @Entity({ name: 'event_activities' })
 class EventActivity extends BaseEntitySequentialGeneratedUUID {
+  @Column()
+  name: string;
+
   @Column({ nullable: true })
   hours_to_retrieve: number;
 
@@ -23,9 +26,9 @@ class EventActivity extends BaseEntitySequentialGeneratedUUID {
   @JoinColumn({ name: 'event_id' })
   event: Event;
 
-  @ManyToOne(() => Activity, activity => activity.event_activities, { nullable: false })
-  @JoinColumn({ name: 'activity_id' })
-  activity: Activity;
+  @ManyToOne(() => File, { nullable: true })
+  @JoinColumn({ name: 'file_id' })
+  file: File | null;
 
   @OneToMany(() => EventActivityPresence, eventActivityPresence => eventActivityPresence.event_activity)
   event_activity_presences: EventActivityPresence[];

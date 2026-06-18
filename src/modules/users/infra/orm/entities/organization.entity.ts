@@ -4,7 +4,6 @@ import { OrganizationRole } from './organization-role.entity';
 import { UserOrganization } from './user-organization.entity';
 import { UserPermission } from './user-permission.entity';
 import { Event } from '../../../../events/infra/orm/entities/event.entity';
-import { Activity } from '../../../../events/infra/orm/entities/activity.entity';
 
 @Entity('organizations')
 class Organization extends BaseEntitySequentialGeneratedUUID {
@@ -25,8 +24,5 @@ class Organization extends BaseEntitySequentialGeneratedUUID {
 
   @OneToMany(() => Event, event => event.organization)
   events: Event[];
-
-  @OneToMany(() => Activity, activity => activity.organization)
-  activities: Activity[];
 }
 export { Organization };

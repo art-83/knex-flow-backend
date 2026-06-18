@@ -8,6 +8,7 @@ import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activ
 import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
 import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
@@ -32,6 +33,8 @@ class FindEventsService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, options: Partial<EventQueryOptions>) {
@@ -128,7 +131,7 @@ class FindEventsService {
             }
           : null,
         available_tickets_count: availableTickets.length,
-        activities: activities.map(activity => this.mapActivity(activity)),
+        activities: activities.map(activity => this.mapEventActivity(activity)),
         invited: invited.map(item => this.mapInvited(item)),
       };
     });
@@ -136,13 +139,25 @@ class FindEventsService {
     return { message: 'Events found successfully.', data: response };
   }
 
-  private mapActivity(activity: EventActivity) {
+  private mapEventActivity(eventActivity: EventActivity) {
+    let file = null;
+
+    if (eventActivity.file) {
+      file = {
+        id: eventActivity.file.id,
+        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
+        mime_type: eventActivity.file.mime_type,
+      };
+    }
+
     return {
-      id: activity.id,
-      hours_to_retrieve: activity.hours_to_retrieve,
-      max_participants: activity.max_participants,
-      start_date: activity.start_date,
-      end_date: activity.end_date,
+      id: eventActivity.id,
+      name: eventActivity.name,
+      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      max_participants: eventActivity.max_participants,
+      start_date: eventActivity.start_date,
+      end_date: eventActivity.end_date,
+      file,
     };
   }
 

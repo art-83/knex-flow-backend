@@ -3,7 +3,7 @@ import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/o
 import { User } from '../../../../users/infra/orm/entities/user.entity';
 
 @Entity({ name: 'files' })
-class StoredFile extends BaseEntitySequentialGeneratedUUID {
+class File extends BaseEntitySequentialGeneratedUUID {
   @Column({ unique: true })
   path: string;
 
@@ -14,4 +14,4 @@ class StoredFile extends BaseEntitySequentialGeneratedUUID {
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
-export { StoredFile };
+export { File };

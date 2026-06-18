@@ -15,14 +15,13 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
     const query = this.repository.createQueryBuilder('event_activity');
 
     query.leftJoinAndSelect('event_activity.event', 'event');
-    query.leftJoinAndSelect('event_activity.activity', 'activity');
+    query.leftJoinAndSelect('event_activity.file', 'file');
 
     if (data.id) query.andWhere('event_activity.id = :id', { id: data.id });
 
     if (data.event_id) query.andWhere('event_activity.event_id = :event_id', { event_id: data.event_id });
 
-    if (data.activity_id)
-      query.andWhere('event_activity.activity_id = :activity_id', { activity_id: data.activity_id });
+    if (data.name) query.andWhere('event_activity.name ILIKE :name', { name: `%${data.name}%` });
 
     if (data.hours_to_retrieve !== undefined) {
       query.andWhere('event_activity.hours_to_retrieve = :hours_to_retrieve', {
@@ -56,9 +55,8 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
   }
 
   public async update(id: string, data: Partial<EventActivity>): Promise<EventActivity> {
-    const create = this.repository.create(data);
-    await this.repository.update(id, create);
-    return create;
+    await this.repository.save({ id, ...data });
+    return (await this.find({ id })).at(0)!;
   }
 
   public async delete(id: string): Promise<number> {

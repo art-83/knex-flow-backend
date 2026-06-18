@@ -30,20 +30,20 @@ class UploadFileService {
       mime_type,
     });
 
-    const storedFile = await this.fileRepository.create({
+    const savedFile = await this.fileRepository.create({
       path: filePath,
       mime_type,
       user: { id: user_id } as User,
     });
 
     return {
-      id: storedFile.id,
-      path: storedFile.path,
-      mime_type: storedFile.mime_type,
+      id: savedFile.id,
+      path: savedFile.path,
+      mime_type: savedFile.mime_type,
       user_id,
-      created_at: storedFile.created_at,
-      updated_at: storedFile.updated_at,
-      deleted_at: storedFile.deleted_at ?? null,
+      created_at: savedFile.created_at,
+      updated_at: savedFile.updated_at,
+      deleted_at: savedFile.deleted_at ?? null,
       url: this.storageProvider.getPublicUrl(filePath),
     };
   }

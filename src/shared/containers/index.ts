@@ -24,8 +24,6 @@ import { UserPermissionRepository } from '../../modules/users/infra/orm/reposito
 
 import { IEventRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-repository.provider';
 import { EventRepository } from '../../modules/events/infra/orm/repositories/implementations/event-repository.implementation';
-import { IActivityRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/activity-repository.provider';
-import { ActivityRepository } from '../../modules/events/infra/orm/repositories/implementations/activity-repository.implementation';
 import { IBatchRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/batch-repository.provider';
 import { BatchRepository } from '../../modules/events/infra/orm/repositories/implementations/batch-repository.implementation';
 import { IEventActivityRepositoryProvider } from '../../modules/events/infra/orm/repositories/providers/event-activity-repository.provider';
@@ -89,7 +87,6 @@ container.registerSingleton<IUserPermissionRepositoryProvider>(
 );
 
 container.registerSingleton<IEventRepositoryProvider>('EventRepositoryProvider', EventRepository);
-container.registerSingleton<IActivityRepositoryProvider>('ActivityRepositoryProvider', ActivityRepository);
 container.registerSingleton<IBatchRepositoryProvider>('BatchRepositoryProvider', BatchRepository);
 container.registerSingleton<IEventActivityRepositoryProvider>(
   'EventActivityRepositoryProvider',
