@@ -111,10 +111,22 @@ class FindEventsService {
         start_date: event.start_date,
         end_date: event.end_date,
         modality: event.modality,
+        url_path: event.url_path,
+        status: event.status,
         organization: {
           id: event.organization.id,
           name: event.organization.name,
         },
+        address: event.address
+          ? {
+              street: event.address.street,
+              number: event.address.number,
+              city: event.address.city,
+              state: event.address.state,
+              country: event.address.country,
+              zip_code: event.address.zip_code,
+            }
+          : null,
         available_tickets_count: availableTickets.length,
         activities: activities.map(activity => this.mapActivity(activity)),
         invited: invited.map(item => this.mapInvited(item)),

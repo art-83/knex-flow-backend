@@ -1,5 +1,5 @@
 interface DiscordErrorWebhookJobPayloadDTO {
   message: string;
-  stack?: string;
+  stack: string;
 }
 export { DiscordErrorWebhookJobPayloadDTO };

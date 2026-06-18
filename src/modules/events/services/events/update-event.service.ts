@@ -1,17 +1,21 @@
 import { inject, injectable } from 'tsyringe';
 import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { IAddressRepositoryProvider } from '../../infra/orm/repositories/providers/address-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
 @injectable()
 class UpdateEventService {
   constructor(
     @inject('EventRepositoryProvider')
     private eventRepository: IEventRepositoryProvider,
+    @inject('AddressRepositoryProvider')
+    private addressRepository: IAddressRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
@@ -63,8 +67,39 @@ class UpdateEventService {
       );
     }
 
-    const event = await this.eventRepository.update(event_id, data);
+    if (data.url_path) {
+      const possibleExistingEvent = (
+        await this.eventRepository.find({ url_path: data.url_path, status: EventStatus.ACTIVE })
+      ).at(0);
+
+      if (possibleExistingEvent && possibleExistingEvent.id !== event_id) {
+        throw new AppError(400, 'Event with this URL path already exists.', 'Evento com este caminho URL ja existe.');
+      }
+    }
+
+    const event = await this.eventRepository.update(event_id, await this.buildUpdatePayload(eventExists, data));
     return { message: 'Event updated successfully.', data: event };
+  }
+
+  private async buildUpdatePayload(
+    eventExists: NonNullable<Awaited<ReturnType<IEventRepositoryProvider['find']>>[number]>,
+    data: Partial<CreateOrUpdateEventDTO>,
+  ) {
+    const { address, ...rest } = data;
+    const updatePayload: Partial<CreateOrUpdateEventDTO> = { ...rest };
+
+    if (!address) {
+      return updatePayload;
+    }
+
+    if (eventExists.address?.id) {
+      await this.addressRepository.update(eventExists.address.id, address);
+      return updatePayload;
+    }
+
+    const createdAddress = await this.addressRepository.create(address);
+    updatePayload.address = createdAddress;
+    return updatePayload;
   }
 }
 export { UpdateEventService };

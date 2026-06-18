@@ -41,11 +41,11 @@ interface AbacatePayPixWebhookRequestDTO {
         term: string | null;
         content: string | null;
       };
-      PIX?: {
+      PIX: {
         name: string | null;
         taxId: string | null;
         isSameAsCustomer: boolean;
-      };
+      } | null;
     };
   };
 }

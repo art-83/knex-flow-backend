@@ -11,6 +11,10 @@ eventPublicRouter.get(
   celebrate({
     [Segments.QUERY]: Joi.object({
       organization_id: Joi.string().uuid().optional(),
+      url_path: Joi.string()
+        .pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+        .max(120)
+        .optional(),
       ...defaultQueryOptionsSchema,
     }),
   }),

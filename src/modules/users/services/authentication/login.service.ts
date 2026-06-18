@@ -31,9 +31,9 @@ class LoginService {
       throw new AppError(401, 'Invalid email or password.', 'Email ou senha invalidos.');
     }
 
-    const tokenPayload = { user_id: user.id };
+    const tokenPayload = { user_id: user.id, type: 'access' };
     const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
-    const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
+    const refreshToken = this.jwtProvider.signRefreshToken({ user_id: user.id, type: 'refresh' });
 
     return {
       message: 'Login successful.',

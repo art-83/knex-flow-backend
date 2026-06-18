@@ -2,6 +2,6 @@ import { DefaultQueryOptionsDTO } from '../../../../shared/infra/orm/dtos/defaul
 import { User } from '../../infra/orm/entities/user.entity';
 
 interface UserQueryOptions extends User, DefaultQueryOptionsDTO {
-  includePassword?: boolean;
+  includePassword: boolean;
 }
 export { UserQueryOptions };

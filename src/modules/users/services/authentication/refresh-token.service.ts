@@ -17,7 +17,7 @@ class RefreshTokenService {
 
       const accessToken = this.jwtProvider.signAccessToken({
         user_id: decoded.user_id,
-        type: decoded.type,
+        type: decoded.type ?? 'access',
       });
 
       return {

@@ -5,6 +5,7 @@ import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
 import { Address } from './address.entity';
 import { EventModality } from '../enums/event-modality.enum';
+import { EventStatus } from '../enums/event-status.enum';
 
 @Entity({ name: 'events' })
 class Event extends BaseEntitySequentialGeneratedUUID {
@@ -17,6 +18,12 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   @ManyToOne(() => Organization, organization => organization.events, { nullable: false })
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
+
+  @Column({ nullable: true })
+  url_path: string;
+
+  @Column({ type: 'enum', enum: EventStatus, default: EventStatus.DRAFT })
+  status?: EventStatus;
 
   @Column({ type: 'timestamptz' })
   start_date: Date;

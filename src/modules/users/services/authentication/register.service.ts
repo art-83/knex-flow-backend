@@ -47,9 +47,9 @@ class RegisterService {
     data.password = hashedPassword;
     const createdUser = await this.userRepository.create(data);
 
-    const tokenPayload = { user_id: createdUser.id };
+    const tokenPayload = { user_id: createdUser.id, type: 'access' };
     const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
-    const refreshToken = this.jwtProvider.signRefreshToken(tokenPayload);
+    const refreshToken = this.jwtProvider.signRefreshToken({ user_id: createdUser.id, type: 'refresh' });
 
     await this.producerProvider.createJob(
       QueueNames.SEND_WELCOME_EMAIL,

@@ -6,9 +6,25 @@ import {
   timestampQueryOptionsSchema,
 } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
 import { EventModality } from '../../orm/enums/event-modality.enum';
+import { EventStatus } from '../../orm/enums/event-status.enum';
 
 const eventRouter = Router();
 const eventController = new EventController();
+
+const eventUrlPathSchema = Joi.string()
+  .pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  .max(120)
+  .optional()
+  .allow(null);
+
+const eventStatusFilterSchema = Joi.string()
+  .valid(...Object.values(EventStatus))
+  .optional();
+
+const eventCreateStatusSchema = Joi.string()
+  .valid(...Object.values(EventStatus))
+  .optional()
+  .default(EventStatus.DRAFT);
 
 eventRouter.get(
   '/',
@@ -18,6 +34,8 @@ eventRouter.get(
       name: Joi.string().optional(),
       description: Joi.string().optional(),
       organization_id: Joi.string().uuid().required(),
+      url_path: eventUrlPathSchema,
+      status: eventStatusFilterSchema,
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     }),
@@ -37,6 +55,8 @@ eventRouter.post(
       modality: Joi.string()
         .valid(...Object.values(EventModality))
         .optional(),
+      url_path: eventUrlPathSchema,
+      status: eventCreateStatusSchema,
       configuration: Joi.object().allow(null).optional(),
       address: Joi.object({
         street: Joi.string().required(),
@@ -156,9 +176,9 @@ eventRouter.post(
     }).required(),
     [Segments.BODY]: Joi.object({
       name: Joi.string().required(),
-      institution: Joi.string().optional(),
-      profession: Joi.string().optional(),
-      user_id: Joi.string().uuid().optional(),
+      institution: Joi.string().optional().allow(null).default(null),
+      profession: Joi.string().optional().allow(null).default(null),
+      user_id: Joi.string().uuid().optional().allow(null).default(null),
     }).required(),
   }),
   eventController.createEventInvited,
@@ -307,7 +327,17 @@ eventRouter.patch(
       description: Joi.string().optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
+      url_path: eventUrlPathSchema,
+      status: eventStatusFilterSchema,
       configuration: Joi.object().allow(null).optional(),
+      address: Joi.object({
+        street: Joi.string().required(),
+        number: Joi.string().required(),
+        city: Joi.string().required(),
+        state: Joi.string().required(),
+        country: Joi.string().required(),
+        zip_code: Joi.string().required(),
+      }).optional(),
     })
       .min(1)
       .required(),

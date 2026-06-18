@@ -25,7 +25,7 @@ async function globalErrorHandlerMiddleware(error: Error, request: Request, resp
     QueueNames.DISCORD_ERROR_WEBHOOK,
     {
       message: error.message,
-      stack: error.stack,
+      stack: error.stack ?? '',
     } as DiscordErrorWebhookJobPayloadDTO,
     bullmqConfig.defaultJobOptions,
   );

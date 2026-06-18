@@ -63,7 +63,9 @@ class UpdateEventConfigurationService {
       );
     }
 
-    const event = await this.eventRepository.update(event_id, { configuration: data.configuration });
+    const event = await this.eventRepository.update(event_id, {
+      configuration: data.configuration,
+    });
 
     return { message: 'Event configuration updated successfully.', data: { configuration: event.configuration } };
   }

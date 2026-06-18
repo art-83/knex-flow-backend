@@ -1,6 +1,7 @@
 import { IEventRepositoryProvider } from '../providers/event-repository.provider';
 import { Event } from '../../entities/event.entity';
 import { EventQueryOptions } from '../../../../dtos/event/event-query-options';
+import { EventStatus } from '../../enums/event-status.enum';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -26,6 +27,10 @@ class EventRepository implements IEventRepositoryProvider {
 
     if (data.description) query.andWhere('event.description = :description', { description: data.description });
 
+    if (data.url_path) query.andWhere('event.url_path = :url_path', { url_path: data.url_path });
+
+    if (data.status) query.andWhere('event.status = :status', { status: data.status });
+
     if (data.start_date) query.andWhere('event.start_date >= :start_date', { start_date: data.start_date });
 
     if (data.end_date) query.andWhere('event.end_date <= :end_date', { end_date: data.end_date });
@@ -41,14 +46,22 @@ class EventRepository implements IEventRepositoryProvider {
   }
 
   public async create(data: Event): Promise<Event> {
-    const create = this.repository.create(data);
+    const create = this.repository.create({
+      ...data,
+      status: data.status ?? EventStatus.DRAFT,
+    });
     return await this.repository.save(create);
   }
 
   public async update(id: string, data: Partial<Event>): Promise<Event> {
-    const update = this.repository.create(data);
-    await this.repository.update(id, update);
-    return update;
+    await this.repository.save({ id, ...data });
+    const updated = (await this.find({ id })).at(0);
+
+    if (!updated) {
+      throw new Error('Event not found after update.');
+    }
+
+    return updated;
   }
 
   public async delete(id: string): Promise<number> {

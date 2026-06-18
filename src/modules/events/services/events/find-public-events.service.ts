@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { EventQueryOptions } from '../../dtos/event/event-query-options';
+import { PublicEventQueryOptions } from '../../dtos/event/public-event-query-options';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
@@ -15,13 +16,7 @@ import { Address } from '../../infra/orm/entities/address.entity';
 import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
 import { Batch } from '../../infra/orm/entities/batch.entity';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-
-interface PublicEventQueryOptions {
-  id?: string;
-  organization_id?: string;
-  limit?: number;
-  offset?: number;
-}
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
 @injectable()
 class FindPublicEventsService {
@@ -38,8 +33,11 @@ class FindPublicEventsService {
     private batchRepository: IBatchRepositoryProvider,
   ) {}
 
-  public async execute(options: PublicEventQueryOptions) {
-    const events = await this.eventRepository.find(options as Partial<EventQueryOptions>);
+  public async execute(options: Partial<PublicEventQueryOptions>) {
+    const events = await this.eventRepository.find({
+      ...(options as Partial<EventQueryOptions>),
+      status: EventStatus.ACTIVE,
+    });
     const published = events.filter(event => event.configuration?.published === true);
 
     if (options.id) {
@@ -92,6 +90,8 @@ class FindPublicEventsService {
         start_date: event.start_date,
         end_date: event.end_date,
         modality: event.modality,
+        url_path: event.url_path,
+        status: event.status,
         configuration: event.configuration,
         organization: {
           id: event.organization.id,

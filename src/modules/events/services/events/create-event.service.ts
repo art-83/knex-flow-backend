@@ -8,6 +8,7 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 
 @injectable()
 class CreateEventService {
@@ -27,6 +28,16 @@ class CreateEventService {
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventDTO) {
+    if (data.url_path) {
+      const possibleExistingEvent = (
+        await this.eventRepository.find({ url_path: data.url_path, status: EventStatus.ACTIVE })
+      ).at(0);
+
+      if (possibleExistingEvent) {
+        throw new AppError(400, 'Event with this URL path already exists.', 'Evento com este caminho URL ja existe.');
+      }
+    }
+
     const userOrganization = (
       await this.userOrganizationRepository.find({ user_id, organization_id: data.organization_id })
     ).at(0);
@@ -72,6 +83,7 @@ class CreateEventService {
     this.validateEventDateRange(data);
 
     data.organization = organization;
+    data.status = data.status ?? EventStatus.DRAFT;
 
     if (data.address) {
       const address = await this.addressRepository.create(data.address);
@@ -85,6 +97,8 @@ class CreateEventService {
         id: event.id,
         name: event.name,
         description: event.description,
+        url_path: event.url_path,
+        status: event.status,
         address: event.address,
       },
     };

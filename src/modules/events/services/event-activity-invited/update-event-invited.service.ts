@@ -105,8 +105,8 @@ class UpdateEventInvitedService {
     const updatePayload: Partial<EventActivityInvited> = {};
 
     if (data.name !== undefined) updatePayload.name = data.name;
-    if (data.institution !== undefined) updatePayload.institution = data.institution;
-    if (data.profession !== undefined) updatePayload.profession = data.profession;
+    if (data.institution !== undefined) updatePayload.institution = data.institution ?? undefined;
+    if (data.profession !== undefined) updatePayload.profession = data.profession ?? undefined;
 
     if (data.user_id !== undefined) {
       if (data.user_id === null) {

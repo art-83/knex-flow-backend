@@ -1,7 +1,7 @@
 interface CreateOrUpdateEventInvitedDTO {
-  name?: string;
-  institution?: string;
-  profession?: string;
-  user_id?: string | null;
+  name: string;
+  institution: string | null;
+  profession: string | null;
+  user_id: string | null;
 }
 export { CreateOrUpdateEventInvitedDTO };

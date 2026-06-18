@@ -81,8 +81,8 @@ class CreateEventInvitedService {
 
     const invitedPayload: Partial<EventActivityInvited> = {
       name: data.name,
-      institution: data.institution,
-      profession: data.profession,
+      institution: data.institution ?? undefined,
+      profession: data.profession ?? undefined,
       event_activity: eventActivity,
     };
 
