@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
+import { File } from '../../../../files/infra/orm/entities/file.entity';
 import { Batch } from './batch.entity';
 import { EventActivity } from './event-activity.entity';
 import { Organization } from '../../../../users/infra/orm/entities/organization.entity';
@@ -19,11 +20,15 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @Column({ nullable: true })
-  url_path: string;
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  url_path: string | null;
+
+  @ManyToOne(() => File, { nullable: true })
+  @JoinColumn({ name: 'file_id' })
+  file: File | null;
 
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.DRAFT })
-  status?: EventStatus;
+  status: EventStatus;
 
   @Column({ type: 'timestamptz' })
   start_date: Date;

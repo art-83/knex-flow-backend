@@ -11,6 +11,8 @@ import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repo
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
+import { getActivityDurationHours } from '../../utils/event-activity-duration';
+import { mapStoredFile } from '../../../files/utils/map-stored-file';
 
 @injectable()
 class CreateEventActivityService {
@@ -89,24 +91,17 @@ class CreateEventActivityService {
   }
 
   private mapEventActivity(eventActivity: EventActivity) {
-    let file = null;
-
-    if (eventActivity.file) {
-      file = {
-        id: eventActivity.file.id,
-        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
-        mime_type: eventActivity.file.mime_type,
-      };
-    }
-
     return {
       id: eventActivity.id,
       name: eventActivity.name,
-      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      hours_to_retrieve_enabled: eventActivity.hours_to_retrieve_enabled,
+      complementary_hours: eventActivity.hours_to_retrieve_enabled
+        ? getActivityDurationHours(eventActivity.start_date, eventActivity.end_date)
+        : null,
       max_participants: eventActivity.max_participants,
       start_date: eventActivity.start_date,
       end_date: eventActivity.end_date,
-      file,
+      file: mapStoredFile(this.storageProvider, eventActivity.file),
     };
   }
 

@@ -9,6 +9,8 @@ import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invi
 import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
+import { getActivityDurationHours } from '../../utils/event-activity-duration';
+import { mapStoredFile } from '../../../files/utils/map-stored-file';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
@@ -116,6 +118,7 @@ class FindEventsService {
         modality: event.modality,
         url_path: event.url_path,
         status: event.status,
+        banner: mapStoredFile(this.storageProvider, event.file),
         organization: {
           id: event.organization.id,
           name: event.organization.name,
@@ -140,24 +143,17 @@ class FindEventsService {
   }
 
   private mapEventActivity(eventActivity: EventActivity) {
-    let file = null;
-
-    if (eventActivity.file) {
-      file = {
-        id: eventActivity.file.id,
-        url: this.storageProvider.getPublicUrl(eventActivity.file.path),
-        mime_type: eventActivity.file.mime_type,
-      };
-    }
-
     return {
       id: eventActivity.id,
       name: eventActivity.name,
-      hours_to_retrieve: eventActivity.hours_to_retrieve,
+      hours_to_retrieve_enabled: eventActivity.hours_to_retrieve_enabled,
+      complementary_hours: eventActivity.hours_to_retrieve_enabled
+        ? getActivityDurationHours(eventActivity.start_date, eventActivity.end_date)
+        : null,
       max_participants: eventActivity.max_participants,
       start_date: eventActivity.start_date,
       end_date: eventActivity.end_date,
-      file,
+      file: mapStoredFile(this.storageProvider, eventActivity.file),
     };
   }
 

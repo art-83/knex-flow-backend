@@ -5,6 +5,8 @@ import {
   defaultQueryOptionsSchema,
   timestampQueryOptionsSchema,
 } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
+import { eventAddressSchema } from '../dtos/event-address-schema.dto';
+import { validateOfflineEventAddressForPublishMiddleware } from '../middlewares/validate-offline-event-address-for-publish.middleware';
 import { EventModality } from '../../orm/enums/event-modality.enum';
 import { EventStatus } from '../../orm/enums/event-status.enum';
 
@@ -56,16 +58,10 @@ eventRouter.post(
         .valid(...Object.values(EventModality))
         .optional(),
       url_path: eventUrlPathSchema,
+      file_id: Joi.string().uuid().allow(null).optional(),
       status: eventCreateStatusSchema,
       configuration: Joi.object().allow(null).optional(),
-      address: Joi.object({
-        street: Joi.string().required(),
-        number: Joi.string().required(),
-        city: Joi.string().required(),
-        state: Joi.string().required(),
-        country: Joi.string().required(),
-        zip_code: Joi.string().required(),
-      }).optional(),
+      address: eventAddressSchema.optional(),
     }).required(),
   }),
   eventController.createEvent,
@@ -131,8 +127,8 @@ eventRouter.get(
       id: Joi.string().uuid().optional(),
       event_id: Joi.string().uuid().required(),
       name: Joi.string().optional(),
-      hours_to_retrieve: Joi.number().integer().min(0).optional(),
-      max_participants: Joi.number().integer().min(1).optional(),
+      hours_to_retrieve_enabled: Joi.boolean().optional(),
+      max_participants: Joi.number().integer().min(1).allow(null).optional(),
       ...timestampQueryOptionsSchema,
       ...defaultQueryOptionsSchema,
     }),
@@ -149,8 +145,8 @@ eventRouter.patch(
     [Segments.BODY]: Joi.object({
       name: Joi.string().optional(),
       file_id: Joi.string().uuid().allow(null).optional(),
-      hours_to_retrieve: Joi.number().integer().min(0).optional(),
-      max_participants: Joi.number().integer().min(1).optional(),
+      hours_to_retrieve_enabled: Joi.boolean().optional(),
+      max_participants: Joi.number().integer().min(1).allow(null).optional(),
       start_date: Joi.date().optional(),
       end_date: Joi.date().optional(),
     })
@@ -309,8 +305,8 @@ eventRouter.post(
     }).required(),
     [Segments.BODY]: Joi.object({
       name: Joi.string().required(),
-      hours_to_retrieve: Joi.number().integer().min(0).required(),
-      max_participants: Joi.number().integer().min(1).required(),
+      hours_to_retrieve_enabled: Joi.boolean().optional(),
+      max_participants: Joi.number().integer().min(1).allow(null).optional(),
       start_date: Joi.date().required(),
       end_date: Joi.date().required(),
     }).required(),
@@ -325,6 +321,7 @@ eventRouter.post(
       event_id: Joi.string().uuid().required(),
     }).required(),
   }),
+  validateOfflineEventAddressForPublishMiddleware,
   eventController.publishEvent,
 );
 
@@ -343,16 +340,10 @@ eventRouter.patch(
         .valid(...Object.values(EventModality))
         .optional(),
       url_path: eventUrlPathSchema,
+      file_id: Joi.string().uuid().allow(null).optional(),
       status: eventStatusFilterSchema,
       configuration: Joi.object().allow(null).optional(),
-      address: Joi.object({
-        street: Joi.string().required(),
-        number: Joi.string().required(),
-        city: Joi.string().required(),
-        state: Joi.string().required(),
-        country: Joi.string().required(),
-        zip_code: Joi.string().required(),
-      }).optional(),
+      address: eventAddressSchema.optional(),
     })
       .min(1)
       .required(),

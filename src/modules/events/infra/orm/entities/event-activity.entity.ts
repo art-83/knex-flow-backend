@@ -10,11 +10,11 @@ class EventActivity extends BaseEntitySequentialGeneratedUUID {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
-  hours_to_retrieve: number;
+  @Column({ type: 'boolean', default: false })
+  hours_to_retrieve_enabled: boolean;
 
-  @Column()
-  max_participants: number;
+  @Column({ type: 'integer', nullable: true })
+  max_participants: number | null;
 
   @Column({ type: 'timestamptz' })
   start_date: Date;

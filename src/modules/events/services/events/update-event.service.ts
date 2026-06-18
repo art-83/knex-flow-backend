@@ -9,6 +9,11 @@ import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repo
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { EventModality } from '../../infra/orm/enums/event-modality.enum';
+import { Event } from '../../infra/orm/entities/event.entity';
+import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
+import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
+import { mapStoredFile } from '../../../files/utils/map-stored-file';
 
 @injectable()
 class UpdateEventService {
@@ -23,6 +28,10 @@ class UpdateEventService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('FileRepositoryProvider')
+    private fileRepository: IFileRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, event_id: string, data: Partial<CreateOrUpdateEventDTO>) {
@@ -88,9 +97,37 @@ class UpdateEventService {
     }
 
     const updatePayload = await this.buildUpdatePayload(eventExists, data, isSwitchingToOnline);
+
+    if (data.file_id !== undefined) {
+      if (data.file_id === null) {
+        updatePayload.file = null;
+      } else {
+        const file = (await this.fileRepository.find({ id: data.file_id, user_id } as FileQueryOptions)).at(0);
+
+        if (!file) {
+          throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
+        }
+
+        updatePayload.file = file;
+      }
+    }
+
     const event = await this.eventRepository.update(event_id, updatePayload);
 
-    return { message: 'Event updated successfully.', data: event };
+    return {
+      message: 'Event updated successfully.',
+      data: {
+        id: event.id,
+        name: event.name,
+        description: event.description,
+        url_path: event.url_path,
+        status: event.status,
+        modality: event.modality,
+        start_date: event.start_date,
+        end_date: event.end_date,
+        banner: mapStoredFile(this.storageProvider, event.file),
+      },
+    };
   }
 
   private async buildUpdatePayload(
@@ -98,8 +135,8 @@ class UpdateEventService {
     data: Partial<CreateOrUpdateEventDTO>,
     isSwitchingToOnline: boolean,
   ) {
-    const { address, ...rest } = data;
-    const updatePayload: Partial<CreateOrUpdateEventDTO> = { ...rest };
+    const { address, file_id, organization_id, ...rest } = data;
+    const updatePayload: Partial<Event> = { ...rest };
 
     if (isSwitchingToOnline) {
       return updatePayload;

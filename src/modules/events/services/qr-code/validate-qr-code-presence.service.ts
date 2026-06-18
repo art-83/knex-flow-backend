@@ -81,7 +81,7 @@ class ValidateQRCodePresenceService {
 
     const presenceCount = await this.eventActivityPresenceRepository.countByEventActivity(event_activity_id);
 
-    if (presenceCount >= eventActivity.max_participants) {
+    if (eventActivity.max_participants != null && presenceCount >= eventActivity.max_participants) {
       throw new AppError(
         409,
         'Event activity has reached maximum participants.',

@@ -106,5 +106,4 @@ class PublishEventService {
     };
   }
 }
-
 export { PublishEventService };

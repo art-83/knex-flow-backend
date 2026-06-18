@@ -23,9 +23,9 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
 
     if (data.name) query.andWhere('event_activity.name ILIKE :name', { name: `%${data.name}%` });
 
-    if (data.hours_to_retrieve !== undefined) {
-      query.andWhere('event_activity.hours_to_retrieve = :hours_to_retrieve', {
-        hours_to_retrieve: data.hours_to_retrieve,
+    if (data.hours_to_retrieve_enabled !== undefined) {
+      query.andWhere('event_activity.hours_to_retrieve_enabled = :hours_to_retrieve_enabled', {
+        hours_to_retrieve_enabled: data.hours_to_retrieve_enabled,
       });
     }
 
@@ -51,7 +51,8 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
 
   public async create(data: EventActivity): Promise<EventActivity> {
     const create = this.repository.create(data);
-    return await this.repository.save(create);
+    const saved = await this.repository.save(create);
+    return (await this.find({ id: saved.id })).at(0) ?? saved;
   }
 
   public async update(id: string, data: Partial<EventActivity>): Promise<EventActivity> {

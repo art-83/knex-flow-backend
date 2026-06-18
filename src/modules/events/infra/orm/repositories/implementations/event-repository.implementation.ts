@@ -17,6 +17,7 @@ class EventRepository implements IEventRepositoryProvider {
 
     query.leftJoinAndSelect('event.organization', 'organization');
     query.leftJoinAndSelect('event.address', 'address');
+    query.leftJoinAndSelect('event.file', 'file');
 
     if (data.id) query.andWhere('event.id = :id', { id: data.id });
 
@@ -50,7 +51,10 @@ class EventRepository implements IEventRepositoryProvider {
       ...data,
       status: data.status ?? EventStatus.DRAFT,
     });
-    return await this.repository.save(create);
+    const saved = await this.repository.save(create);
+    const reloaded = (await this.find({ id: saved.id })).at(0);
+
+    return reloaded ?? saved;
   }
 
   public async update(id: string, data: Partial<Event>): Promise<Event> {

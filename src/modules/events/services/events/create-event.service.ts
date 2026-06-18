@@ -9,6 +9,10 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
+import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
+import { mapStoredFile } from '../../../files/utils/map-stored-file';
 
 @injectable()
 class CreateEventService {
@@ -25,6 +29,10 @@ class CreateEventService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
     @inject('AddressRepositoryProvider')
     private addressRepository: IAddressRepositoryProvider,
+    @inject('FileRepositoryProvider')
+    private fileRepository: IFileRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateEventDTO) {
@@ -85,8 +93,28 @@ class CreateEventService {
     data.organization = organization;
     data.status = data.status ?? EventStatus.DRAFT;
 
-    const { address: addressData, ...eventData } = data;
-    const event = await this.eventRepository.create(eventData);
+    const { address: addressData, organization_id: _organizationId, file_id, ...eventData } = data;
+
+    let file: Awaited<ReturnType<IFileRepositoryProvider['find']>>[number] | null | undefined;
+
+    if (file_id !== undefined) {
+      if (file_id === null) {
+        file = null;
+      } else {
+        const resolvedFile = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+
+        if (!resolvedFile) {
+          throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
+        }
+
+        file = resolvedFile;
+      }
+    }
+
+    const event = await this.eventRepository.create({
+      ...eventData,
+      ...(file !== undefined ? { file } : {}),
+    });
 
     if (addressData) {
       await this.addressRepository.create({ ...addressData, event });
@@ -101,6 +129,7 @@ class CreateEventService {
         description: event.description,
         url_path: event.url_path,
         status: event.status,
+        banner: mapStoredFile(this.storageProvider, eventWithRelations?.file),
         address: eventWithRelations?.address ?? null,
       },
     };
