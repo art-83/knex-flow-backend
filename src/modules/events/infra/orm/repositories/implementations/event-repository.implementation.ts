@@ -15,6 +15,7 @@ class EventRepository implements IEventRepositoryProvider {
     const query = this.repository.createQueryBuilder('event');
 
     query.leftJoinAndSelect('event.organization', 'organization');
+    query.leftJoinAndSelect('event.address', 'address');
 
     if (data.id) query.andWhere('event.id = :id', { id: data.id });
 

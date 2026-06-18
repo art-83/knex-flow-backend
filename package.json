@@ -5,6 +5,7 @@
   "main": "src/shared/http/server.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "seed:local-admin": "node scripts/seed-local-admin.mjs",
     "worker:payment-processing-queue": "node dist/shared/infra/queue/queue-bootstrap.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
