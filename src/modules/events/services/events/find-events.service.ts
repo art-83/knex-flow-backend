@@ -12,7 +12,7 @@ import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
-import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
+import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
@@ -145,7 +145,7 @@ class FindEventsService {
           : null,
         available_tickets_count: stock.available_tickets_count,
         activities: activities.map(activity => this.mapEventActivity(activity)),
-        invited: invited.map(item => this.mapInvited(item)),
+        invited: invited.map(item => mapEventActivityInvited(this.storageProvider, item)),
       };
     });
 
@@ -175,17 +175,6 @@ class FindEventsService {
       start_date: eventActivity.start_date,
       end_date: eventActivity.end_date,
       file: mapStoredFile(this.storageProvider, eventActivity.file),
-    };
-  }
-
-  private mapInvited(invited: EventActivityInvited) {
-    return {
-      id: invited.id,
-      event_activity_id: invited.event_activity.id,
-      name: invited.name,
-      institution: invited.institution,
-      profession: invited.profession,
-      user_id: invited.user?.id ?? null,
     };
   }
 }

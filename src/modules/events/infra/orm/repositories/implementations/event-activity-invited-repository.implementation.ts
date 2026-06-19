@@ -17,6 +17,7 @@ class EventActivityInvitedRepository implements IEventActivityInvitedRepositoryP
     query.leftJoinAndSelect('event_activity_invited.event_activity', 'event_activity');
     query.leftJoinAndSelect('event_activity.event', 'event');
     query.leftJoinAndSelect('event_activity_invited.user', 'user');
+    query.leftJoinAndSelect('event_activity_invited.file', 'file');
 
     if (data.id) query.andWhere('event_activity_invited.id = :id', { id: data.id });
 

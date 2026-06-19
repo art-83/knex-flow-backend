@@ -9,7 +9,7 @@ import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers
 import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
 import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
-import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
+import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { Address } from '../../infra/orm/entities/address.entity';
 import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
@@ -113,7 +113,7 @@ class FindPublicEventsService {
             }
           : null,
         activities: activities.map(activity => this.mapEventActivity(activity)),
-        invited: invited.map(item => this.mapInvited(item)),
+        invited: invited.map(item => mapEventActivityInvited(this.storageProvider, item)),
       };
     });
   }
@@ -157,17 +157,6 @@ class FindPublicEventsService {
       state: address.state,
       country: address.country,
       zip_code: address.zip_code,
-    };
-  }
-
-  private mapInvited(invited: EventActivityInvited) {
-    return {
-      id: invited.id,
-      event_activity_id: invited.event_activity.id,
-      name: invited.name,
-      institution: invited.institution,
-      profession: invited.profession,
-      user_id: invited.user?.id ?? null,
     };
   }
 }

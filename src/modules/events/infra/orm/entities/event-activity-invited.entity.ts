@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntitySequentialGeneratedUUID } from '../../../../../shared/infra/orm/entities/base-entity-sequential-generated-uuid.entity';
+import { File } from '../../../../files/infra/orm/entities/file.entity';
 import { EventActivity } from './event-activity.entity';
 import { User } from '../../../../users/infra/orm/entities/user.entity';
 
@@ -21,5 +22,9 @@ class EventActivityInvited extends BaseEntitySequentialGeneratedUUID {
   @ManyToOne(() => User, user => user.event_activity_invited, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => File, { nullable: true })
+  @JoinColumn({ name: 'file_id' })
+  file: File | null;
 }
 export { EventActivityInvited };

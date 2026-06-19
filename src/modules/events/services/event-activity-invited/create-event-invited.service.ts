@@ -7,11 +7,16 @@ import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/p
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
+import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { applyInvitedFileToPayload } from '../../utils/resolve-invited-file';
+import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
+import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
 
 @injectable()
 class CreateEventInvitedService {
@@ -30,6 +35,10 @@ class CreateEventInvitedService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('FileRepositoryProvider')
+    private fileRepository: IFileRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, event_activity_id: string, data: CreateOrUpdateEventInvitedDTO) {
@@ -111,22 +120,16 @@ class CreateEventInvitedService {
       invitedPayload.user = user;
     }
 
+    await applyInvitedFileToPayload(this.fileRepository, user_id, data.file_id, invitedPayload);
+
     const invited = await this.eventActivityInvitedRepository.create(invitedPayload);
+    const persisted = (
+      await this.eventActivityInvitedRepository.find({ id: invited.id } as Partial<EventActivityInvitedQueryOptions>)
+    ).at(0);
 
     return {
       message: 'Event invited created successfully.',
-      data: this.mapInvited(invited),
-    };
-  }
-
-  private mapInvited(invited: EventActivityInvited) {
-    return {
-      id: invited.id,
-      event_activity_id: invited.event_activity.id,
-      name: invited.name,
-      institution: invited.institution,
-      profession: invited.profession,
-      user_id: invited.user?.id ?? null,
+      data: mapEventActivityInvited(this.storageProvider, persisted ?? invited),
     };
   }
 }

@@ -176,6 +176,7 @@ eventRouter.post(
       institution: Joi.string().optional().allow(null).default(null),
       profession: Joi.string().optional().allow(null).default(null),
       user_id: Joi.string().uuid().optional().allow(null).default(null),
+      file_id: Joi.string().uuid().optional().allow(null).default(null),
     }).required(),
   }),
   eventController.createEventInvited,
@@ -226,6 +227,7 @@ eventRouter.patch(
       institution: Joi.string().optional().allow(null),
       profession: Joi.string().optional().allow(null),
       user_id: Joi.string().uuid().optional().allow(null),
+      file_id: Joi.string().uuid().optional().allow(null),
     })
       .min(1)
       .required(),

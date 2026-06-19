@@ -1,12 +1,13 @@
 import { inject, injectable } from 'tsyringe';
 import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
+import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
-import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
+import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
 
 @injectable()
 class FindEventInvitedByIdService {
@@ -21,6 +22,8 @@ class FindEventInvitedByIdService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
+    @inject('StorageProvider')
+    private storageProvider: IStorageProvider,
   ) {}
 
   public async execute(user_id: string, invited_id: string) {
@@ -74,18 +77,7 @@ class FindEventInvitedByIdService {
 
     return {
       message: 'Event invited found successfully.',
-      data: this.mapInvited(invited),
-    };
-  }
-
-  private mapInvited(invited: EventActivityInvited) {
-    return {
-      id: invited.id,
-      event_activity_id: invited.event_activity.id,
-      name: invited.name,
-      institution: invited.institution,
-      profession: invited.profession,
-      user_id: invited.user?.id ?? null,
+      data: mapEventActivityInvited(this.storageProvider, invited),
     };
   }
 }
