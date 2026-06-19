@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
@@ -60,6 +61,10 @@ class DeleteEventService {
         'You do not have permission to perform this action.',
         'Voce nao tem permissao para realizar esta acao.',
       );
+    }
+
+    if (event.status !== EventStatus.DRAFT) {
+      throw new AppError(400, 'Only draft events can be deleted.', 'Somente eventos em rascunho podem ser excluidos.');
     }
 
     const rowsDeleted = await this.eventRepository.delete(event_id);
