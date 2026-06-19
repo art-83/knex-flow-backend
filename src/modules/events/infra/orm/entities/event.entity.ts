@@ -24,8 +24,12 @@ class Event extends BaseEntitySequentialGeneratedUUID {
   url_path: string | null;
 
   @ManyToOne(() => File, { nullable: true })
-  @JoinColumn({ name: 'file_id' })
-  file: File | null;
+  @JoinColumn({ name: 'banner_file_id' })
+  banner_file: File | null;
+
+  @ManyToOne(() => File, { nullable: true })
+  @JoinColumn({ name: 'icon_file_id' })
+  icon_file: File | null;
 
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.DRAFT })
   status: EventStatus;

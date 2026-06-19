@@ -57,7 +57,8 @@ eventRouter.post(
         .valid(...Object.values(EventModality))
         .optional(),
       url_path: eventUrlPathSchema,
-      file_id: Joi.string().uuid().allow(null).optional(),
+      banner_file_id: Joi.string().uuid().allow(null).optional(),
+      icon_file_id: Joi.string().uuid().allow(null).optional(),
       status: eventCreateStatusSchema,
       address: eventAddressSchema.optional(),
     }).required(),
@@ -314,7 +315,8 @@ eventRouter.patch(
         .valid(...Object.values(EventModality))
         .optional(),
       url_path: eventUrlPathSchema,
-      file_id: Joi.string().uuid().allow(null).optional(),
+      banner_file_id: Joi.string().uuid().allow(null).optional(),
+      icon_file_id: Joi.string().uuid().allow(null).optional(),
       status: eventStatusFilterSchema,
       address: eventAddressSchema.optional(),
     })

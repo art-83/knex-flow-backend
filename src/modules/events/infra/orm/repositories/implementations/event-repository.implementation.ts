@@ -17,7 +17,8 @@ class EventRepository implements IEventRepositoryProvider {
 
     query.leftJoinAndSelect('event.organization', 'organization');
     query.leftJoinAndSelect('event.address', 'address');
-    query.leftJoinAndSelect('event.file', 'file');
+    query.leftJoinAndSelect('event.banner_file', 'banner_file');
+    query.leftJoinAndSelect('event.icon_file', 'icon_file');
 
     if (data.id) query.andWhere('event.id = :id', { id: data.id });
 

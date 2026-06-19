@@ -96,7 +96,8 @@ class FindPublicEventsService {
         modality: event.modality,
         url_path: event.url_path,
         status: event.status,
-        banner: mapStoredFile(this.storageProvider, event.file),
+        banner: mapStoredFile(this.storageProvider, event.banner_file),
+        icon: mapStoredFile(this.storageProvider, event.icon_file),
         organization: {
           id: event.organization.id,
           name: event.organization.name,

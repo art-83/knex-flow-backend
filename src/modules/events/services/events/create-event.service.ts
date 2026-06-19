@@ -96,30 +96,27 @@ class CreateEventService {
     const {
       address: addressData,
       organization_id: _organizationId,
-      file_id,
+      banner_file_id,
+      icon_file_id,
       configuration: _configuration,
       ...eventData
     } = data;
 
-    let file: Awaited<ReturnType<IFileRepositoryProvider['find']>>[number] | null | undefined;
+    let banner_file: Awaited<ReturnType<IFileRepositoryProvider['find']>>[number] | null | undefined;
+    let icon_file: Awaited<ReturnType<IFileRepositoryProvider['find']>>[number] | null | undefined;
 
-    if (file_id !== undefined) {
-      if (file_id === null) {
-        file = null;
-      } else {
-        const resolvedFile = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+    if (banner_file_id !== undefined) {
+      banner_file = await this.resolveEventFile(user_id, banner_file_id);
+    }
 
-        if (!resolvedFile) {
-          throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
-        }
-
-        file = resolvedFile;
-      }
+    if (icon_file_id !== undefined) {
+      icon_file = await this.resolveEventFile(user_id, icon_file_id);
     }
 
     const event = await this.eventRepository.create({
       ...eventData,
-      ...(file !== undefined ? { file } : {}),
+      ...(banner_file !== undefined ? { banner_file } : {}),
+      ...(icon_file !== undefined ? { icon_file } : {}),
     });
 
     if (addressData) {
@@ -135,10 +132,25 @@ class CreateEventService {
         description: event.description,
         url_path: event.url_path,
         status: event.status,
-        banner: mapStoredFile(this.storageProvider, eventWithRelations?.file),
+        banner: mapStoredFile(this.storageProvider, eventWithRelations?.banner_file),
+        icon: mapStoredFile(this.storageProvider, eventWithRelations?.icon_file),
         address: eventWithRelations?.address ?? null,
       },
     };
+  }
+
+  private async resolveEventFile(user_id: string, file_id: string | null) {
+    if (file_id === null) {
+      return null;
+    }
+
+    const resolvedFile = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+
+    if (!resolvedFile) {
+      throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
+    }
+
+    return resolvedFile;
   }
 
   private validateEventDateRange(data: CreateOrUpdateEventDTO) {

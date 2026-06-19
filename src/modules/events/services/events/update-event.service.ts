@@ -112,18 +112,12 @@ class UpdateEventService {
 
     const updatePayload = await this.buildUpdatePayload(eventExists, data, isSwitchingToOnline);
 
-    if (data.file_id !== undefined) {
-      if (data.file_id === null) {
-        updatePayload.file = null;
-      } else {
-        const file = (await this.fileRepository.find({ id: data.file_id, user_id } as FileQueryOptions)).at(0);
+    if (data.banner_file_id !== undefined) {
+      updatePayload.banner_file = await this.resolveEventFile(user_id, data.banner_file_id);
+    }
 
-        if (!file) {
-          throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
-        }
-
-        updatePayload.file = file;
-      }
+    if (data.icon_file_id !== undefined) {
+      updatePayload.icon_file = await this.resolveEventFile(user_id, data.icon_file_id);
     }
 
     const event = await this.eventRepository.update(event_id, updatePayload);
@@ -139,9 +133,24 @@ class UpdateEventService {
         modality: event.modality,
         start_date: event.start_date,
         end_date: event.end_date,
-        banner: mapStoredFile(this.storageProvider, event.file),
+        banner: mapStoredFile(this.storageProvider, event.banner_file),
+        icon: mapStoredFile(this.storageProvider, event.icon_file),
       },
     };
+  }
+
+  private async resolveEventFile(user_id: string, file_id: string | null) {
+    if (file_id === null) {
+      return null;
+    }
+
+    const file = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+
+    if (!file) {
+      throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
+    }
+
+    return file;
   }
 
   private async buildUpdatePayload(
@@ -149,7 +158,7 @@ class UpdateEventService {
     data: Partial<CreateOrUpdateEventDTO>,
     isSwitchingToOnline: boolean,
   ) {
-    const { address, file_id, organization_id, configuration: _configuration, ...rest } = data;
+    const { address, banner_file_id, icon_file_id, organization_id, configuration: _configuration, ...rest } = data;
     const updatePayload: Partial<Event> = { ...rest };
 
     if (isSwitchingToOnline) {
