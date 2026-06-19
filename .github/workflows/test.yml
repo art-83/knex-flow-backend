@@ -67,7 +67,7 @@ jobs:
 
       - name: Run k6 smoke against ephemeral test server
         run: |
-          npx tsx tests/scripts/start-test-server.ts &
+          npm run test:smoke-server &
           SERVER_PID=$!
 
           for i in $(seq 1 60); do

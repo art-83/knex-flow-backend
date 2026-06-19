@@ -1,7 +1,7 @@
 import { container } from 'tsyringe';
 
-import { IUserRepositoryProvider } from '@/modules/users/infra/orm/repositories/providers/user-repository.provider';
-import { IHashProvider } from '@/modules/users/infra/hash/providers/hash.provider';
+import { IUserRepositoryProvider } from '../../src/modules/users/infra/orm/repositories/providers/user-repository.provider';
+import { IHashProvider } from '../../src/modules/users/infra/hash/providers/hash.provider';
 
 const SMOKE_EMAIL = process.env.SMOKE_EMAIL ?? 'smoke@test.example.com';
 const SMOKE_PASSWORD = process.env.SMOKE_PASSWORD ?? 'Test123!';

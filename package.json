@@ -18,6 +18,7 @@
     "test:e2e": "vitest run --config tests/config/vitest.e2e.config.ts",
     "test:coverage": "vitest run --coverage --config tests/config/vitest.unit.config.ts && vitest run --coverage --config tests/config/vitest.integration.config.ts",
     "test:k6": "k6 run tests/k6/smoke.js",
+    "test:smoke-server": "TS_NODE_PROJECT=tests/tsconfig.json TS_NODE_TRANSPILE_ONLY=true node -r ts-node/register tests/scripts/start-test-server.ts",
     "prepare": "node -e \"const fs=require('fs');const {execFileSync}=require('child_process');const p=require('path');const b=p.join('node_modules','husky','bin.js');if(fs.existsSync(b))execFileSync(process.execPath,[b],{stdio:'inherit'})\""
   },
   "keywords": [],
