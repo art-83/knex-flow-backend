@@ -22,7 +22,7 @@ class RetrieveAvailableTicketsWorker implements IWorkerProvider {
       QueueNames.RETRIEVE_AVAILABLE_TICKETS,
       async job => {
         const service = container.resolve(GetTicketsAvaliabilityAndMaybeCreateOrderService);
-        return service.execute(job.data.body.user_id, job.data.body.event_id);
+        return service.execute(job.data.body.user_id, job.data.body.event_id, job.data.body.event_activity_ids ?? []);
       },
       {
         connection: redisConnection.getConnection(),

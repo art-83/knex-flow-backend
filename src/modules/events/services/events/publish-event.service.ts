@@ -4,12 +4,11 @@ import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
-import { Ticket } from '../../infra/orm/entities/ticket.entity';
-import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
+import { Batch } from '../../infra/orm/entities/batch.entity';
 
 @injectable()
 class PublishEventService {
@@ -18,8 +17,6 @@ class PublishEventService {
     private eventRepository: IEventRepositoryProvider,
     @inject('BatchRepositoryProvider')
     private batchRepository: IBatchRepositoryProvider,
-    @inject('TicketRepositoryProvider')
-    private ticketRepository: ITicketRepositoryProvider,
     @inject('UserOrganizationRepositoryProvider')
     private userOrganizationRepository: IUserOrganizationRepositoryProvider,
     @inject('PermissionRepositoryProvider')
@@ -75,35 +72,23 @@ class PublishEventService {
       throw new AppError(400, 'Event is not draft.', 'Evento nao esta em draft.');
     }
 
-    // TODO: validar se existe ao menos um lote antes de publicar.
-    // TODO: persistir configuration.published = true junto com status ACTIVE, se o frontend/consumidores dependerem disso.
-    // TODO: envolver update do evento + createMany de tickets em uma unica transacao.
-
     event.status = EventStatus.ACTIVE;
     await this.eventRepository.update(event_id, event);
 
-    const batchQueryOptions = {
-      event_id: event.id,
-    } as BatchQueryOptions;
-
-    const batches = await this.batchRepository.find(batchQueryOptions);
-
-    const ticketsToCreate = batches.flatMap(batch =>
-      Array.from({ length: batch.base_quantity }, () => ({ batch }) as Ticket),
-    );
-
-    if (ticketsToCreate.length > 0) {
-      await this.ticketRepository.createMany(ticketsToCreate);
-    }
+    const batches = await this.batchRepository.find({ event_id: event.id } as BatchQueryOptions);
 
     return {
       message: 'Event published successfully.',
       data: {
         event_id,
         status: EventStatus.ACTIVE,
-        tickets_created: ticketsToCreate.length,
+        capacity_total: this.resolveTotalCapacity(batches),
       },
     };
+  }
+
+  private resolveTotalCapacity(batches: Batch[]): number {
+    return batches.reduce((sum, batch) => sum + batch.base_quantity, 0);
   }
 }
 export { PublishEventService };

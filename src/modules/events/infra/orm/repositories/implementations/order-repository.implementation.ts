@@ -1,10 +1,18 @@
 import { IOrderRepositoryProvider } from '../providers/order-repository.provider';
+import {
+  CreatePendingOrderAttemptDTO,
+  CreatePendingOrderAttemptResult,
+} from '../../../../dtos/order/create-pending-order-attempt.dto';
 import { Order } from '../../entities/order.entity';
 import { OrderQueryOptions } from '../../../../dtos/order/order-query-options';
 import { OrderStatus } from '../../enums/order-status.enum';
 import { Ticket } from '../../entities/ticket.entity';
+import { Batch } from '../../entities/batch.entity';
 import { Payment } from '../../../../../payments/infra/orm/entities/payment.entity';
 import { PaymentStatus } from '../../../../../payments/infra/orm/enums/payment-status.enum';
+import { EventActivityPresence } from '../../entities/event-activity-presence.entity';
+import { User } from '../../../../../users/infra/orm/entities/user.entity';
+import { EventActivity } from '../../entities/event-activity.entity';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -66,16 +74,82 @@ class OrderRepository implements IOrderRepositoryProvider {
     return Number(deleteResult.affected);
   }
 
+  public async createPendingOrderAttempt(
+    data: CreatePendingOrderAttemptDTO,
+  ): Promise<CreatePendingOrderAttemptResult | null> {
+    return dataSource.transaction(async manager => {
+      const batch = await manager
+        .createQueryBuilder(Batch, 'batch')
+        .where('batch.event_id = :event_id', { event_id: data.event_id })
+        .orderBy('batch.price', 'ASC')
+        .setLock('pessimistic_write')
+        .getOne();
+
+      if (!batch) {
+        return null;
+      }
+
+      const issuedCount = await manager
+        .createQueryBuilder(Ticket, 'ticket')
+        .where('ticket.batch_id = :batchId', { batchId: batch.id })
+        .getCount();
+
+      if (issuedCount >= batch.base_quantity) {
+        return null;
+      }
+
+      const order = await manager.save(
+        Order,
+        manager.create(Order, {
+          user: { id: data.user_id } as User,
+          total_amount: batch.price,
+          status: OrderStatus.PENDING,
+        }),
+      );
+
+      const ticket = await manager.save(
+        Ticket,
+        manager.create(Ticket, {
+          batch: { id: batch.id } as Batch,
+          order: { id: order.id } as Order,
+        }),
+      );
+
+      const presences: EventActivityPresence[] = [];
+
+      for (const eventActivityId of data.event_activity_ids) {
+        const presence = await manager.save(
+          EventActivityPresence,
+          manager.create(EventActivityPresence, {
+            user: { id: data.user_id } as User,
+            order: { id: order.id } as Order,
+            event_activity: { id: eventActivityId } as EventActivity,
+            user_presence: false,
+          }),
+        );
+
+        presences.push(presence);
+      }
+
+      return {
+        ticket: {
+          ...ticket,
+          batch,
+          order,
+        } as Ticket,
+        order,
+        presences,
+      };
+    });
+  }
+
   public async expirePendingOrder(orderId: string): Promise<void> {
     await dataSource.transaction(async manager => {
+      await manager.delete(EventActivityPresence, { order: { id: orderId } });
+
       await manager.update(Order, orderId, { status: OrderStatus.EXPIRED });
 
-      await manager
-        .createQueryBuilder()
-        .update(Ticket)
-        .set({ order: null })
-        .where('order_id = :orderId', { orderId })
-        .execute();
+      await manager.softDelete(Ticket, { order: { id: orderId } });
 
       await manager
         .createQueryBuilder()

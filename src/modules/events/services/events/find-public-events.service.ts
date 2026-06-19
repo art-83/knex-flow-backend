@@ -8,18 +8,18 @@ import { ITicketRepositoryProvider } from '../../infra/orm/repositories/provider
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
 import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
-import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { Address } from '../../infra/orm/entities/address.entity';
 import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
-import { Batch } from '../../infra/orm/entities/batch.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
+import { Batch } from '../../infra/orm/entities/batch.entity';
 
 @injectable()
 class FindPublicEventsService {
@@ -43,10 +43,9 @@ class FindPublicEventsService {
       ...(options as Partial<EventQueryOptions>),
       status: EventStatus.ACTIVE,
     });
-    const published = events.filter(event => event.configuration?.published === true);
 
     if (options.id) {
-      const event = published.at(0);
+      const event = events.at(0);
       if (!event) {
         throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
       }
@@ -54,7 +53,7 @@ class FindPublicEventsService {
       return { message: 'Event found successfully.', data: mapped };
     }
 
-    const data = await this.mapEvents(published);
+    const data = await this.mapEvents(events);
     return { message: 'Events found successfully.', data };
   }
 
@@ -63,7 +62,7 @@ class FindPublicEventsService {
 
     const eventIds = events.map(event => event.id);
 
-    const [activitiesByEvent, invitedByEvent, availableTicketsByEvent, batchesByEvent] = await Promise.all([
+    const [activitiesByEvent, invitedByEvent, issuedTicketsByEvent, batchesByEvent] = await Promise.all([
       Promise.all(
         eventIds.map(event_id => this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>)),
       ),
@@ -73,8 +72,8 @@ class FindPublicEventsService {
         ),
       ),
       Promise.all(
-        eventIds.map(event_id =>
-          this.ticketRepository.find({ event_id, order_is_null: true } as Partial<TicketQueryOptions>),
+        eventIds.map(
+          async event_id => (await this.ticketRepository.find({ event_id } as Partial<TicketQueryOptions>)).length,
         ),
       ),
       Promise.all(eventIds.map(event_id => this.batchRepository.find({ event_id } as Partial<BatchQueryOptions>))),
@@ -83,10 +82,10 @@ class FindPublicEventsService {
     return events.map((event, index) => {
       const activities = activitiesByEvent[index] ?? [];
       const invited = invitedByEvent[index] ?? [];
-      const availableTickets = availableTicketsByEvent[index] ?? [];
+      const issuedCount = issuedTicketsByEvent[index] ?? 0;
       const batches = batchesByEvent[index] ?? [];
+      const stock = this.resolveTicketStock(batches, issuedCount);
       const lowestBatch = this.findLowestPriceBatch(batches);
-      const ticketsTotal = batches.reduce((sum, batch) => sum + batch.base_quantity, 0);
 
       return {
         id: event.id,
@@ -97,15 +96,14 @@ class FindPublicEventsService {
         modality: event.modality,
         url_path: event.url_path,
         status: event.status,
-        configuration: event.configuration,
         banner: mapStoredFile(this.storageProvider, event.file),
         organization: {
           id: event.organization.id,
           name: event.organization.name,
         },
         address: event.address ? this.mapAddress(event.address) : null,
-        available_tickets_count: availableTickets.length,
-        tickets_total: ticketsTotal,
+        available_tickets_count: stock.available_tickets_count,
+        tickets_total: stock.tickets_total,
         batch: lowestBatch
           ? {
               id: lowestBatch.id,
@@ -117,6 +115,17 @@ class FindPublicEventsService {
         invited: invited.map(item => this.mapInvited(item)),
       };
     });
+  }
+
+  private resolveTicketStock(batches: Batch[], issuedCount: number) {
+    const ticketsTotal = batches.reduce((sum, batch) => sum + batch.base_quantity, 0);
+    const availableTicketsCount = Math.max(0, ticketsTotal - issuedCount);
+
+    return {
+      tickets_total: ticketsTotal,
+      available_tickets_count: availableTicketsCount,
+      has_tickets: availableTicketsCount > 0,
+    };
   }
 
   private findLowestPriceBatch(batches: Batch[]): Batch | null {

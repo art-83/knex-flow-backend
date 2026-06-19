@@ -13,6 +13,7 @@ import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 
 @injectable()
 class CreateEventActivityService {
@@ -38,8 +39,17 @@ class CreateEventActivityService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    if (event.status !== EventStatus.DRAFT) {
-      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
+    if (event.status === EventStatus.ACTIVE) {
+      const config = event.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_create_event_activities_after_publish ?? false;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
     }
 
     const userOrganization = (

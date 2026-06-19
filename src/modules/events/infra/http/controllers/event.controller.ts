@@ -12,9 +12,6 @@ import { DeleteBatchService } from '../../../services/batches/delete-batch.servi
 import { FindEventActivitiesService } from '../../../services/event-activities/find-event-activities.service';
 import { UpdateEventActivityService } from '../../../services/event-activities/update-event-activity.service';
 import { DeleteEventActivityService } from '../../../services/event-activities/delete-event-activity.service';
-import { FindEventConfigurationsService } from '../../../services/event-configurations/find-event-configurations.service';
-import { UpdateEventConfigurationService } from '../../../services/event-configurations/update-event-configuration.service';
-import { DeleteEventConfigurationService } from '../../../services/event-configurations/delete-event-configuration.service';
 import { CreateEventInvitedService } from '../../../services/event-activity-invited/create-event-invited.service';
 import { FindEventInvitedService } from '../../../services/event-activity-invited/find-event-invited.service';
 import { FindEventInvitedByIdService } from '../../../services/event-activity-invited/find-event-invited-by-id.service';
@@ -24,6 +21,7 @@ import { FindEventInvitedByEventActivityService } from '../../../services/event-
 import { GeneratePresenceQRCodeService } from '../../../services/qr-code/generate-presence-qr-code.service';
 import { ValidateQRCodePresenceService } from '../../../services/qr-code/validate-qr-code-presence.service';
 import { PublishEventService } from '../../../services/events/publish-event.service';
+import { FindUserEventActivityEnrollmentsService } from '../../../services/event-activity-presence/find-user-event-activity-enrollments.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -174,24 +172,11 @@ class EventController {
     return response.json(result);
   }
 
-  public async findEventConfigurations(request: Request, response: Response) {
-    const findEventConfigurationsService = container.resolve(FindEventConfigurationsService);
-    const eventConfigurations = await findEventConfigurationsService.execute(request.user_id, request.query);
-    return response.json(eventConfigurations);
-  }
-
-  public async updateEventConfiguration(request: Request, response: Response) {
-    const updateEventConfigurationService = container.resolve(UpdateEventConfigurationService);
+  public async findUserEventActivityEnrollments(request: Request, response: Response) {
+    const findUserEventActivityEnrollmentsService = container.resolve(FindUserEventActivityEnrollmentsService);
     const event_id = String(request.params.event_id);
-    const eventConfiguration = await updateEventConfigurationService.execute(request.user_id, event_id, request.body);
-    return response.json(eventConfiguration);
-  }
-
-  public async deleteEventConfiguration(request: Request, response: Response) {
-    const deleteEventConfigurationService = container.resolve(DeleteEventConfigurationService);
-    const event_id = String(request.params.event_id);
-    const eventConfiguration = await deleteEventConfigurationService.execute(request.user_id, event_id);
-    return response.json(eventConfiguration);
+    const result = await findUserEventActivityEnrollmentsService.execute(request.user_id, event_id);
+    return response.json(result);
   }
 
   public async publishEvent(request: Request, response: Response) {

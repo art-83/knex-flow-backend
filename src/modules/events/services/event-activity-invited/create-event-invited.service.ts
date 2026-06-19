@@ -10,6 +10,8 @@ import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repo
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 
 @injectable()
 class CreateEventInvitedService {
@@ -41,6 +43,19 @@ class CreateEventInvitedService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status === EventStatus.ACTIVE) {
+      const config = event.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_create_event_activity_invited_after_publish ?? true;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
     }
 
     const userOrganization = (

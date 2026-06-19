@@ -6,6 +6,8 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 
 @injectable()
 class DeleteEventInvitedService {
@@ -33,6 +35,19 @@ class DeleteEventInvitedService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status === EventStatus.ACTIVE) {
+      const config = event.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_delete_event_activity_invited_after_publish ?? true;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
     }
 
     const userOrganization = (

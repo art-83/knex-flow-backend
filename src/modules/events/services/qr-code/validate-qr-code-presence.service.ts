@@ -10,12 +10,8 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-repository.provider';
-import {
-  CreateEventActivityPresenceDTO,
-  EventActivityPresenceQueryOptions,
-} from '../../dtos/event-activity-presence/event-activity-presence-query-options';
-import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
-import { User } from '../../../users/infra/orm/entities/user.entity';
+import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { OrderStatus } from '../../infra/orm/enums/order-status.enum';
 
 @injectable()
 class ValidateQRCodePresenceService {
@@ -71,7 +67,23 @@ class ValidateQRCodePresenceService {
 
     const existingPresence = (await this.eventActivityPresenceRepository.find(presenceQueryOptions)).at(0);
 
-    if (existingPresence) {
+    if (!existingPresence) {
+      throw new AppError(
+        404,
+        'User is not registered for this event activity.',
+        'Usuario nao esta inscrito nesta atividade do evento.',
+      );
+    }
+
+    if (existingPresence.order.status !== OrderStatus.CONFIRMED) {
+      throw new AppError(
+        400,
+        'Order must be confirmed to validate presence.',
+        'Pedido deve estar confirmado para validar presenca.',
+      );
+    }
+
+    if (existingPresence.user_presence) {
       throw new AppError(
         409,
         'User already checked in for this event activity.',
@@ -79,28 +91,8 @@ class ValidateQRCodePresenceService {
       );
     }
 
-    const presenceCount = await this.eventActivityPresenceRepository.countByEventActivity(event_activity_id);
-
-    if (eventActivity.max_participants != null && presenceCount >= eventActivity.max_participants) {
-      throw new AppError(
-        409,
-        'Event activity has reached maximum participants.',
-        'Atividade do evento atingiu o numero maximo de participantes.',
-      );
-    }
-
-    const [foundUser, foundEventActivity] = await Promise.all([
-      (await this.userRepository.find({ id: payload.user_id })).at(0),
-      (await this.eventActivityRepository.find({ id: event_activity_id })).at(0),
-    ]);
-
-    if (!foundUser || !foundEventActivity) {
-      throw new AppError(404, 'User or event activity not found.', 'Usuario ou atividade de evento nao encontrada.');
-    }
-
-    const presence = await this.eventActivityPresenceRepository.create({
-      user: foundUser,
-      event_activity: foundEventActivity,
+    const presence = await this.eventActivityPresenceRepository.update(existingPresence.id, {
+      user_presence: true,
     });
 
     return {

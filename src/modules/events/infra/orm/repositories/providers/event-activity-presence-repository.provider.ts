@@ -3,5 +3,6 @@ import { EventActivityPresence } from '../../entities/event-activity-presence.en
 
 interface IEventActivityPresenceRepositoryProvider extends IRepositoryProvider<EventActivityPresence> {
   countByEventActivity(event_activity_id: string): Promise<number>;
+  deleteByOrderId(order_id: string): Promise<void>;
 }
 export { IEventActivityPresenceRepositoryProvider };

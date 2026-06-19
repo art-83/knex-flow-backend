@@ -37,8 +37,12 @@ class UpdateBatchService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    if (event.status !== EventStatus.DRAFT) {
-      throw new AppError(409, 'Event is not a draft.', 'Evento nao esta em rascunho.');
+    if (event.status === EventStatus.ACTIVE) {
+      throw new AppError(
+        409,
+        'Action not allowed after event is published.',
+        'Acao nao permitida apos publicacao do evento.',
+      );
     }
 
     const userOrganization = (

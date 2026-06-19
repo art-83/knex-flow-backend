@@ -8,6 +8,7 @@ import { paymentRouter } from '../../../../modules/payments/infra/http/routers/p
 import { eventRouter } from '../../../../modules/events/infra/http/routers/event.router';
 import { orderRouter } from '../../../../modules/events/infra/http/routers/order.router';
 import { authorizationRouter } from '../../../../modules/users/infra/http/routers/authorization.router';
+import { organizationRouter } from '../../../../modules/users/infra/http/routers/organization.router';
 import { fileRouter } from '../../../../modules/files/infra/http/routers/file.router';
 import { eventPublicRouter } from '../../../../modules/events/infra/http/routers/event-public.router';
 
@@ -40,6 +41,7 @@ routes.use('/health', (request, response) => {
 
 routes.use('/orders', orderRouter);
 routes.use('/events', eventRouter);
+routes.use('/organizations', organizationRouter);
 routes.use('/users', authorizationRouter);
 routes.use('/files', fileRouter);
 routes.use('/payment', paymentRouter);

@@ -93,7 +93,13 @@ class CreateEventService {
     data.organization = organization;
     data.status = data.status ?? EventStatus.DRAFT;
 
-    const { address: addressData, organization_id: _organizationId, file_id, ...eventData } = data;
+    const {
+      address: addressData,
+      organization_id: _organizationId,
+      file_id,
+      configuration: _configuration,
+      ...eventData
+    } = data;
 
     let file: Awaited<ReturnType<IFileRepositoryProvider['find']>>[number] | null | undefined;
 

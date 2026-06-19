@@ -5,7 +5,5 @@ interface TicketQueryOptions extends Ticket, DefaultQueryOptionsDTO {
   batch_id: string;
   event_id: string;
   order_id: string;
-
-  order_is_null: boolean;
 }
 export { TicketQueryOptions };

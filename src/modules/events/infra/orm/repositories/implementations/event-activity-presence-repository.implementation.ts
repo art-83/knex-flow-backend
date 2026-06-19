@@ -16,6 +16,7 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
 
     query.leftJoinAndSelect('event_activity_presence.user', 'user');
     query.leftJoinAndSelect('event_activity_presence.event_activity', 'event_activity');
+    query.leftJoinAndSelect('event_activity_presence.order', 'order');
 
     if (data.id) query.andWhere('event_activity_presence.id = :id', { id: data.id });
 
@@ -27,6 +28,10 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
 
     if (data.user_id) {
       query.andWhere('event_activity_presence.user_id = :user_id', { user_id: data.user_id });
+    }
+
+    if (data.order_id) {
+      query.andWhere('event_activity_presence.order_id = :order_id', { order_id: data.order_id });
     }
 
     if (data.limit) query.limit(data.limit);
@@ -53,6 +58,10 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
   public async delete(id: string): Promise<number> {
     const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
+  }
+
+  public async deleteByOrderId(order_id: string): Promise<void> {
+    await this.repository.delete({ order: { id: order_id } });
   }
 }
 export { EventActivityPresenceRepository };

@@ -5,6 +5,7 @@ import { PresenceQRPayloadDTO } from '../../../../shared/infra/qr-code/dtos/pres
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { OrderStatus } from '../../infra/orm/enums/order-status.enum';
 
 @injectable()
 class GeneratePresenceQRCodeService {
@@ -32,7 +33,23 @@ class GeneratePresenceQRCodeService {
 
     const existingPresence = (await this.eventActivityPresenceRepository.find(presenceQueryOptions)).at(0);
 
-    if (existingPresence) {
+    if (!existingPresence) {
+      throw new AppError(
+        404,
+        'User is not registered for this event activity.',
+        'Usuario nao esta inscrito nesta atividade do evento.',
+      );
+    }
+
+    if (existingPresence.order.status !== OrderStatus.CONFIRMED) {
+      throw new AppError(
+        400,
+        'Order must be confirmed to generate presence QR code.',
+        'Pedido deve estar confirmado para gerar QR code de presenca.',
+      );
+    }
+
+    if (existingPresence.user_presence) {
       throw new AppError(
         409,
         'User already checked in for this event activity.',

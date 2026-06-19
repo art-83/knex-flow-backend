@@ -6,7 +6,6 @@ import {
   timestampQueryOptionsSchema,
 } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
 import { eventAddressSchema } from '../dtos/event-address-schema.dto';
-import { validateOfflineEventAddressForPublishMiddleware } from '../middlewares/validate-offline-event-address-for-publish.middleware';
 import { EventModality } from '../../orm/enums/event-modality.enum';
 import { EventStatus } from '../../orm/enums/event-status.enum';
 
@@ -60,7 +59,6 @@ eventRouter.post(
       url_path: eventUrlPathSchema,
       file_id: Joi.string().uuid().allow(null).optional(),
       status: eventCreateStatusSchema,
-      configuration: Joi.object().allow(null).optional(),
       address: eventAddressSchema.optional(),
     }).required(),
   }),
@@ -255,39 +253,6 @@ eventRouter.delete(
 );
 
 eventRouter.get(
-  '/event-configurations',
-  celebrate({
-    [Segments.QUERY]: Joi.object({
-      event_id: Joi.string().uuid().required(),
-    }),
-  }),
-  eventController.findEventConfigurations,
-);
-
-eventRouter.patch(
-  '/:event_id/configuration',
-  celebrate({
-    [Segments.PARAMS]: Joi.object({
-      event_id: Joi.string().uuid().required(),
-    }).required(),
-    [Segments.BODY]: Joi.object({
-      configuration: Joi.object().allow(null).required(),
-    }).required(),
-  }),
-  eventController.updateEventConfiguration,
-);
-
-eventRouter.delete(
-  '/:event_id/configuration',
-  celebrate({
-    [Segments.PARAMS]: Joi.object({
-      event_id: Joi.string().uuid().required(),
-    }).required(),
-  }),
-  eventController.deleteEventConfiguration,
-);
-
-eventRouter.get(
   '/:event_id/invited',
   celebrate({
     [Segments.PARAMS]: Joi.object({
@@ -314,6 +279,16 @@ eventRouter.post(
   eventController.createEventActivity,
 );
 
+eventRouter.get(
+  '/:event_id/activity-enrollments',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.findUserEventActivityEnrollments,
+);
+
 eventRouter.post(
   '/:event_id/publish',
   celebrate({
@@ -321,7 +296,6 @@ eventRouter.post(
       event_id: Joi.string().uuid().required(),
     }).required(),
   }),
-  validateOfflineEventAddressForPublishMiddleware,
   eventController.publishEvent,
 );
 
@@ -342,7 +316,6 @@ eventRouter.patch(
       url_path: eventUrlPathSchema,
       file_id: Joi.string().uuid().allow(null).optional(),
       status: eventStatusFilterSchema,
-      configuration: Joi.object().allow(null).optional(),
       address: eventAddressSchema.optional(),
     })
       .min(1)

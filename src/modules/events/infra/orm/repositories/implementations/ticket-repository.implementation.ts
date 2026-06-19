@@ -28,8 +28,6 @@ class TicketRepository implements ITicketRepositoryProvider {
 
     if (data.order_id) query.andWhere('ticket.order_id = :order_id', { order_id: data.order_id });
 
-    if (data.order_is_null) query.andWhere('ticket.order_id IS NULL');
-
     if (data.limit) query.limit(data.limit);
     if (data.offset) query.offset(data.offset);
 
@@ -50,11 +48,6 @@ class TicketRepository implements ITicketRepositoryProvider {
   public async delete(id: string): Promise<number> {
     const deleteResult = await this.repository.softDelete(id);
     return Number(deleteResult.affected);
-  }
-
-  public async createMany(data: Partial<Ticket>[]): Promise<Ticket[]> {
-    const create = this.repository.create(data);
-    return await this.repository.save(create);
   }
 }
 export { TicketRepository };

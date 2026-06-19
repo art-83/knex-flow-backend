@@ -10,8 +10,6 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
-import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
-import { Ticket } from '../../infra/orm/entities/ticket.entity';
 
 @injectable()
 class CreateBatchService {
@@ -28,8 +26,6 @@ class CreateBatchService {
     private permissionRepository: IPermissionRepositoryProvider,
     @inject('UserPermissionRepositoryProvider')
     private userPermissionRepository: IUserPermissionRepositoryProvider,
-    @inject('TicketRepositoryProvider')
-    private ticketRepository: ITicketRepositoryProvider,
   ) {}
 
   public async execute(user_id: string, data: CreateOrUpdateBatchDTO) {
@@ -75,17 +71,29 @@ class CreateBatchService {
       );
     }
 
+    if (event.status === EventStatus.ACTIVE) {
+      const config = event.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_create_batches_after_publish ?? true;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
+    }
+
     const organization = (await this.organizationRepository.find({ id: event.organization.id })).at(0);
 
     if (!organization) {
       throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    const configurationObject = organization.configuration as OrganizationConfiguration;
+    const configurationObject = organization.configuration as OrganizationConfiguration | undefined;
 
     if (
-      configurationObject &&
-      configurationObject.max_batch_base_quantity &&
+      configurationObject?.max_batch_base_quantity &&
       data.base_quantity > configurationObject.max_batch_base_quantity
     ) {
       throw new AppError(
@@ -97,20 +105,7 @@ class CreateBatchService {
 
     data.event = event;
 
-    // TODO: quando event.status === ACTIVE, envolver create do lote + createMany de tickets em uma unica transacao.
-
     const batch = await this.batchRepository.create(data);
-
-    if (event.status === EventStatus.ACTIVE) {
-      const ticketToCreate = Array.from(
-        { length: batch.base_quantity },
-        () =>
-          ({
-            batch: batch,
-          }) as Ticket,
-      );
-      await this.ticketRepository.createMany(ticketToCreate);
-    }
 
     return {
       message: 'Batch created successfully.',

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { FindPublicEventsService } from '../../../services/events/find-public-events.service';
+import { FindPublicEventAvailabilityService } from '../../../services/events/find-public-event-availability.service';
 
 class EventPublicController {
   public async findEvents(request: Request, response: Response) {
@@ -14,6 +15,13 @@ class EventPublicController {
     const event_id = String(request.params.event_id);
     const event = await findPublicEventsService.execute({ id: event_id });
     return response.json(event);
+  }
+
+  public async findEventAvailability(request: Request, response: Response) {
+    const findPublicEventAvailabilityService = container.resolve(FindPublicEventAvailabilityService);
+    const event_id = String(request.params.event_id);
+    const availability = await findPublicEventAvailabilityService.execute(event_id);
+    return response.json(availability);
   }
 }
 export { EventPublicController };

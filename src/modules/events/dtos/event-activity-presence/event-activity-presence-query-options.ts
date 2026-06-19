@@ -1,13 +1,9 @@
 import { DefaultQueryOptionsDTO } from '../../../../shared/infra/orm/dtos/default-query-options.dto';
+import { EventActivityPresence } from '../../infra/orm/entities/event-activity-presence.entity';
 
-interface CreateEventActivityPresenceDTO {
-  user_id: string;
+interface EventActivityPresenceQueryOptions extends EventActivityPresence, DefaultQueryOptionsDTO {
   event_activity_id: string;
+  user_id: string;
+  order_id: string;
 }
-
-interface EventActivityPresenceQueryOptions extends DefaultQueryOptionsDTO {
-  id?: string;
-  event_activity_id?: string;
-  user_id?: string;
-}
-export { CreateEventActivityPresenceDTO, EventActivityPresenceQueryOptions };
+export { EventActivityPresenceQueryOptions };

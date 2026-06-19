@@ -14,6 +14,7 @@ import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/p
 import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 
 @injectable()
 class UpdateEventService {
@@ -77,6 +78,19 @@ class UpdateEventService {
       );
     }
 
+    if (eventExists.status === EventStatus.ACTIVE) {
+      const config = eventExists.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_edit_event_after_publish ?? true;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
+    }
+
     if (data.url_path) {
       const possibleExistingEvent = (
         await this.eventRepository.find({ url_path: data.url_path, status: EventStatus.ACTIVE })
@@ -135,7 +149,7 @@ class UpdateEventService {
     data: Partial<CreateOrUpdateEventDTO>,
     isSwitchingToOnline: boolean,
   ) {
-    const { address, file_id, organization_id, ...rest } = data;
+    const { address, file_id, organization_id, configuration: _configuration, ...rest } = data;
     const updatePayload: Partial<Event> = { ...rest };
 
     if (isSwitchingToOnline) {

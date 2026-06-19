@@ -22,6 +22,16 @@ eventPublicRouter.get(
 );
 
 eventPublicRouter.get(
+  '/:event_id/availability',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_id: Joi.string().uuid().required(),
+    }),
+  }),
+  eventPublicController.findEventAvailability,
+);
+
+eventPublicRouter.get(
   '/:event_id',
   celebrate({
     [Segments.PARAMS]: Joi.object({

@@ -16,11 +16,14 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter implements IWebSoc
 
   async execute(payload: WebSocketMessageDTO): Promise<void> {
     const body = payload.payload;
+    const eventActivityIds = Array.isArray(body.event_activity_ids) ? body.event_activity_ids.map(String) : [];
+
     const jobPayload = {
       channel_id: String(payload.channel_id),
       body: {
         user_id: String(body.user_id),
         event_id: String(body.event_id),
+        event_activity_ids: eventActivityIds,
       },
     } as RetrieveAvailableTicketsJobPayloadDTO;
 

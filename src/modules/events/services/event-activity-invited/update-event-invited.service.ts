@@ -12,6 +12,8 @@ import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permis
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
 import { User } from '../../../users/infra/orm/entities/user.entity';
+import { EventStatus } from '../../infra/orm/enums/event-status.enum';
+import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
 
 @injectable()
 class UpdateEventInvitedService {
@@ -64,6 +66,19 @@ class UpdateEventInvitedService {
 
     if (!event) {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
+    }
+
+    if (event.status === EventStatus.ACTIVE) {
+      const config = event.organization.configuration as OrganizationConfiguration | undefined;
+      const allowed = config?.can_update_event_activity_invited_after_publish ?? true;
+
+      if (!allowed) {
+        throw new AppError(
+          409,
+          'Action not allowed after event is published.',
+          'Acao nao permitida apos publicacao do evento.',
+        );
+      }
     }
 
     const userOrganization = (
