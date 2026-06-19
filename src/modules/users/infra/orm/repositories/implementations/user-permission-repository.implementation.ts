@@ -14,6 +14,10 @@ class UserPermissionRepository implements IUserPermissionRepositoryProvider {
   public async find(data: Partial<UserPermissionQueryOptionsDTO>): Promise<UserPermission[]> {
     const query = this.repository.createQueryBuilder('userPermission');
 
+    query.leftJoinAndSelect('userPermission.permission', 'permission');
+    query.leftJoinAndSelect('userPermission.user', 'user');
+    query.leftJoinAndSelect('userPermission.organization', 'organization');
+
     if (data.id) query.andWhere('userPermission.id = :id', { id: data.id });
     if (data.user_id) query.andWhere('userPermission.user_id = :user_id', { user_id: data.user_id });
     if (data.organization_id)

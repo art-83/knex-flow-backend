@@ -58,12 +58,12 @@ describe('Ticket purchase E2E', () => {
     const orderId = await createPendingOrderForUser(buyerId, eventId);
 
     const paymentResponse = await agent
-      .post('/payments')
+      .get(`/payment/by-order/${orderId}`)
       .set('Authorization', `Bearer ${buyerTokens.accessToken}`)
-      .send({ order_id: orderId, method: 'PIX' })
-      .expect(201);
+      .expect(200);
 
-    expect(paymentResponse.body.payment.external_id).toBeDefined();
+    expect(paymentResponse.body.gatewayPayment.id).toBeDefined();
+    expect(paymentResponse.body.gatewayPayment.brCode).toBeTruthy();
 
     const externalId = getTestFakes().paymentGateway.payments.at(0)?.id;
     expect(externalId).toBeDefined();

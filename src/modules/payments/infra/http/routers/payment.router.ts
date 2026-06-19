@@ -7,6 +7,16 @@ const paymentRouter = Router();
 const paymentController = container.resolve(PaymentController);
 
 paymentRouter.get(
+  '/by-order/:order_id',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      order_id: Joi.string().uuid().required(),
+    }),
+  }),
+  paymentController.findPendingPaymentByOrder,
+);
+
+paymentRouter.get(
   '/:id',
   celebrate({
     [Segments.PARAMS]: Joi.object({

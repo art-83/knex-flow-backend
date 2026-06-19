@@ -11,8 +11,11 @@ import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/p
 import { User } from '../../../users/infra/orm/entities/user.entity';
 import { PaymentStatus } from '../../infra/orm/enums/payment-status.enum';
 import { IRepositoryProvider } from '../../../../shared/infra/orm/providers/repository.provider';
+import { PaymentMethod } from '../../infra/orm/enums/payment-method.enum';
 import { Payment } from '../../infra/orm/entities/payment.entity';
 import { payAbacatepayPix } from '../../utils/dev-pay-abacatepay-pix';
+import { PaymentQueryOptionsDTO } from '../../dtos/incoming/http/payments/payment-query-options.dto';
+import { mapStoredPixPayment } from '../../utils/map-stored-pix-payment';
 
 @injectable()
 class CreatePaymentService {
@@ -49,6 +52,19 @@ class CreatePaymentService {
       throw new AppError(400, 'Order not pending', 'Pedido nao esta pendente.');
     }
 
+    const existingPendingPayment = (
+      await this.paymentRepositoryProvider.find({
+        order_id: data.order_id,
+        status: PaymentStatus.PENDING,
+      } as Partial<PaymentQueryOptionsDTO>)
+    )
+      .filter(payment => payment.pix_br_code)
+      .at(0);
+
+    if (existingPendingPayment) {
+      return mapStoredPixPayment(existingPendingPayment);
+    }
+
     const payload: AbacatepayCreatePaymentRequestDTO = {
       order_id: data.order_id!,
       method: data.method!,
@@ -64,10 +80,14 @@ class CreatePaymentService {
     const payment = await this.paymentRepositoryProvider.create({
       order: order,
       amount: order.total_amount,
-      method: data.method,
+      method: data.method ?? PaymentMethod.PIX,
       status: PaymentStatus.PENDING,
       provider: 'abacatepay',
       external_id: gatewayPayment.id,
+      pix_br_code: gatewayPayment.brCode,
+      pix_br_code_base64: gatewayPayment.brCodeBase64,
+      pix_expires_at: new Date(gatewayPayment.expiresAt),
+      pix_amount_cents: gatewayPayment.amount,
     });
 
     if (process.env.ENVIRONMENT === 'development') {

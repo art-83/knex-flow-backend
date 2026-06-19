@@ -22,6 +22,7 @@ import { GeneratePresenceQRCodeService } from '../../../services/qr-code/generat
 import { ValidateQRCodePresenceService } from '../../../services/qr-code/validate-qr-code-presence.service';
 import { PublishEventService } from '../../../services/events/publish-event.service';
 import { FindUserEventActivityEnrollmentsService } from '../../../services/event-activity-presence/find-user-event-activity-enrollments.service';
+import { FindEventActivityPresencesService } from '../../../services/event-activity-presence/find-event-activity-presences.service';
 
 class EventController {
   public async findEvents(request: Request, response: Response) {
@@ -120,11 +121,15 @@ class EventController {
   public async generatePresenceQRCode(request: Request, response: Response) {
     const generatePresenceQRCodeService = container.resolve(GeneratePresenceQRCodeService);
     const event_activity_id = String(request.params.event_activity_id);
-    const qr_code = await generatePresenceQRCodeService.execute(request.user_id, event_activity_id);
-    return response.json({
-      message: 'Presence QR code generated successfully.',
-      qr_code,
-    });
+    const result = await generatePresenceQRCodeService.execute(request.user_id, event_activity_id);
+    return response.json(result);
+  }
+
+  public async findEventActivityPresences(request: Request, response: Response) {
+    const findEventActivityPresencesService = container.resolve(FindEventActivityPresencesService);
+    const event_activity_id = String(request.params.event_activity_id);
+    const result = await findEventActivityPresencesService.execute(request.user_id, event_activity_id);
+    return response.json(result);
   }
 
   public async validatePresenceQRCode(request: Request, response: Response) {

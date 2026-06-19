@@ -22,6 +22,18 @@ class Payment extends BaseEntitySequentialGeneratedUUID {
   @Column({ nullable: true })
   external_id: string;
 
+  @Column({ type: 'text', nullable: true })
+  pix_br_code: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  pix_br_code_base64: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  pix_expires_at: Date | null;
+
+  @Column({ type: 'integer', nullable: true })
+  pix_amount_cents: number | null;
+
   @Column({ type: 'timestamptz', nullable: true })
   paid_at: Date;
 

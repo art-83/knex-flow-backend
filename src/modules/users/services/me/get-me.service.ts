@@ -4,6 +4,7 @@ import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { UserOrganization } from '../../infra/orm/entities/user-organization.entity';
+import { mapUserPermission } from '../../utils/map-user-permission';
 
 @injectable()
 class GetMeService {
@@ -40,7 +41,7 @@ class GetMeService {
             email: user.email,
           },
         ],
-        user_permissions: userPermissions,
+        user_permissions: userPermissions.map(mapUserPermission),
         user_organizations: mappedOrganizations,
         has_organization: mappedOrganizations.length > 0,
       },

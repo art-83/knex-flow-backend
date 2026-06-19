@@ -5,6 +5,7 @@ import { UserPermissionQueryOptionsDTO } from '../../dtos/incoming/http/user-per
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
+import { mapUserPermission } from '../../utils/map-user-permission';
 
 @injectable()
 class FindUserPermissionsService {
@@ -62,7 +63,7 @@ class FindUserPermissionsService {
 
     return {
       message: 'User permissions retrieved successfully.',
-      data: userPermissions,
+      data: userPermissions.map(mapUserPermission),
     };
   }
 }

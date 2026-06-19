@@ -2,8 +2,15 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { GetMeService } from '../../../services/me/get-me.service';
 import { FindUsersService } from '../../../services/users/find-users.service';
+import { FindPermissionsService } from '../../../services/permissions/find-permissions.service';
 
 class UsersController {
+  public async findPermissions(_request: Request, response: Response) {
+    const findPermissionsService = container.resolve(FindPermissionsService);
+    const result = await findPermissionsService.execute();
+    return response.json(result);
+  }
+
   public async find(request: Request, response: Response) {
     const findUsersService = container.resolve(FindUsersService);
     const organization_id = String(request.query.organization_id);

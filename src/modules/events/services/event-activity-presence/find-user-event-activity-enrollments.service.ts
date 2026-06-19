@@ -33,11 +33,13 @@ class FindUserEventActivityEnrollmentsService {
         data: {
           event_id,
           event_activity_ids: [],
+          enrollments: [],
         },
       };
     }
 
     const enrolledActivityIds: string[] = [];
+    const enrollments: Array<{ event_activity_id: string; user_presence: boolean }> = [];
 
     for (const activity of activities) {
       const presence = (
@@ -50,6 +52,10 @@ class FindUserEventActivityEnrollmentsService {
 
       if (presence) {
         enrolledActivityIds.push(activity.id);
+        enrollments.push({
+          event_activity_id: activity.id,
+          user_presence: presence.user_presence,
+        });
       }
     }
 
@@ -58,6 +64,7 @@ class FindUserEventActivityEnrollmentsService {
       data: {
         event_id,
         event_activity_ids: enrolledActivityIds,
+        enrollments,
       },
     };
   }

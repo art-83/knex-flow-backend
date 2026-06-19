@@ -6,6 +6,8 @@ import { resolveTicketAvaliability } from '../../utils/resolve-ticket-avaliabili
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Ticket } from '../../infra/orm/entities/ticket.entity';
 import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
+import { CreatePaymentService } from '../../../payments/services/payments/create-payment.service';
+import { PaymentMethod } from '../../../payments/infra/orm/enums/payment-method.enum';
 
 @injectable()
 class GetTicketsAvaliabilityAndMaybeCreateOrderService {
@@ -16,6 +18,8 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     private eventActivityRepository: IEventActivityRepositoryProvider,
     @inject('OrderRepositoryProvider')
     private orderRepository: IOrderRepositoryProvider,
+    @inject(CreatePaymentService)
+    private createPaymentService: CreatePaymentService,
   ) {}
 
   async execute(user_id: string, event_id: string, event_activity_ids: string[] = []) {
@@ -86,6 +90,10 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
         }
 
         const ticketAvailability = resolveTicketAvaliability(result.ticket as Ticket, result.order);
+        const paymentResult = await this.createPaymentService.execute(user.id, {
+          order_id: result.order.id,
+          method: PaymentMethod.PIX,
+        });
 
         return {
           message: 'Tickets available! Order created successfully.',
@@ -101,6 +109,8 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
               user_presence: presence.user_presence,
             })),
             ticketAvailability,
+            payment: paymentResult.payment,
+            gatewayPayment: paymentResult.gatewayPayment,
           },
         };
       }

@@ -210,6 +210,16 @@ eventRouter.get(
 );
 
 eventRouter.get(
+  '/event-activities/:event_activity_id/presences',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      event_activity_id: Joi.string().uuid().required(),
+    }).required(),
+  }),
+  eventController.findEventActivityPresences,
+);
+
+eventRouter.get(
   '/event-activities/:event_activity_id/presence/qr-code',
   celebrate({
     [Segments.PARAMS]: Joi.object({

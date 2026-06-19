@@ -15,5 +15,7 @@ usersRouter.get(
   (request, response) => usersController.find(request, response),
 );
 
+usersRouter.get('/permissions', (request, response) => usersController.findPermissions(request, response));
+
 usersRouter.get('/me', (request, response) => usersController.me(request, response));
 export { usersRouter };

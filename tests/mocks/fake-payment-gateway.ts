@@ -1,5 +1,6 @@
 import { v7 as uuidv7 } from 'uuid';
 
+import { orderConfig } from '../../src/config/order.config';
 import { AbacatepayCreatePaymentRequestDTO } from '../../src/modules/payments/dtos/outgoing/gateways/abacatepay/create-payment-request.dto';
 import { AbacatepayCreatePaymentResponseDTO } from '../../src/modules/payments/dtos/incoming/gateways/abacatepay/create-payment-response.dto';
 import { AbacatepayRefundPaymentResponseDTO } from '../../src/modules/payments/dtos/incoming/gateways/abacatepay/refund-payment-response.dto';
@@ -15,7 +16,7 @@ class FakePaymentGateway implements IPaymentGatewayProvider {
       amount: data.amount,
       brCode: '00020126580014br.gov.bcb.pix',
       brCodeBase64: 'data:image/png;base64,fake',
-      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+      expiresAt: new Date(Date.now() + orderConfig.pendingTtlMinutes * 60 * 1000).toISOString(),
     };
 
     this.payments.push(payment);
