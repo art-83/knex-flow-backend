@@ -20,24 +20,11 @@ routes.use('/public/events', eventPublicRouter);
 // Webhook externo: autenticado via header AbacatePay, não via JWT.
 routes.use('/webhook/', checkoutHooksRouter);
 
-routes.use(authMiddleware);
-
-routes.use('/health', (request, response) => {
-  const lupeDeLupeSongs = [
-    'Cabo Frio',
-    'Gaúcha',
-    'Fogo-Fátuo',
-    'A Escrava Isaura',
-    'Pavimento',
-    '17',
-    'Eu Já Venci',
-    'Redenção (Três Gatos e um Cachorro)',
-    'Dalila',
-    'SP (Pais Solteiros)',
-  ];
-  const randomSong = lupeDeLupeSongs[Math.floor(Math.random() * lupeDeLupeSongs.length)];
-  return response.status(200).json({ messagem: 'lula livre #lula2026', som_da_vez: `lupe de lupe - ${randomSong}` });
+routes.get('/health', (_request, response) => {
+  return response.status(200).json({ status: 'ok' });
 });
+
+routes.use(authMiddleware);
 
 routes.use('/orders', orderRouter);
 routes.use('/events', eventRouter);
