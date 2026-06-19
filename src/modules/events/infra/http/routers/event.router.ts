@@ -1,11 +1,8 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
 import { EventController } from '../controllers/event.controller';
-import {
-  defaultQueryOptionsSchema,
-  timestampQueryOptionsSchema,
-} from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
-import { eventAddressSchema } from '../dtos/event-address-schema.dto';
+import { defaultQueryOptionsSchema } from '../../../../../shared/dtos/incoming/http/schemas/default-query-options.schema';
+import { timestampQueryOptionsSchema } from '../../../../../shared/dtos/incoming/http/schemas/timestamp-query-options.schema';
 import { EventModality } from '../../orm/enums/event-modality.enum';
 import { EventStatus } from '../../orm/enums/event-status.enum';
 
@@ -26,6 +23,26 @@ const eventCreateStatusSchema = Joi.string()
   .valid(...Object.values(EventStatus))
   .optional()
   .default(EventStatus.DRAFT);
+
+const eventAddressSchema = Joi.object({
+  street: Joi.string().trim().min(1).required(),
+  number: Joi.string().trim().min(1).required(),
+  city: Joi.string().trim().min(1).required(),
+  state: Joi.string().trim().length(2).required(),
+  country: Joi.string().trim().min(1).required(),
+  zip_code: Joi.string()
+    .trim()
+    .required()
+    .custom((value, helpers) => {
+      const digits = value.replace(/\D/g, '');
+
+      if (digits.length !== 8) {
+        return helpers.error('any.invalid');
+      }
+
+      return value;
+    }),
+});
 
 eventRouter.get(
   '/',

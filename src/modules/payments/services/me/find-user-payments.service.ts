@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { IRepositoryProvider } from '../../../../shared/infra/orm/providers/repository.provider';
-import { PaymentQueryOptions } from '../../dtos/payments/payment-query-options.dto';
+import { PaymentQueryOptionsDTO } from '../../dtos/incoming/http/payments/payment-query-options.dto';
 import { Payment } from '../../infra/orm/entities/payment.entity';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 
@@ -12,11 +12,11 @@ class FindUserPaymentsService {
     private paymentRepositoryProvider: IRepositoryProvider<Payment>,
   ) {}
 
-  public async execute(user_id: string, options: Partial<PaymentQueryOptions>) {
+  public async execute(user_id: string, options: Partial<PaymentQueryOptionsDTO>) {
     const payments = (
       await this.paymentRepositoryProvider.find({
         id: options.id,
-      } as Partial<PaymentQueryOptions>)
+      } as Partial<PaymentQueryOptionsDTO>)
     ).at(0);
 
     if (!payments) {

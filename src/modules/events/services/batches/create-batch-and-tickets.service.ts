@@ -3,8 +3,9 @@ import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { CreateOrUpdateBatchDTO } from '../../dtos/incoming/http/batch/create-or-update-batch.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
@@ -72,8 +73,8 @@ class CreateBatchService {
     }
 
     if (event.status === EventStatus.ACTIVE) {
-      const config = event.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_create_batches_after_publish ?? true;
+      const config = event.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_create_batches_after_publish', true);
 
       if (!allowed) {
         throw new AppError(
@@ -90,17 +91,16 @@ class CreateBatchService {
       throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    const configurationObject = organization.configuration as OrganizationConfiguration | undefined;
+    const configurationObject = organization.configuration as OrganizationConfigurationDTO | undefined;
 
-    if (
-      configurationObject?.max_batch_base_quantity &&
-      data.base_quantity > configurationObject.max_batch_base_quantity
-    ) {
-      throw new AppError(
-        400,
-        'Batch base quantity exceeds the maximum allowed by the organization.',
-        'Quantidade base do lote excede o maximo permitido pela organizacao.',
-      );
+    if (configurationObject && configurationObject.max_batch_base_quantity) {
+      if (data.base_quantity > configurationObject.max_batch_base_quantity) {
+        throw new AppError(
+          400,
+          'Batch base quantity exceeds the maximum allowed by the organization.',
+          'Quantidade base do lote excede o maximo permitido pela organizacao.',
+        );
+      }
     }
 
     data.event = event;

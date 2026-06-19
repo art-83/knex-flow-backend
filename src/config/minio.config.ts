@@ -4,7 +4,7 @@ const minioConfig = {
   useSSL: process.env.MINIO_USE_SSL === 'true',
   accessKey: String(process.env.MINIO_ACCESS_KEY),
   secretKey: String(process.env.MINIO_SECRET_KEY),
-  bucket: 'files',
+  bucket: String(process.env.MINIO_BUCKET),
   publicUrl: String(process.env.MINIO_PUBLIC_URL),
 };
 export { minioConfig };

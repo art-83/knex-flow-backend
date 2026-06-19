@@ -1,9 +1,10 @@
 import { IEventRepositoryProvider } from '../providers/event-repository.provider';
 import { Event } from '../../entities/event.entity';
-import { EventQueryOptions } from '../../../../dtos/event/event-query-options';
+import { EventQueryOptionsDTO } from '../../../../dtos/incoming/http/event/event-query-options.dto';
 import { EventStatus } from '../../enums/event-status.enum';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
+import { AppError } from '../../../../../../shared/infra/http/errors/app-error';
 
 class EventRepository implements IEventRepositoryProvider {
   private repository: Repository<Event>;
@@ -12,7 +13,7 @@ class EventRepository implements IEventRepositoryProvider {
     this.repository = dataSource.getRepository(Event);
   }
 
-  public async find(data: Partial<EventQueryOptions>): Promise<Event[]> {
+  public async find(data: Partial<EventQueryOptionsDTO>): Promise<Event[]> {
     const query = this.repository.createQueryBuilder('event');
 
     query.leftJoinAndSelect('event.organization', 'organization');
@@ -63,7 +64,7 @@ class EventRepository implements IEventRepositoryProvider {
     const updated = (await this.find({ id })).at(0);
 
     if (!updated) {
-      throw new Error('Event not found after update.');
+      throw new AppError(404, 'Event not found after update.', 'Evento nao encontrado apos atualizacao.');
     }
 
     return updated;

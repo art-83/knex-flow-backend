@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { CreateOrUpdateOrganizationRoleDTO } from '../../dtos/organization-role/create-or-update-organization-role.dto';
+import { CreateOrUpdateOrganizationRoleDTO } from '../../dtos/incoming/http/organization-role/create-or-update-organization-role.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';

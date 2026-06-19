@@ -5,12 +5,11 @@ import { IOrderRepositoryProvider } from '../../../events/infra/orm/repositories
 import { IRepositoryProvider } from '../../../../shared/infra/orm/providers/repository.provider';
 import { Payment } from '../../infra/orm/entities/payment.entity';
 import { PaymentStatus } from '../../infra/orm/enums/payment-status.enum';
-import { OrderStatus } from '../../../events/infra/orm/enums/order-status.enum';
-import { PaymentQueryOptions } from '../../dtos/payments/payment-query-options.dto';
-import { AbacatePayPixWebhookRequestDTO } from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { PaymentQueryOptionsDTO } from '../../dtos/incoming/http/payments/payment-query-options.dto';
+import { AbacatePayTransparentWebhookRequestDTO } from '../../dtos/incoming/webhooks/abacatepay/transparent-webhook-request.dto';
 
 @injectable()
-class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayPixWebhookRequestDTO> {
+class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<AbacatePayTransparentWebhookRequestDTO> {
   constructor(
     @inject('OrderRepositoryProvider')
     private orderRepositoryProvider: IOrderRepositoryProvider,
@@ -18,7 +17,7 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
     private paymentRepositoryProvider: IRepositoryProvider<Payment>,
   ) {}
 
-  public async handle(payload: AbacatePayPixWebhookRequestDTO): Promise<void> {
+  public async handle(payload: AbacatePayTransparentWebhookRequestDTO): Promise<void> {
     const transparent = payload.data.transparent;
     const orderId = String(transparent.metadata.order_id);
     const externalId = String(transparent.id);
@@ -27,16 +26,10 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
       throw new AppError(400, 'Invalid payload', 'Payload invalido.');
     }
 
-    const order = (await this.orderRepositoryProvider.find({ id: orderId })).at(0);
-
-    if (!order) {
-      throw new AppError(404, 'Order not found', 'Pedido nao encontrado.');
-    }
-
     const paymentQueryOptions = {
       order_id: orderId,
       external_id: externalId,
-    } as PaymentQueryOptions;
+    } as PaymentQueryOptionsDTO;
 
     const payment = (await this.paymentRepositoryProvider.find(paymentQueryOptions)).at(0);
 
@@ -44,16 +37,21 @@ class AbacatepayCompletedWebhookHandler implements IWebhookHandlerProvider<Abaca
       throw new AppError(404, 'Payment not found', 'Pagamento nao encontrado.');
     }
 
-    if (payment.status !== PaymentStatus.PAID) {
-      await this.paymentRepositoryProvider.update(payment.id, {
-        status: PaymentStatus.PAID,
-      });
-    }
+    const result = await this.orderRepositoryProvider.confirmPaidOrder({
+      order_id: orderId,
+      payment_id: payment.id,
+    });
 
-    if (order.status === OrderStatus.PENDING) {
-      await this.orderRepositoryProvider.update(order.id, {
-        status: OrderStatus.CONFIRMED,
-      });
+    switch (result.status) {
+      case 'confirmed':
+      case 'already_confirmed':
+        return;
+      case 'order_not_found':
+        throw new AppError(404, 'Order not found', 'Pedido nao encontrado.');
+      case 'payment_not_found':
+        throw new AppError(404, 'Payment not found', 'Pagamento nao encontrado.');
+      case 'payment_order_mismatch':
+        throw new AppError(400, 'Payment does not belong to order', 'Pagamento nao pertence ao pedido.');
     }
   }
 }

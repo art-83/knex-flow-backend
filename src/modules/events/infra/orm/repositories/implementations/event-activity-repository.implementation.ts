@@ -1,6 +1,6 @@
 import { IEventActivityRepositoryProvider } from '../providers/event-activity-repository.provider';
 import { EventActivity } from '../../entities/event-activity.entity';
-import { EventActivityQueryOptions } from '../../../../dtos/event-activity/event-activity-query-options';
+import { EventActivityQueryOptionsDTO } from '../../../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class EventActivityRepository implements IEventActivityRepositoryProvider {
     this.repository = dataSource.getRepository(EventActivity);
   }
 
-  public async find(data: Partial<EventActivityQueryOptions>): Promise<EventActivity[]> {
+  public async find(data: Partial<EventActivityQueryOptionsDTO>): Promise<EventActivity[]> {
     const query = this.repository.createQueryBuilder('event_activity');
 
     query.leftJoinAndSelect('event_activity.event', 'event');

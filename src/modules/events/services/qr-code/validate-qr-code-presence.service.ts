@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IQRCodeProvider } from '../../../../shared/infra/qr-code/providers/qr-code.provider';
-import { PresenceQRPayloadDTO } from '../../../../shared/infra/qr-code/dtos/presence-qr-payload.dto';
+import { PresenceQRPayloadDTO } from '../../../../shared/dtos/internal/qr-code/presence-qr-payload.dto';
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
@@ -10,8 +10,8 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-repository.provider';
-import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
-import { OrderStatus } from '../../infra/orm/enums/order-status.enum';
+import { EventActivityPresenceQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-presence/event-activity-presence-query-options.dto';
+import { MarkPresenceCheckInOutcomeStatus } from '../../infra/orm/enums/mark-presence-check-in-outcome-status.enum';
 
 @injectable()
 class ValidateQRCodePresenceService {
@@ -59,7 +59,7 @@ class ValidateQRCodePresenceService {
       throw new AppError(404, 'User not found.', 'Usuario nao encontrado.');
     }
 
-    const presenceQueryOptions: Partial<EventActivityPresenceQueryOptions> = {
+    const presenceQueryOptions: Partial<EventActivityPresenceQueryOptionsDTO> = {
       event_activity_id,
       user_id: payload.user_id,
       limit: 1,
@@ -75,34 +75,55 @@ class ValidateQRCodePresenceService {
       );
     }
 
-    if (existingPresence.order.status !== OrderStatus.CONFIRMED) {
-      throw new AppError(
-        400,
-        'Order must be confirmed to validate presence.',
-        'Pedido deve estar confirmado para validar presenca.',
-      );
-    }
-
-    if (existingPresence.user_presence) {
-      throw new AppError(
-        409,
-        'User already checked in for this event activity.',
-        'Usuario ja registrou presenca nesta atividade do evento.',
-      );
-    }
-
-    const presence = await this.eventActivityPresenceRepository.update(existingPresence.id, {
-      user_presence: true,
+    const outcome = await this.eventActivityPresenceRepository.markPresenceCheckIn({
+      presence_id: existingPresence.id,
+      event_activity_id,
+      user_id: payload.user_id,
     });
 
-    return {
-      message: 'Presence validated successfully.',
-      data: {
-        presence_id: presence.id,
-        event_activity_id,
-        user_id: payload.user_id,
-      },
-    };
+    switch (outcome.status) {
+      case MarkPresenceCheckInOutcomeStatus.SUCCESS:
+        if (!outcome.presence) {
+          throw new AppError(
+            500,
+            'Presence check-in succeeded without presence data.',
+            'Presenca registrada sem dados de retorno.',
+          );
+        }
+
+        return {
+          message: 'Presence validated successfully.',
+          data: {
+            presence_id: outcome.presence.id,
+            event_activity_id,
+            user_id: payload.user_id,
+          },
+        };
+      case MarkPresenceCheckInOutcomeStatus.NOT_FOUND:
+        throw new AppError(
+          404,
+          'User is not registered for this event activity.',
+          'Usuario nao esta inscrito nesta atividade do evento.',
+        );
+      case MarkPresenceCheckInOutcomeStatus.MISMATCH:
+        throw new AppError(
+          400,
+          'QR code does not belong to this event activity.',
+          'QR code nao pertence a esta atividade do evento.',
+        );
+      case MarkPresenceCheckInOutcomeStatus.ORDER_NOT_CONFIRMED:
+        throw new AppError(
+          400,
+          'Order must be confirmed to validate presence.',
+          'Pedido deve estar confirmado para validar presenca.',
+        );
+      case MarkPresenceCheckInOutcomeStatus.ALREADY_CHECKED_IN:
+        throw new AppError(
+          409,
+          'User already checked in for this event activity.',
+          'Usuario ja registrou presenca nesta atividade do evento.',
+        );
+    }
   }
 
   private async ensureStaffPermission(user_id: string, event_activity_id: string) {

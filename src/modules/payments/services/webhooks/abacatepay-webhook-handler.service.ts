@@ -1,11 +1,16 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { AbacatePayWebhookHandlerFactory } from '../../infra/factories/abacate-pay-webhook-handler.factory';
-import { AbacatePayPixWebhookRequestDTO } from '../../dtos/gateways/abacatepay/abacatepay-pix-webhook-request.dto';
+import { AbacatePayTransparentWebhookRequestDTO } from '../../dtos/incoming/webhooks/abacatepay/transparent-webhook-request.dto';
 
 @injectable()
 class AbacatepayWebhookHandlerService {
-  public async execute(payload: AbacatePayPixWebhookRequestDTO): Promise<void> {
-    const handler = AbacatePayWebhookHandlerFactory.create(payload);
+  constructor(
+    @inject(AbacatePayWebhookHandlerFactory)
+    private webhookHandlerFactory: AbacatePayWebhookHandlerFactory,
+  ) {}
+
+  public async execute(payload: AbacatePayTransparentWebhookRequestDTO): Promise<void> {
+    const handler = this.webhookHandlerFactory.create(payload);
     await handler.handle(payload);
   }
 }

@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IQRCodeProvider } from '../../../../shared/infra/qr-code/providers/qr-code.provider';
-import { PresenceQRPayloadDTO } from '../../../../shared/infra/qr-code/dtos/presence-qr-payload.dto';
+import { PresenceQRPayloadDTO } from '../../../../shared/dtos/internal/qr-code/presence-qr-payload.dto';
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
-import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { EventActivityPresenceQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-presence/event-activity-presence-query-options.dto';
 import { OrderStatus } from '../../infra/orm/enums/order-status.enum';
 
 @injectable()
@@ -25,7 +25,7 @@ class GeneratePresenceQRCodeService {
       throw new AppError(404, 'Event activity not found.', 'Atividade de evento nao encontrada.');
     }
 
-    const presenceQueryOptions: Partial<EventActivityPresenceQueryOptions> = {
+    const presenceQueryOptions: Partial<EventActivityPresenceQueryOptionsDTO> = {
       event_activity_id,
       user_id,
       limit: 1,

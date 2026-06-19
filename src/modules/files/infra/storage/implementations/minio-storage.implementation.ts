@@ -1,6 +1,6 @@
 import * as Minio from 'minio';
 import { minioConfig } from '../../../../../config/minio.config';
-import { UploadStorageDTO } from '../../../dtos/storage/upload-storage.dto';
+import { UploadStorageDTO } from '../../../dtos/internal/storage/upload-storage.dto';
 import { IStorageProvider } from '../providers/storage.provider';
 
 class MinioStorageImplementation implements IStorageProvider {

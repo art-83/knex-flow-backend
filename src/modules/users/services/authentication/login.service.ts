@@ -2,8 +2,8 @@ import { inject, injectable } from 'tsyringe';
 import { IHashProvider } from '../../infra/hash/providers/hash.provider';
 import { IJwtProvider } from '../../infra/jwt/providers/jwt.provider';
 import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
-import { LoginDTO } from '../../dtos/auth/login.dto';
-import { LoginResponseDTO } from '../../dtos/auth/login-response.dto';
+import { LoginRequestDTO } from '../../dtos/incoming/http/auth/login-request.dto';
+import { LoginResponseDTO } from '../../dtos/outgoing/http/auth/login-response.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 
 @injectable()
@@ -17,7 +17,7 @@ class LoginService {
     private jwtProvider: IJwtProvider,
   ) {}
 
-  public async execute(data: LoginDTO): Promise<LoginResponseDTO> {
+  public async execute(data: LoginRequestDTO): Promise<LoginResponseDTO> {
     const users = await this.userRepository.find({ email: data.email, includePassword: true });
     const user = users.at(0);
 

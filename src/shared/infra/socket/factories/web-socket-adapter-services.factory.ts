@@ -3,6 +3,7 @@ import { GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter } from '../infr
 import { IWebSocketServiceAdapterProvider } from '../infra/providers/web-socket-service-adapter.provider';
 import { container } from 'tsyringe';
 import { WebSocketType } from '../enums/web-socket-type';
+import { AppError } from '../../http/errors/app-error';
 
 class SocketServicesFactory {
   public static create(payload: WebSocketMessageDTO): IWebSocketServiceAdapterProvider {
@@ -10,7 +11,7 @@ class SocketServicesFactory {
       case WebSocketType.RETRIEVE_AVAILABLE_TICKETS:
         return container.resolve(GetTicketsAvaliabilityAndMaybeCreateOrderServiceAdapter);
       default:
-        throw new Error('Invalid payload type');
+        throw new AppError(400, 'Invalid payload type', 'Tipo de payload invalido.');
     }
   }
 }

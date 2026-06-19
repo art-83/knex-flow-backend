@@ -1,6 +1,6 @@
 import { IUserOrganizationRepositoryProvider } from '../providers/user-organization-repository.provider';
 import { UserOrganization } from '../../entities/user-organization.entity';
-import { UserOrganizationQueryOptions } from '../../../../dtos/user-organization/user-organization-query-options';
+import { UserOrganizationQueryOptionsDTO } from '../../../../dtos/incoming/http/user-organization/user-organization-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class UserOrganizationRepository implements IUserOrganizationRepositoryProvider 
     this.repository = dataSource.getRepository(UserOrganization);
   }
 
-  public async find(data: Partial<UserOrganizationQueryOptions>): Promise<UserOrganization[]> {
+  public async find(data: Partial<UserOrganizationQueryOptionsDTO>): Promise<UserOrganization[]> {
     const query = this.repository.createQueryBuilder('userOrganization');
 
     query.leftJoinAndSelect('userOrganization.organization', 'organization');

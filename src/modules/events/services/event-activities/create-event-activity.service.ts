@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
-import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create-or-update-event-activity.dto';
+import { CreateOrUpdateEventActivityDTO } from '../../dtos/incoming/http/event-activity/create-or-update-event-activity.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
@@ -13,7 +13,8 @@ import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 
 @injectable()
 class CreateEventActivityService {
@@ -40,8 +41,8 @@ class CreateEventActivityService {
     }
 
     if (event.status === EventStatus.ACTIVE) {
-      const config = event.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_create_event_activities_after_publish ?? false;
+      const config = event.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_create_event_activities_after_publish', false);
 
       if (!allowed) {
         throw new AppError(

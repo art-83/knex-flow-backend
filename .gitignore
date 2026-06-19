@@ -1,8 +1,18 @@
 node_modules
 .env
+.env.test.local
 prod-ca-2021.crt
 dist
 .claude
 .cursor
 tasks
 agents
+
+# Vitest / test artifacts (Vitest runs .ts directly; tsc must not emit these)
+tests/**/*.js
+!tests/k6/**
+tests/**/*.d.ts
+tests/**/*.map
+vitest*.js
+vitest*.d.ts
+vitest*.map

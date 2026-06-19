@@ -1,6 +1,6 @@
 import { ITicketRepositoryProvider } from '../providers/ticket-repository.provider';
 import { Ticket } from '../../entities/ticket.entity';
-import { TicketQueryOptions } from '../../../../dtos/ticket/ticket-query-options';
+import { TicketQueryOptionsDTO } from '../../../../dtos/incoming/http/ticket/ticket-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class TicketRepository implements ITicketRepositoryProvider {
     this.repository = dataSource.getRepository(Ticket);
   }
 
-  public async find(data: Partial<TicketQueryOptions>): Promise<Ticket[]> {
+  public async find(data: Partial<TicketQueryOptionsDTO>): Promise<Ticket[]> {
     const query = this.repository.createQueryBuilder('ticket');
 
     query.leftJoinAndSelect('ticket.batch', 'batch');

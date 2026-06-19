@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { UploadFileDTO } from '../../dtos/file/upload-file.dto';
-import { UploadFileResponseDTO } from '../../dtos/file/upload-file-response.dto';
+import { UploadFileRequestDTO } from '../../dtos/incoming/http/upload-file-request.dto';
+import { UploadFileResponseDTO } from '../../dtos/outgoing/http/upload-file-response.dto';
 import { IFileRepositoryProvider } from '../../infra/orm/repositories/providers/file-repository.provider';
 import { IStorageProvider } from '../../infra/storage/providers/storage.provider';
 import { buildFilePath } from '../../utils/build-file-path';
@@ -16,7 +16,7 @@ class UploadFileService {
     private storageProvider: IStorageProvider,
   ) {}
 
-  public async execute(user_id: string, file?: UploadFileDTO): Promise<UploadFileResponseDTO> {
+  public async execute(user_id: string, file?: UploadFileRequestDTO): Promise<UploadFileResponseDTO> {
     if (!file) {
       throw new AppError(400, 'File is required.', 'Arquivo e obrigatorio.');
     }

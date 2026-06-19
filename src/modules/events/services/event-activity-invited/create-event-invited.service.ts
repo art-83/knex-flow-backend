@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { CreateOrUpdateEventInvitedDTO } from '../../dtos/event-activity-invited/create-or-update-event-invited.dto';
+import { CreateOrUpdateEventInvitedDTO } from '../../dtos/incoming/http/event-activity-invited/create-or-update-event-invited.dto';
 import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
@@ -13,10 +13,11 @@ import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventActivityInvited } from '../../infra/orm/entities/event-activity-invited.entity';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 import { applyInvitedFileToPayload } from '../../utils/resolve-invited-file';
 import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
-import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
+import { EventActivityInvitedQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-invited/event-activity-invited-query-options.dto';
 
 @injectable()
 class CreateEventInvitedService {
@@ -55,8 +56,8 @@ class CreateEventInvitedService {
     }
 
     if (event.status === EventStatus.ACTIVE) {
-      const config = event.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_create_event_activity_invited_after_publish ?? true;
+      const config = event.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_create_event_activity_invited_after_publish', true);
 
       if (!allowed) {
         throw new AppError(
@@ -124,7 +125,7 @@ class CreateEventInvitedService {
 
     const invited = await this.eventActivityInvitedRepository.create(invitedPayload);
     const persisted = (
-      await this.eventActivityInvitedRepository.find({ id: invited.id } as Partial<EventActivityInvitedQueryOptions>)
+      await this.eventActivityInvitedRepository.find({ id: invited.id } as Partial<EventActivityInvitedQueryOptionsDTO>)
     ).at(0);
 
     return {

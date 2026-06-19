@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
-import { EventQueryOptions } from '../../dtos/event/event-query-options';
+import { EventQueryOptionsDTO } from '../../dtos/incoming/http/event/event-query-options.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
 import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
-import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
-import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
+import { EventActivityInvitedQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-invited/event-activity-invited-query-options.dto';
+import { BatchQueryOptionsDTO } from '../../dtos/incoming/http/batch/batch-query-options.dto';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
@@ -18,7 +18,7 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
-import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
+import { TicketQueryOptionsDTO } from '../../dtos/incoming/http/ticket/ticket-query-options.dto';
 import { Batch } from '../../infra/orm/entities/batch.entity';
 
 @injectable()
@@ -44,7 +44,7 @@ class FindEventsService {
     private storageProvider: IStorageProvider,
   ) {}
 
-  public async execute(user_id: string, options: Partial<EventQueryOptions>) {
+  public async execute(user_id: string, options: Partial<EventQueryOptionsDTO>) {
     if (!options.organization_id) {
       throw new AppError(400, 'organization_id is required.', 'organization_id e obrigatorio.');
     }
@@ -95,19 +95,21 @@ class FindEventsService {
 
     const [activitiesByEvent, invitedByEvent, issuedTicketsByEvent, batchesByEvent] = await Promise.all([
       Promise.all(
-        eventIds.map(event_id => this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>)),
+        eventIds.map(event_id =>
+          this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptionsDTO>),
+        ),
       ),
       Promise.all(
         eventIds.map(event_id =>
-          this.eventActivityInvitedRepository.find({ event_id } as Partial<EventActivityInvitedQueryOptions>),
+          this.eventActivityInvitedRepository.find({ event_id } as Partial<EventActivityInvitedQueryOptionsDTO>),
         ),
       ),
       Promise.all(
         eventIds.map(
-          async event_id => (await this.ticketRepository.find({ event_id } as Partial<TicketQueryOptions>)).length,
+          async event_id => (await this.ticketRepository.find({ event_id } as Partial<TicketQueryOptionsDTO>)).length,
         ),
       ),
-      Promise.all(eventIds.map(event_id => this.batchRepository.find({ event_id } as Partial<BatchQueryOptions>))),
+      Promise.all(eventIds.map(event_id => this.batchRepository.find({ event_id } as Partial<BatchQueryOptionsDTO>))),
     ]);
 
     const response = events.map((event, index) => {

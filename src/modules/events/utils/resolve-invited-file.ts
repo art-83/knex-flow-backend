@@ -1,5 +1,5 @@
 import { File } from '../../files/infra/orm/entities/file.entity';
-import { FileQueryOptions } from '../../files/dtos/file/file-query-options';
+import { FileQueryOptionsDTO } from '../../files/dtos/incoming/http/file-query-options.dto';
 import { IFileRepositoryProvider } from '../../files/infra/orm/repositories/providers/file-repository.provider';
 import { EventActivityInvited } from '../infra/orm/entities/event-activity-invited.entity';
 
@@ -16,7 +16,7 @@ async function resolveInvitedFile(
     return null;
   }
 
-  const file = (await fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+  const file = (await fileRepository.find({ id: file_id, user_id } as FileQueryOptionsDTO)).at(0);
 
   if (!file) {
     return null;
@@ -39,4 +39,4 @@ async function applyInvitedFileToPayload(
 
   payload.file = file;
 }
-export { applyInvitedFileToPayload, resolveInvitedFile };
+export { applyInvitedFileToPayload };

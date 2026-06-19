@@ -1,6 +1,6 @@
 import jwt, { Secret } from 'jsonwebtoken';
 import { IJwtProvider } from '../providers/jwt.provider';
-import { JwtPayloadDTO } from '../../../dtos/auth/jwt-payload.dto';
+import { JwtPayloadDTO } from '../../../dtos/internal/auth/jwt-payload.dto';
 import { jwtConfig } from '../../../../../config/jwt.config';
 
 class JsonWebTokenJwtProvider implements IJwtProvider {

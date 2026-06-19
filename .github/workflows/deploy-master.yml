@@ -16,7 +16,11 @@ env:
   SSH_TARGET: ${{ secrets.SERVER_ROOT_USER }}@${{ secrets.SERVER_IPV4 }}
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:

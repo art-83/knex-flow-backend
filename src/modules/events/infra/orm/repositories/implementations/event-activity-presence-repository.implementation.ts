@@ -1,7 +1,11 @@
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
-import { EventActivityPresenceQueryOptions } from '../../../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { EventActivityPresenceQueryOptionsDTO } from '../../../../dtos/incoming/http/event-activity-presence/event-activity-presence-query-options.dto';
+import { MarkPresenceCheckInOutcomeStatus } from '../../enums/mark-presence-check-in-outcome-status.enum';
+import { MarkPresenceCheckInDTO } from '../../../../dtos/internal/repositories/mark-presence-check-in.dto';
+import { MarkPresenceCheckInOutcomeDTO } from '../../../../dtos/internal/repositories/mark-presence-check-in-outcome.dto';
 import { EventActivityPresence } from '../../entities/event-activity-presence.entity';
+import { OrderStatus } from '../../enums/order-status.enum';
 import { IEventActivityPresenceRepositoryProvider } from '../providers/event-activity-presence-repository.provider';
 
 class EventActivityPresenceRepository implements IEventActivityPresenceRepositoryProvider {
@@ -11,7 +15,7 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
     this.repository = dataSource.getRepository(EventActivityPresence);
   }
 
-  public async find(data: Partial<EventActivityPresenceQueryOptions>): Promise<EventActivityPresence[]> {
+  public async find(data: Partial<EventActivityPresenceQueryOptionsDTO>): Promise<EventActivityPresence[]> {
     const query = this.repository.createQueryBuilder('event_activity_presence');
 
     query.leftJoinAndSelect('event_activity_presence.user', 'user');
@@ -62,6 +66,58 @@ class EventActivityPresenceRepository implements IEventActivityPresenceRepositor
 
   public async deleteByOrderId(order_id: string): Promise<void> {
     await this.repository.delete({ order: { id: order_id } });
+  }
+
+  public async markPresenceCheckIn(data: MarkPresenceCheckInDTO): Promise<MarkPresenceCheckInOutcomeDTO> {
+    return dataSource.transaction(async manager => {
+      const presence = await manager
+        .createQueryBuilder(EventActivityPresence, 'presence')
+        .innerJoinAndSelect('presence.order', 'order')
+        .innerJoinAndSelect('presence.event_activity', 'event_activity')
+        .innerJoinAndSelect('presence.user', 'user')
+        .where('presence.id = :id', { id: data.presence_id })
+        .setLock('pessimistic_write')
+        .getOne();
+
+      if (!presence) {
+        return { status: MarkPresenceCheckInOutcomeStatus.NOT_FOUND };
+      }
+
+      if (presence.event_activity.id !== data.event_activity_id || presence.user.id !== data.user_id) {
+        return { status: MarkPresenceCheckInOutcomeStatus.MISMATCH };
+      }
+
+      if (presence.order.status !== OrderStatus.CONFIRMED) {
+        return { status: MarkPresenceCheckInOutcomeStatus.ORDER_NOT_CONFIRMED };
+      }
+
+      if (presence.user_presence) {
+        return { status: MarkPresenceCheckInOutcomeStatus.ALREADY_CHECKED_IN };
+      }
+
+      const updateResult = await manager
+        .createQueryBuilder()
+        .update(EventActivityPresence)
+        .set({ user_presence: true })
+        .where('id = :id', { id: data.presence_id })
+        .andWhere('user_presence = :userPresence', { userPresence: false })
+        .execute();
+
+      if (!updateResult.affected) {
+        return { status: MarkPresenceCheckInOutcomeStatus.ALREADY_CHECKED_IN };
+      }
+
+      const updatedPresence = await manager.findOne(EventActivityPresence, {
+        where: { id: data.presence_id },
+        relations: ['order', 'event_activity', 'user'],
+      });
+
+      if (!updatedPresence) {
+        return { status: MarkPresenceCheckInOutcomeStatus.NOT_FOUND };
+      }
+
+      return { status: MarkPresenceCheckInOutcomeStatus.SUCCESS, presence: updatedPresence };
+    });
   }
 }
 export { EventActivityPresenceRepository };

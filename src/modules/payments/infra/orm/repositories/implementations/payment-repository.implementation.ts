@@ -2,7 +2,7 @@ import { Payment } from '../../entities/payment.entity';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 import { IRepositoryProvider } from '../../../../../../shared/infra/orm/providers/repository.provider';
-import { PaymentQueryOptions } from '../../../../dtos/payments/payment-query-options.dto';
+import { PaymentQueryOptionsDTO } from '../../../../dtos/incoming/http/payments/payment-query-options.dto';
 
 class PaymentRepository implements IRepositoryProvider<Payment> {
   private repository: Repository<Payment>;
@@ -16,7 +16,7 @@ class PaymentRepository implements IRepositoryProvider<Payment> {
     return await this.repository.save(create);
   }
 
-  public async find(options: PaymentQueryOptions): Promise<Payment[]> {
+  public async find(options: PaymentQueryOptionsDTO): Promise<Payment[]> {
     const query = this.repository.createQueryBuilder('payment');
 
     query

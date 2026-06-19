@@ -8,7 +8,7 @@ import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/re
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
-import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
+import { EventActivityInvitedQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-invited/event-activity-invited-query-options.dto';
 import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
 
 @injectable()
@@ -81,7 +81,7 @@ class FindEventInvitedByEventActivityService {
 
     const invited = await this.eventActivityInvitedRepository.find({
       event_activity_id,
-    } as Partial<EventActivityInvitedQueryOptions>);
+    } as Partial<EventActivityInvitedQueryOptionsDTO>);
 
     return {
       message: 'Event invited found successfully.',

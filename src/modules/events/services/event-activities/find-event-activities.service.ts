@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
@@ -29,7 +29,7 @@ class FindEventActivitiesService {
     private storageProvider: IStorageProvider,
   ) {}
 
-  public async execute(user_id: string, options: Partial<EventActivityQueryOptions>) {
+  public async execute(user_id: string, options: Partial<EventActivityQueryOptionsDTO>) {
     if (!options.event_id) {
       throw new AppError(400, 'event_id is required.', 'event_id e obrigatorio.');
     }

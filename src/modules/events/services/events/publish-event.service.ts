@@ -3,7 +3,7 @@ import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
-import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { BatchQueryOptionsDTO } from '../../dtos/incoming/http/batch/batch-query-options.dto';
 import { IUserOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
@@ -75,7 +75,7 @@ class PublishEventService {
     event.status = EventStatus.ACTIVE;
     await this.eventRepository.update(event_id, event);
 
-    const batches = await this.batchRepository.find({ event_id: event.id } as BatchQueryOptions);
+    const batches = await this.batchRepository.find({ event_id: event.id } as BatchQueryOptionsDTO);
 
     return {
       message: 'Event published successfully.',

@@ -2,14 +2,13 @@ import { inject, injectable } from 'tsyringe';
 import { IHashProvider } from '../../infra/hash/providers/hash.provider';
 import { IJwtProvider } from '../../infra/jwt/providers/jwt.provider';
 import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/user-repository.provider';
-import { RegisterDTO } from '../../dtos/auth/register.dto';
-import { LoginResponseDTO } from '../../dtos/auth/login-response.dto';
+import { RegisterRequestDTO } from '../../dtos/incoming/http/auth/register-request.dto';
+import { LoginResponseDTO } from '../../dtos/outgoing/http/auth/login-response.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { validatePasswordStrength } from '../../utils/validate-password-strength';
 import { IProducerProvider } from '../../../../shared/infra/queue/infra/providers/producer.provider';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
-import { bullmqConfig } from '../../../../config/bullmq.config';
-import { WelcomeEmailJobPayloadDTO } from '../../dtos/welcome-email/welcome-email-job-payload.dto';
+import { WelcomeEmailJobPayloadDTO } from '../../dtos/internal/queue/welcome-email-job-payload.dto';
 
 @injectable()
 class RegisterService {
@@ -24,7 +23,7 @@ class RegisterService {
     private producerProvider: IProducerProvider,
   ) {}
 
-  public async execute(data: RegisterDTO): Promise<LoginResponseDTO> {
+  public async execute(data: RegisterRequestDTO): Promise<LoginResponseDTO> {
     const passwordValidation = validatePasswordStrength(data.password);
     if (!passwordValidation.isValid) {
       throw new AppError(
@@ -51,11 +50,9 @@ class RegisterService {
     const accessToken = this.jwtProvider.signAccessToken(tokenPayload);
     const refreshToken = this.jwtProvider.signRefreshToken({ user_id: createdUser.id, type: 'refresh' });
 
-    await this.producerProvider.createJob(
-      QueueNames.SEND_WELCOME_EMAIL,
-      { user_id: createdUser.id } as WelcomeEmailJobPayloadDTO,
-      bullmqConfig.defaultJobOptions,
-    );
+    await this.producerProvider.createJob(QueueNames.SEND_WELCOME_EMAIL, {
+      user_id: createdUser.id,
+    } as WelcomeEmailJobPayloadDTO);
 
     return {
       message: 'Register successful.',

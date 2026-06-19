@@ -1,6 +1,6 @@
 import { IUserRepositoryProvider } from '../providers/user-repository.provider';
 import { User } from '../../entities/user.entity';
-import { UserQueryOptions } from '../../../../dtos/user/user-query-options';
+import { UserQueryOptionsDTO } from '../../../../dtos/incoming/http/user/user-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class UserRepository implements IUserRepositoryProvider {
     this.repository = dataSource.getRepository(User);
   }
 
-  public async find(data: Partial<UserQueryOptions>): Promise<User[]> {
+  public async find(data: Partial<UserQueryOptionsDTO>): Promise<User[]> {
     const query = this.repository.createQueryBuilder('user');
 
     if (data.includePassword) {

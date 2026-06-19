@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
-import { EventActivityInvitedQueryOptions } from '../../../../dtos/event-activity-invited/event-activity-invited-query-options';
+import { EventActivityInvitedQueryOptionsDTO } from '../../../../dtos/incoming/http/event-activity-invited/event-activity-invited-query-options.dto';
 import { EventActivityInvited } from '../../entities/event-activity-invited.entity';
 import { IEventActivityInvitedRepositoryProvider } from '../providers/event-activity-invited-repository.provider';
 
@@ -11,7 +11,7 @@ class EventActivityInvitedRepository implements IEventActivityInvitedRepositoryP
     this.repository = dataSource.getRepository(EventActivityInvited);
   }
 
-  public async find(data: Partial<EventActivityInvitedQueryOptions>): Promise<EventActivityInvited[]> {
+  public async find(data: Partial<EventActivityInvitedQueryOptionsDTO>): Promise<EventActivityInvited[]> {
     const query = this.repository.createQueryBuilder('event_activity_invited');
 
     query.leftJoinAndSelect('event_activity_invited.event_activity', 'event_activity');

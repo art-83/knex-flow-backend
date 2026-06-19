@@ -1,6 +1,6 @@
 import { IBatchRepositoryProvider } from '../providers/batch-repository.provider';
 import { Batch } from '../../entities/batch.entity';
-import { BatchQueryOptions } from '../../../../dtos/batch/batch-query-options';
+import { BatchQueryOptionsDTO } from '../../../../dtos/incoming/http/batch/batch-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class BatchRepository implements IBatchRepositoryProvider {
     this.repository = dataSource.getRepository(Batch);
   }
 
-  public async find(data: Partial<BatchQueryOptions>): Promise<Batch[]> {
+  public async find(data: Partial<BatchQueryOptionsDTO>): Promise<Batch[]> {
     const query = this.repository.createQueryBuilder('batch');
 
     query.leftJoinAndSelect('batch.event', 'event');

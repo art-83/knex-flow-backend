@@ -1,24 +1,24 @@
 import { inject, injectable } from 'tsyringe';
-import { EventQueryOptions } from '../../dtos/event/event-query-options';
-import { PublicEventQueryOptions } from '../../dtos/event/public-event-query-options';
+import { EventQueryOptionsDTO } from '../../dtos/incoming/http/event/event-query-options.dto';
+import { PublicEventQueryOptionsDTO } from '../../dtos/incoming/http/event/public-event-query-options.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventActivityInvitedRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-invited-repository.provider';
 import { ITicketRepositoryProvider } from '../../infra/orm/repositories/providers/ticket-repository.provider';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
-import { EventActivityInvitedQueryOptions } from '../../dtos/event-activity-invited/event-activity-invited-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
+import { EventActivityInvitedQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-invited/event-activity-invited-query-options.dto';
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { mapEventActivityInvited } from '../../utils/map-event-activity-invited';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { Address } from '../../infra/orm/entities/address.entity';
-import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { BatchQueryOptionsDTO } from '../../dtos/incoming/http/batch/batch-query-options.dto';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
-import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
+import { TicketQueryOptionsDTO } from '../../dtos/incoming/http/ticket/ticket-query-options.dto';
 import { Batch } from '../../infra/orm/entities/batch.entity';
 
 @injectable()
@@ -38,9 +38,9 @@ class FindPublicEventsService {
     private storageProvider: IStorageProvider,
   ) {}
 
-  public async execute(options: Partial<PublicEventQueryOptions>) {
+  public async execute(options: Partial<PublicEventQueryOptionsDTO>) {
     const events = await this.eventRepository.find({
-      ...(options as Partial<EventQueryOptions>),
+      ...(options as Partial<EventQueryOptionsDTO>),
       status: EventStatus.ACTIVE,
     });
 
@@ -64,19 +64,21 @@ class FindPublicEventsService {
 
     const [activitiesByEvent, invitedByEvent, issuedTicketsByEvent, batchesByEvent] = await Promise.all([
       Promise.all(
-        eventIds.map(event_id => this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>)),
+        eventIds.map(event_id =>
+          this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptionsDTO>),
+        ),
       ),
       Promise.all(
         eventIds.map(event_id =>
-          this.eventActivityInvitedRepository.find({ event_id } as Partial<EventActivityInvitedQueryOptions>),
+          this.eventActivityInvitedRepository.find({ event_id } as Partial<EventActivityInvitedQueryOptionsDTO>),
         ),
       ),
       Promise.all(
         eventIds.map(
-          async event_id => (await this.ticketRepository.find({ event_id } as Partial<TicketQueryOptions>)).length,
+          async event_id => (await this.ticketRepository.find({ event_id } as Partial<TicketQueryOptionsDTO>)).length,
         ),
       ),
-      Promise.all(eventIds.map(event_id => this.batchRepository.find({ event_id } as Partial<BatchQueryOptions>))),
+      Promise.all(eventIds.map(event_id => this.batchRepository.find({ event_id } as Partial<BatchQueryOptionsDTO>))),
     ]);
 
     return events.map((event, index) => {

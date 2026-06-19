@@ -1,16 +1,21 @@
-import axios from 'axios';
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
 import { discordConfig } from '../../../../config/discord.config';
-import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/discord-error-webhook/discord-error-webhook-job-payload.dto';
+import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/internal/queue/discord-error-webhook-job-payload.dto';
+import { IWebhookClientProvider } from '../../infra/webhook/providers/webhook-client.provider';
 
 @injectable()
 class SendDiscordErrorWebhookService {
+  constructor(
+    @inject('WebhookClientProvider')
+    private webhookClient: IWebhookClientProvider,
+  ) {}
+
   public async execute(data: DiscordErrorWebhookJobPayloadDTO): Promise<void> {
     const content = this.formatMessage(data);
 
     try {
-      await axios.post(discordConfig.errorWebhookUrl, { content });
+      await this.webhookClient.post(discordConfig.errorWebhookUrl, { content });
     } catch (error) {
       console.log(error);
     }

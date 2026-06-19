@@ -5,7 +5,7 @@ import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/pr
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { IOrganizationRolePermissionRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { ApplyOrganizationRoleDTO } from '../../dtos/user-permission/apply-organization-role.dto';
+import { ApplyOrganizationRoleRequestDTO } from '../../dtos/incoming/http/user-permission/apply-organization-role-request.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
@@ -35,7 +35,7 @@ class ApplyOrganizationRoleToUserService {
     private permissionRepository: IPermissionRepositoryProvider,
   ) {}
 
-  public async execute(actor_user_id: string, data: ApplyOrganizationRoleDTO) {
+  public async execute(actor_user_id: string, data: ApplyOrganizationRoleRequestDTO) {
     const userOrganization = (
       await this.userOrganizationRepository.find({ user_id: actor_user_id, organization_id: data.organization_id })
     ).at(0);

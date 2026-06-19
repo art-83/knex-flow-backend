@@ -1,13 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
-import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
 import { IOrderRepositoryProvider } from '../../infra/orm/repositories/providers/order-repository.provider';
 import { resolveTicketAvaliability } from '../../utils/resolve-ticket-avaliability';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { Ticket } from '../../infra/orm/entities/ticket.entity';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
-import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
 
 @injectable()
 class GetTicketsAvaliabilityAndMaybeCreateOrderService {
@@ -16,8 +14,6 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     private userRepository: IUserRepositoryProvider,
     @inject('EventActivityRepositoryProvider')
     private eventActivityRepository: IEventActivityRepositoryProvider,
-    @inject('EventActivityPresenceRepositoryProvider')
-    private eventActivityPresenceRepository: IEventActivityPresenceRepositoryProvider,
     @inject('OrderRepositoryProvider')
     private orderRepository: IOrderRepositoryProvider,
   ) {}
@@ -43,48 +39,77 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     }
 
     const eventActivities = uniqueActivityIds.length
-      ? await this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>)
+      ? await this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptionsDTO>)
       : [];
 
-    await this.validateEventActivities(uniqueActivityIds, eventActivities, user_id);
+    this.validateEventActivitiesBelongToEvent(uniqueActivityIds, eventActivities);
 
-    const result = await this.orderRepository.createPendingOrderAttempt({
+    const outcome = await this.orderRepository.createPendingOrderAttempt({
       user_id: user.id,
       event_id,
       event_activity_ids: uniqueActivityIds,
     });
 
-    if (!result) {
-      return {
-        message: 'No tickets found.',
-        data: null,
-      };
+    switch (outcome.status) {
+      case 'no_tickets':
+        return {
+          message: 'No tickets found.',
+          data: null,
+        };
+      case 'already_registered':
+        throw new AppError(
+          409,
+          'User already registered for this event activity.',
+          'Usuario ja inscrito nesta atividade do evento.',
+        );
+      case 'max_participants':
+        throw new AppError(
+          409,
+          'Event activity has reached maximum participants.',
+          'Atividade do evento atingiu o numero maximo de participantes.',
+        );
+      case 'activity_not_found':
+        throw new AppError(
+          404,
+          'Event activity not found for this event.',
+          'Atividade de evento nao encontrada para este evento.',
+        );
+      case 'success': {
+        const result = outcome.data;
+
+        if (!result) {
+          throw new AppError(
+            500,
+            'Order attempt succeeded without result data.',
+            'Pedido criado sem dados de retorno.',
+          );
+        }
+
+        const ticketAvailability = resolveTicketAvaliability(result.ticket as Ticket, result.order);
+
+        return {
+          message: 'Tickets available! Order created successfully.',
+          data: {
+            ticket: {
+              ...result.ticket,
+              order: result.order,
+            },
+            order: result.order,
+            event_activity_presences: result.presences.map((presence, index) => ({
+              id: presence.id,
+              event_activity_id: uniqueActivityIds[index]!,
+              user_presence: presence.user_presence,
+            })),
+            ticketAvailability,
+          },
+        };
+      }
     }
-
-    const ticketAvailability = resolveTicketAvaliability(result.ticket as Ticket, result.order);
-
-    return {
-      message: 'Tickets available! Order created successfully.',
-      data: {
-        ticket: {
-          ...result.ticket,
-          order: result.order,
-        },
-        order: result.order,
-        event_activity_presences: result.presences.map((presence, index) => ({
-          id: presence.id,
-          event_activity_id: uniqueActivityIds[index]!,
-          user_presence: presence.user_presence,
-        })),
-        ticketAvailability,
-      },
-    };
   }
 
-  private async validateEventActivities(
+  private validateEventActivitiesBelongToEvent(
     event_activity_ids: string[],
     eventActivities: Awaited<ReturnType<IEventActivityRepositoryProvider['find']>>,
-    user_id: string,
   ) {
     if (!event_activity_ids.length) {
       return;
@@ -93,42 +118,12 @@ class GetTicketsAvaliabilityAndMaybeCreateOrderService {
     const eventActivityMap = new Map(eventActivities.map(activity => [activity.id, activity]));
 
     for (const eventActivityId of event_activity_ids) {
-      const eventActivity = eventActivityMap.get(eventActivityId);
-
-      if (!eventActivity) {
+      if (!eventActivityMap.has(eventActivityId)) {
         throw new AppError(
           404,
           'Event activity not found for this event.',
           'Atividade de evento nao encontrada para este evento.',
         );
-      }
-
-      const existingPresence = (
-        await this.eventActivityPresenceRepository.find({
-          event_activity_id: eventActivityId,
-          user_id,
-          limit: 1,
-        } as Partial<EventActivityPresenceQueryOptions>)
-      ).at(0);
-
-      if (existingPresence) {
-        throw new AppError(
-          409,
-          'User already registered for this event activity.',
-          'Usuario ja inscrito nesta atividade do evento.',
-        );
-      }
-
-      if (eventActivity.max_participants != null) {
-        const presenceCount = await this.eventActivityPresenceRepository.countByEventActivity(eventActivityId);
-
-        if (presenceCount >= eventActivity.max_participants) {
-          throw new AppError(
-            409,
-            'Event activity has reached maximum participants.',
-            'Atividade do evento atingiu o numero maximo de participantes.',
-          );
-        }
       }
     }
   }

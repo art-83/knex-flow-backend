@@ -5,7 +5,8 @@ import { container } from 'tsyringe';
 import { IWorkerProvider } from './infra/providers/worker.provider';
 import { dataSource } from '../orm/database';
 import { IRedisConnectionProvider } from './infra/providers/redis-connection.provider';
-import { closeWorkers, initializeWorkers } from './workers-bootstrap';
+import { closeWorkers } from './close-workers';
+import { initializeWorkers } from './initialize-workers';
 
 async function main() {
   const redisConnection = container.resolve<IRedisConnectionProvider>('RedisConnectionProvider');

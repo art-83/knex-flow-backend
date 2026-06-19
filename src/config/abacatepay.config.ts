@@ -3,7 +3,7 @@ const abacatepayConfig = {
   apiUrl: String(process.env.ABACATEPAY_API_URL),
   webhookSecret: String(process.env.ABACATEPAY_SECRET),
   pix: {
-    expiresIn: 300, // 5 minutes
+    expiresIn: Number(process.env.ABACATEPAY_PIX_EXPIRES_IN),
   },
 };
 export { abacatepayConfig };

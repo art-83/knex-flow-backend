@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
+import { CreateOrUpdateEventDTO } from '../../dtos/incoming/http/event/create-or-update-event.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IAddressRepositoryProvider } from '../../infra/orm/repositories/providers/address-repository.provider';
 import { IOrganizationRepositoryProvider } from '../../../users/infra/orm/repositories/providers/organization-repository.provider';
@@ -10,7 +10,7 @@ import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repo
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
-import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { FileQueryOptionsDTO } from '../../../files/dtos/incoming/http/file-query-options.dto';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
 
@@ -124,6 +124,17 @@ class CreateEventService {
     }
 
     const eventWithRelations = (await this.eventRepository.find({ id: event.id })).at(0);
+
+    let banner = null;
+    let icon = null;
+    let address = null;
+
+    if (eventWithRelations) {
+      banner = mapStoredFile(this.storageProvider, eventWithRelations.banner_file);
+      icon = mapStoredFile(this.storageProvider, eventWithRelations.icon_file);
+      address = eventWithRelations.address;
+    }
+
     return {
       message: 'Event created successfully.',
       event: {
@@ -132,9 +143,9 @@ class CreateEventService {
         description: event.description,
         url_path: event.url_path,
         status: event.status,
-        banner: mapStoredFile(this.storageProvider, eventWithRelations?.banner_file),
-        icon: mapStoredFile(this.storageProvider, eventWithRelations?.icon_file),
-        address: eventWithRelations?.address ?? null,
+        banner,
+        icon,
+        address,
       },
     };
   }
@@ -144,7 +155,7 @@ class CreateEventService {
       return null;
     }
 
-    const resolvedFile = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+    const resolvedFile = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptionsDTO)).at(0);
 
     if (!resolvedFile) {
       throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');

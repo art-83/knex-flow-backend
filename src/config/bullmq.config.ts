@@ -4,16 +4,22 @@ const bullmqConfig = {
     port: Number(process.env.BULLMQ_PORT),
   },
   defaultWorkerOptions: {
-    concurrency: 1,
+    concurrency: Number(process.env.BULLMQ_WORKER_CONCURRENCY),
   },
   defaultJobOptions: {
-    attempts: 3,
+    attempts: Number(process.env.BULLMQ_JOB_ATTEMPTS),
     backoff: {
       type: 'exponential',
-      delay: 1000,
+      delay: Number(process.env.BULLMQ_JOB_BACKOFF_DELAY_MS),
     },
-    removeOnComplete: { age: 3600, count: 1000 },
-    removeOnFail: { age: 604800, count: 5000 },
+    removeOnComplete: {
+      age: Number(process.env.BULLMQ_REMOVE_ON_COMPLETE_AGE),
+      count: Number(process.env.BULLMQ_REMOVE_ON_COMPLETE_COUNT),
+    },
+    removeOnFail: {
+      age: Number(process.env.BULLMQ_REMOVE_ON_FAIL_AGE),
+      count: Number(process.env.BULLMQ_REMOVE_ON_FAIL_COUNT),
+    },
   },
 };
 export { bullmqConfig };

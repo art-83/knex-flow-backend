@@ -7,7 +7,7 @@ import { bullmqConfig } from '../../../../config/bullmq.config';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
 import { IRedisConnectionProvider } from '../../../../shared/infra/queue/infra/providers/redis-connection.provider';
-import { WelcomeEmailJobPayloadDTO } from '../../dtos/welcome-email/welcome-email-job-payload.dto';
+import { WelcomeEmailJobPayloadDTO } from '../../dtos/internal/queue/welcome-email-job-payload.dto';
 import { SendWelcomeEmailService } from '../../services/welcome-email/send-welcome-email.service';
 
 class WelcomeWorker implements IWorkerProvider {

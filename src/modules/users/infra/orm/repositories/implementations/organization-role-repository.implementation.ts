@@ -1,6 +1,6 @@
 import { IOrganizationRoleRepositoryProvider } from '../providers/organization-role-repository.provider';
 import { OrganizationRole } from '../../entities/organization-role.entity';
-import { OrganizationRoleQueryOptions } from '../../../../dtos/organization-role/organization-role-query-options';
+import { OrganizationRoleQueryOptionsDTO } from '../../../../dtos/incoming/http/organization-role/organization-role-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class OrganizationRoleRepository implements IOrganizationRoleRepositoryProvider 
     this.repository = dataSource.getRepository(OrganizationRole);
   }
 
-  public async find(data: Partial<OrganizationRoleQueryOptions>): Promise<OrganizationRole[]> {
+  public async find(data: Partial<OrganizationRoleQueryOptionsDTO>): Promise<OrganizationRole[]> {
     const query = this.repository.createQueryBuilder('organization_role');
 
     if (data.id) query.andWhere('organization_role.id = :id', { id: data.id });

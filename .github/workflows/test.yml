@@ -1,0 +1,94 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - master
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run test:unit
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run test:integration
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: integration
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run test:e2e
+
+  k6-smoke:
+    runs-on: ubuntu-latest
+    needs: e2e
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run k6 smoke against ephemeral test server
+        run: |
+          npx tsx tests/scripts/start-test-server.ts &
+          SERVER_PID=$!
+
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/health > /dev/null 2>&1; then
+              break
+            fi
+            sleep 2
+          done
+
+          docker run --rm --network host \
+            -v "$PWD/tests/k6:/scripts" \
+            grafana/k6:latest run \
+            -e BASE_URL=http://localhost:3000 \
+            -e SMOKE_EMAIL=smoke@test.example.com \
+            -e SMOKE_PASSWORD=Test123! \
+            /scripts/smoke.js
+
+          kill $SERVER_PID || true
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [unit, integration, e2e, k6-smoke]
+    steps:
+      - run: echo "All test stages passed"

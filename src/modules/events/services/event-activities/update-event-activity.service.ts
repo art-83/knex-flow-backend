@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { CreateOrUpdateEventActivityDTO } from '../../dtos/event-activity/create-or-update-event-activity.dto';
+import { CreateOrUpdateEventActivityDTO } from '../../dtos/incoming/http/event-activity/create-or-update-event-activity.dto';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
@@ -10,11 +10,12 @@ import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permis
 import { EventActivity } from '../../infra/orm/entities/event-activity.entity';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
-import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { FileQueryOptionsDTO } from '../../../files/dtos/incoming/http/file-query-options.dto';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { getActivityDurationHours } from '../../utils/event-activity-duration';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 
 @injectable()
 class UpdateEventActivityService {
@@ -49,8 +50,8 @@ class UpdateEventActivityService {
     }
 
     if (event.status === EventStatus.ACTIVE) {
-      const config = event.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_update_event_activities_after_publish ?? false;
+      const config = event.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_update_event_activities_after_publish', false);
 
       if (!allowed) {
         throw new AppError(
@@ -140,7 +141,7 @@ class UpdateEventActivityService {
     const fileQueryOptions = {
       id: file_id,
       user_id,
-    } as FileQueryOptions;
+    } as FileQueryOptionsDTO;
 
     const files = await this.fileRepository.find(fileQueryOptions);
     const file = files.at(0);

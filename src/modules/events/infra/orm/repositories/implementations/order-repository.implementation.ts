@@ -1,10 +1,11 @@
 import { IOrderRepositoryProvider } from '../providers/order-repository.provider';
-import {
-  CreatePendingOrderAttemptDTO,
-  CreatePendingOrderAttemptResult,
-} from '../../../../dtos/order/create-pending-order-attempt.dto';
+import { CreatePendingOrderAttemptDTO } from '../../../../dtos/internal/repositories/create-pending-order-attempt.dto';
+import { CreatePendingOrderAttemptResultDTO } from '../../../../dtos/internal/repositories/create-pending-order-attempt-result.dto';
+import { CreatePendingOrderAttemptOutcomeDTO } from '../../../../dtos/internal/repositories/create-pending-order-attempt-outcome.dto';
+import { ConfirmPaidOrderDTO } from '../../../../dtos/internal/repositories/confirm-paid-order.dto';
+import { ConfirmPaidOrderResultDTO } from '../../../../dtos/internal/repositories/confirm-paid-order-result.dto';
 import { Order } from '../../entities/order.entity';
-import { OrderQueryOptions } from '../../../../dtos/order/order-query-options';
+import { OrderQueryOptionsDTO } from '../../../../dtos/incoming/http/order/order-query-options.dto';
 import { OrderStatus } from '../../enums/order-status.enum';
 import { Ticket } from '../../entities/ticket.entity';
 import { Batch } from '../../entities/batch.entity';
@@ -23,11 +24,12 @@ class OrderRepository implements IOrderRepositoryProvider {
     this.repository = dataSource.getRepository(Order);
   }
 
-  public async find(data: Partial<OrderQueryOptions>): Promise<Order[]> {
+  public async find(data: Partial<OrderQueryOptionsDTO>): Promise<Order[]> {
     const query = this.repository.createQueryBuilder('order');
 
     query.leftJoinAndSelect('order.user', 'user');
     query.leftJoinAndSelect('order.tickets', 'ticket');
+    query.leftJoinAndSelect('order.payments', 'payments');
     query.leftJoinAndSelect('ticket.batch', 'batch');
     query.leftJoinAndSelect('batch.event', 'event');
 
@@ -74,10 +76,93 @@ class OrderRepository implements IOrderRepositoryProvider {
     return Number(deleteResult.affected);
   }
 
+  public async confirmPaidOrder(data: ConfirmPaidOrderDTO): Promise<ConfirmPaidOrderResultDTO> {
+    return dataSource.transaction(async manager => {
+      const payment = await manager
+        .createQueryBuilder(Payment, 'payment')
+        .innerJoinAndSelect('payment.order', 'payment_order')
+        .where('payment.id = :paymentId', { paymentId: data.payment_id })
+        .setLock('pessimistic_write')
+        .getOne();
+
+      if (!payment) {
+        return { status: 'payment_not_found' };
+      }
+
+      const order = await manager
+        .createQueryBuilder(Order, 'order')
+        .where('order.id = :orderId', { orderId: data.order_id })
+        .setLock('pessimistic_write')
+        .getOne();
+
+      if (!order) {
+        return { status: 'order_not_found' };
+      }
+
+      if (payment.order.id !== data.order_id) {
+        return { status: 'payment_order_mismatch' };
+      }
+
+      const paymentAlreadyPaid = payment.status === PaymentStatus.PAID;
+      const orderAlreadyConfirmed = order.status === OrderStatus.CONFIRMED;
+
+      if (paymentAlreadyPaid && orderAlreadyConfirmed) {
+        return { status: 'already_confirmed' };
+      }
+
+      if (!paymentAlreadyPaid) {
+        await manager.update(Payment, payment.id, {
+          status: PaymentStatus.PAID,
+          paid_at: new Date(),
+        });
+      }
+
+      if (order.status === OrderStatus.PENDING) {
+        await manager.update(Order, order.id, { status: OrderStatus.CONFIRMED });
+      }
+
+      return { status: 'confirmed' };
+    });
+  }
+
   public async createPendingOrderAttempt(
     data: CreatePendingOrderAttemptDTO,
-  ): Promise<CreatePendingOrderAttemptResult | null> {
+  ): Promise<CreatePendingOrderAttemptOutcomeDTO> {
     return dataSource.transaction(async manager => {
+      for (const eventActivityId of data.event_activity_ids) {
+        const eventActivity = await manager
+          .createQueryBuilder(EventActivity, 'event_activity')
+          .where('event_activity.id = :id', { id: eventActivityId })
+          .andWhere('event_activity.event_id = :event_id', { event_id: data.event_id })
+          .setLock('pessimistic_write')
+          .getOne();
+
+        if (!eventActivity) {
+          return { status: 'activity_not_found', event_activity_id: eventActivityId };
+        }
+
+        const existingPresence = await manager
+          .createQueryBuilder(EventActivityPresence, 'presence')
+          .where('presence.event_activity_id = :eventActivityId', { eventActivityId })
+          .andWhere('presence.user_id = :userId', { userId: data.user_id })
+          .getOne();
+
+        if (existingPresence) {
+          return { status: 'already_registered', event_activity_id: eventActivityId };
+        }
+
+        if (eventActivity.max_participants != null) {
+          const presenceCount = await manager
+            .createQueryBuilder(EventActivityPresence, 'presence')
+            .where('presence.event_activity_id = :eventActivityId', { eventActivityId })
+            .getCount();
+
+          if (presenceCount >= eventActivity.max_participants) {
+            return { status: 'max_participants', event_activity_id: eventActivityId };
+          }
+        }
+      }
+
       const batch = await manager
         .createQueryBuilder(Batch, 'batch')
         .where('batch.event_id = :event_id', { event_id: data.event_id })
@@ -86,7 +171,7 @@ class OrderRepository implements IOrderRepositoryProvider {
         .getOne();
 
       if (!batch) {
-        return null;
+        return { status: 'no_tickets' };
       }
 
       const issuedCount = await manager
@@ -95,7 +180,7 @@ class OrderRepository implements IOrderRepositoryProvider {
         .getCount();
 
       if (issuedCount >= batch.base_quantity) {
-        return null;
+        return { status: 'no_tickets' };
       }
 
       const order = await manager.save(
@@ -131,7 +216,7 @@ class OrderRepository implements IOrderRepositoryProvider {
         presences.push(presence);
       }
 
-      return {
+      const result: CreatePendingOrderAttemptResultDTO = {
         ticket: {
           ...ticket,
           batch,
@@ -140,6 +225,8 @@ class OrderRepository implements IOrderRepositoryProvider {
         order,
         presences,
       };
+
+      return { status: 'success', data: result };
     });
   }
 
@@ -158,6 +245,51 @@ class OrderRepository implements IOrderRepositoryProvider {
         .where('order_id = :orderId', { orderId })
         .andWhere('status = :status', { status: PaymentStatus.PENDING })
         .execute();
+    });
+  }
+
+  public async refundPaidOrder(orderId: string, paymentId: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      const order = await manager.findOne(Order, { where: { id: orderId } });
+
+      if (!order || order.status === OrderStatus.REFUNDED) {
+        return;
+      }
+
+      await manager.delete(EventActivityPresence, { order: { id: orderId } });
+
+      await manager.update(Order, orderId, { status: OrderStatus.REFUNDED });
+
+      await manager.softDelete(Ticket, { order: { id: orderId } });
+
+      await manager.update(Payment, paymentId, {
+        status: PaymentStatus.REFUNDED,
+        refunded_at: new Date(),
+      });
+    });
+  }
+
+  public async disputeOrder(orderId: string, paymentId: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      await manager.update(Order, orderId, { status: OrderStatus.DISPUTED });
+
+      await manager.update(Payment, paymentId, {
+        status: PaymentStatus.DISPUTED,
+      });
+    });
+  }
+
+  public async loseDisputedOrder(orderId: string, paymentId: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      await manager.delete(EventActivityPresence, { order: { id: orderId } });
+
+      await manager.update(Order, orderId, { status: OrderStatus.CANCELLED });
+
+      await manager.softDelete(Ticket, { order: { id: orderId } });
+
+      await manager.update(Payment, paymentId, {
+        status: PaymentStatus.FAILED,
+      });
     });
   }
 }

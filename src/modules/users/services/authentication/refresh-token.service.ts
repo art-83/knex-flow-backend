@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IJwtProvider } from '../../infra/jwt/providers/jwt.provider';
-import { RefreshTokenDTO } from '../../dtos/auth/refresh-token.dto';
-import { RefreshTokenResponseDTO } from '../../dtos/auth/refresh-token-response.dto';
+import { RefreshTokenRequestDTO } from '../../dtos/incoming/http/auth/refresh-token-request.dto';
+import { RefreshTokenResponseDTO } from '../../dtos/outgoing/http/auth/refresh-token-response.dto';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 
 @injectable()
@@ -11,7 +11,7 @@ class RefreshTokenService {
     private jwtProvider: IJwtProvider,
   ) {}
 
-  public async execute(data: RefreshTokenDTO): Promise<RefreshTokenResponseDTO> {
+  public async execute(data: RefreshTokenRequestDTO): Promise<RefreshTokenResponseDTO> {
     try {
       const decoded = this.jwtProvider.verifyRefreshToken(data.refreshToken);
 

@@ -2,8 +2,8 @@ import { CardInformation } from '../../entities/card-information.entity';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 import { IRepositoryProvider } from '../../../../../../shared/infra/orm/providers/repository.provider';
-import { CreateOrUpdateCardInformationDTO } from '../../../../dtos/card-informations/create-or-update-card-information.dto';
-import { CardInformationQueryOptions } from '../../../../dtos/card-informations/card-information-query-options.dto';
+import { CreateOrUpdateCardInformationDTO } from '../../../../dtos/internal/card-informations/create-or-update-card-information.dto';
+import { CardInformationQueryOptionsDTO } from '../../../../dtos/internal/card-informations/card-information-query-options.dto';
 
 class CardInformationRepository implements IRepositoryProvider<CardInformation> {
   private repository: Repository<CardInformation>;
@@ -17,7 +17,7 @@ class CardInformationRepository implements IRepositoryProvider<CardInformation> 
     return await this.repository.save(create);
   }
 
-  public async find(options: CardInformationQueryOptions): Promise<CardInformation[]> {
+  public async find(options: CardInformationQueryOptionsDTO): Promise<CardInformation[]> {
     const query = this.repository.createQueryBuilder('card_informations');
 
     if (options.id) query.andWhere('card_informations.id = :id', { id: options.id });

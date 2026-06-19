@@ -1,6 +1,6 @@
 import { IOrganizationRolePermissionRepositoryProvider } from '../providers/organization-role-permission-repository.provider';
 import { OrganizationRolePermission } from '../../entities/organization-role-permission.entity';
-import { OrganizationRolePermissionQueryOptions } from '../../../../dtos/organization-role-permission/organization-role-permission-query-options';
+import { OrganizationRolePermissionQueryOptionsDTO } from '../../../../dtos/incoming/http/organization-role-permission/organization-role-permission-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class OrganizationRolePermissionRepository implements IOrganizationRolePermissio
     this.repository = dataSource.getRepository(OrganizationRolePermission);
   }
 
-  public async find(data: Partial<OrganizationRolePermissionQueryOptions>): Promise<OrganizationRolePermission[]> {
+  public async find(data: Partial<OrganizationRolePermissionQueryOptionsDTO>): Promise<OrganizationRolePermission[]> {
     const query = this.repository.createQueryBuilder('orgRolePerm');
 
     query

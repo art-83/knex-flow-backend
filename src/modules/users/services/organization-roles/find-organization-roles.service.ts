@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { OrganizationRoleQueryOptions } from '../../dtos/organization-role/organization-role-query-options';
+import { OrganizationRoleQueryOptionsDTO } from '../../dtos/incoming/http/organization-role/organization-role-query-options.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
@@ -20,7 +20,7 @@ class FindOrganizationRolesService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, data: Partial<OrganizationRoleQueryOptions>) {
+  public async execute(user_id: string, data: Partial<OrganizationRoleQueryOptionsDTO>) {
     if (!data.organization_id) {
       throw new AppError(400, 'organization_id is required.', 'organization_id e obrigatorio.');
     }

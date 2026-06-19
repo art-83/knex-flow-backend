@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { CreateOrUpdateBatchDTO } from '../../dtos/batch/create-or-update-batch.dto';
+import { CreateOrUpdateBatchDTO } from '../../dtos/incoming/http/batch/create-or-update-batch.dto';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';

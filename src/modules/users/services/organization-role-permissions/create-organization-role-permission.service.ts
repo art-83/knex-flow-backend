@@ -3,7 +3,7 @@ import { IOrganizationRolePermissionRepositoryProvider } from '../../infra/orm/r
 import { IOrganizationRoleRepositoryProvider } from '../../infra/orm/repositories/providers/organization-role-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { CreateOrUpdateOrganizationRolePermissionDTO } from '../../dtos/organization-role-permission/create-or-update-organization-role-permission.dto';
+import { CreateOrUpdateOrganizationRolePermissionDTO } from '../../dtos/incoming/http/organization-role-permission/create-or-update-organization-role-permission.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';

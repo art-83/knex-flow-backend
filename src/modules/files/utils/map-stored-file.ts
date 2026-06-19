@@ -1,12 +1,6 @@
 import { File } from '../infra/orm/entities/file.entity';
 import { IStorageProvider } from '../infra/storage/providers/storage.provider';
-
-interface StoredFileAsset {
-  id: string;
-  path: string;
-  url: string;
-  mime_type: string;
-}
+import { StoredFileAsset } from './stored-file-asset';
 
 function mapStoredFile(storageProvider: IStorageProvider, file?: File | null): StoredFileAsset | null {
   if (!file) {
@@ -20,4 +14,4 @@ function mapStoredFile(storageProvider: IStorageProvider, file?: File | null): S
     mime_type: file.mime_type,
   };
 }
-export { StoredFileAsset, mapStoredFile };
+export { mapStoredFile };

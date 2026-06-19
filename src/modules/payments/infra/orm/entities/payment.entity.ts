@@ -23,6 +23,9 @@ class Payment extends BaseEntitySequentialGeneratedUUID {
   external_id: string;
 
   @Column({ type: 'timestamptz', nullable: true })
+  paid_at: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
   refunded_at: Date;
 
   @ManyToOne(() => Order, order => order.payments, { nullable: false })

@@ -6,6 +6,7 @@ import { IJwtProvider } from '../../../../../modules/users/infra/jwt/providers/j
 import { WebSocketMessageDTO } from '../../dto/web-socket-message.dto';
 import { SocketServicesFactory } from '../../factories/web-socket-adapter-services.factory';
 import { IWebSocketProvider } from '../providers/web-socket.provider';
+import { AppError } from '../../../http/errors/app-error';
 
 class WebSocketImplementation implements IWebSocketProvider {
   private server: Server;
@@ -84,12 +85,12 @@ class WebSocketImplementation implements IWebSocketProvider {
 
   private extractBearerToken(value: unknown): string {
     if (typeof value !== 'string') {
-      throw new Error('Missing token');
+      throw new AppError(401, 'Missing token', 'Token ausente.');
     }
 
     const [scheme, token] = value.split(' ');
     if (scheme !== 'Bearer' || !token) {
-      throw new Error('Invalid token');
+      throw new AppError(401, 'Invalid token', 'Token invalido.');
     }
 
     return token;

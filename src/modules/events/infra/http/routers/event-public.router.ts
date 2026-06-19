@@ -1,7 +1,7 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
 import { EventPublicController } from '../controllers/event-public.controller';
-import { defaultQueryOptionsSchema } from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
+import { defaultQueryOptionsSchema } from '../../../../../shared/dtos/incoming/http/schemas/default-query-options.schema';
 
 const eventPublicRouter = Router();
 const eventPublicController = new EventPublicController();

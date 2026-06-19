@@ -1,6 +1,6 @@
 import { IUserPermissionRepositoryProvider } from '../providers/user-permission-repository.provider';
 import { UserPermission } from '../../entities/user-permission.entity';
-import { UserPermissionQueryOptions } from '../../../../dtos/user-permission/user-permission-query-options';
+import { UserPermissionQueryOptionsDTO } from '../../../../dtos/incoming/http/user-permission/user-permission-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class UserPermissionRepository implements IUserPermissionRepositoryProvider {
     this.repository = dataSource.getRepository(UserPermission);
   }
 
-  public async find(data: Partial<UserPermissionQueryOptions>): Promise<UserPermission[]> {
+  public async find(data: Partial<UserPermissionQueryOptionsDTO>): Promise<UserPermission[]> {
     const query = this.repository.createQueryBuilder('userPermission');
 
     if (data.id) query.andWhere('userPermission.id = :id', { id: data.id });

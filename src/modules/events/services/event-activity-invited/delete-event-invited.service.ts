@@ -7,7 +7,8 @@ import { IPermissionRepositoryProvider } from '../../../users/infra/orm/reposito
 import { IUserPermissionRepositoryProvider } from '../../../users/infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../../users/infra/orm/enums/permission-description.enum';
 import { EventStatus } from '../../infra/orm/enums/event-status.enum';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 
 @injectable()
 class DeleteEventInvitedService {
@@ -38,8 +39,8 @@ class DeleteEventInvitedService {
     }
 
     if (event.status === EventStatus.ACTIVE) {
-      const config = event.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_delete_event_activity_invited_after_publish ?? true;
+      const config = event.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_delete_event_activity_invited_after_publish', true);
 
       if (!allowed) {
         throw new AppError(

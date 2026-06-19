@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { orderConfig } from '../../../../config/order.config';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
-import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
-import { TicketQueryOptions } from '../../dtos/ticket/ticket-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
+import { BatchQueryOptionsDTO } from '../../dtos/incoming/http/batch/batch-query-options.dto';
+import { TicketQueryOptionsDTO } from '../../dtos/incoming/http/ticket/ticket-query-options.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
@@ -41,9 +41,9 @@ class FindPublicEventAvailabilityService {
     }
 
     const [activities, issuedTickets, batches] = await Promise.all([
-      this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>),
-      this.ticketRepository.find({ event_id } as Partial<TicketQueryOptions>),
-      this.batchRepository.find({ event_id } as Partial<BatchQueryOptions>),
+      this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptionsDTO>),
+      this.ticketRepository.find({ event_id } as Partial<TicketQueryOptionsDTO>),
+      this.batchRepository.find({ event_id } as Partial<BatchQueryOptionsDTO>),
     ]);
 
     const participantsCounts = await Promise.all(

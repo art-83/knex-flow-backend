@@ -64,58 +64,83 @@ import { IMailerProvider } from '../infra/mailer/providers/mailer.provider';
 import { ResendMailerImplementation } from '../infra/mailer/implementations/resend-mailer.implementation';
 import { IQRCodeProvider } from '../infra/qr-code/providers/qr-code.provider';
 import { QrcodeLibStrategyImplementation } from '../infra/qr-code/implementations/qrcode-lib-strategy.implementation';
-import { PresenceQRPayloadDTO } from '../infra/qr-code/dtos/presence-qr-payload.dto';
+import { PresenceQRPayloadDTO } from '../dtos/internal/qr-code/presence-qr-payload.dto';
+import { SyncPermissionsService } from '../../modules/users/services/permissions/sync-permissions.service';
+import { AbacatepayCompletedWebhookHandler } from '../../modules/payments/services/webhooks/abacatepay-completed.webhook-handler';
+import { AbacatepayRefundedWebhookHandler } from '../../modules/payments/services/webhooks/abacatepay-refunded.webhook-handler';
+import { AbacatepayDisputedWebhookHandler } from '../../modules/payments/services/webhooks/abacatepay-disputed.webhook-handler';
+import { AbacatepayLostWebhookHandler } from '../../modules/payments/services/webhooks/abacatepay-lost.webhook-handler';
+import { AbacatePayWebhookHandlerFactory } from '../../modules/payments/infra/factories/abacate-pay-webhook-handler.factory';
+import { AbacatepayWebhookHandlerService } from '../../modules/payments/services/webhooks/abacatepay-webhook-handler.service';
+import { IWebhookClientProvider } from '../../modules/observability/infra/webhook/providers/webhook-client.provider';
+import { AxiosWebhookClientImplementation } from '../../modules/observability/infra/webhook/implementations/axios-webhook-client.implementation';
 
-container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
-container.registerSingleton<IOrganizationRepositoryProvider>('OrganizationRepositoryProvider', OrganizationRepository);
-container.registerSingleton<IUserOrganizationRepositoryProvider>(
-  'UserOrganizationRepositoryProvider',
-  UserOrganizationRepository,
-);
-container.registerSingleton<IOrganizationRoleRepositoryProvider>(
-  'OrganizationRoleRepositoryProvider',
-  OrganizationRoleRepository,
-);
-container.registerSingleton<IOrganizationRolePermissionRepositoryProvider>(
-  'OrganizationRolePermissionRepositoryProvider',
-  OrganizationRolePermissionRepository,
-);
-container.registerSingleton<IPermissionRepositoryProvider>('PermissionRepositoryProvider', PermissionRepository);
-container.registerSingleton<IUserPermissionRepositoryProvider>(
-  'UserPermissionRepositoryProvider',
-  UserPermissionRepository,
-);
+function registerContainers(): void {
+  container.registerSingleton(SyncPermissionsService, SyncPermissionsService);
+  container.registerSingleton(AbacatepayCompletedWebhookHandler, AbacatepayCompletedWebhookHandler);
+  container.registerSingleton(AbacatepayRefundedWebhookHandler, AbacatepayRefundedWebhookHandler);
+  container.registerSingleton(AbacatepayDisputedWebhookHandler, AbacatepayDisputedWebhookHandler);
+  container.registerSingleton(AbacatepayLostWebhookHandler, AbacatepayLostWebhookHandler);
+  container.registerSingleton(AbacatePayWebhookHandlerFactory, AbacatePayWebhookHandlerFactory);
+  container.registerSingleton(AbacatepayWebhookHandlerService, AbacatepayWebhookHandlerService);
+  container.registerSingleton<IWebhookClientProvider>('WebhookClientProvider', AxiosWebhookClientImplementation);
+  container.registerSingleton<IUserRepositoryProvider>('UserRepositoryProvider', UserRepository);
+  container.registerSingleton<IOrganizationRepositoryProvider>(
+    'OrganizationRepositoryProvider',
+    OrganizationRepository,
+  );
+  container.registerSingleton<IUserOrganizationRepositoryProvider>(
+    'UserOrganizationRepositoryProvider',
+    UserOrganizationRepository,
+  );
+  container.registerSingleton<IOrganizationRoleRepositoryProvider>(
+    'OrganizationRoleRepositoryProvider',
+    OrganizationRoleRepository,
+  );
+  container.registerSingleton<IOrganizationRolePermissionRepositoryProvider>(
+    'OrganizationRolePermissionRepositoryProvider',
+    OrganizationRolePermissionRepository,
+  );
+  container.registerSingleton<IPermissionRepositoryProvider>('PermissionRepositoryProvider', PermissionRepository);
+  container.registerSingleton<IUserPermissionRepositoryProvider>(
+    'UserPermissionRepositoryProvider',
+    UserPermissionRepository,
+  );
 
-container.registerSingleton<IEventRepositoryProvider>('EventRepositoryProvider', EventRepository);
-container.registerSingleton<IBatchRepositoryProvider>('BatchRepositoryProvider', BatchRepository);
-container.registerSingleton<IEventActivityRepositoryProvider>(
-  'EventActivityRepositoryProvider',
-  EventActivityRepository,
-);
-container.registerSingleton<IOrderRepositoryProvider>('OrderRepositoryProvider', OrderRepository);
-container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider', TicketRepository);
-container.registerSingleton<IEventActivityPresenceRepositoryProvider>(
-  'EventActivityPresenceRepositoryProvider',
-  EventActivityPresenceRepository,
-);
-container.registerSingleton<IEventActivityInvitedRepositoryProvider>(
-  'EventActivityInvitedRepositoryProvider',
-  EventActivityInvitedRepository,
-);
-container.registerSingleton<IAddressRepositoryProvider>('AddressRepositoryProvider', AddressRepository);
+  container.registerSingleton<IEventRepositoryProvider>('EventRepositoryProvider', EventRepository);
+  container.registerSingleton<IBatchRepositoryProvider>('BatchRepositoryProvider', BatchRepository);
+  container.registerSingleton<IEventActivityRepositoryProvider>(
+    'EventActivityRepositoryProvider',
+    EventActivityRepository,
+  );
+  container.registerSingleton<IOrderRepositoryProvider>('OrderRepositoryProvider', OrderRepository);
+  container.registerSingleton<ITicketRepositoryProvider>('TicketRepositoryProvider', TicketRepository);
+  container.registerSingleton<IEventActivityPresenceRepositoryProvider>(
+    'EventActivityPresenceRepositoryProvider',
+    EventActivityPresenceRepository,
+  );
+  container.registerSingleton<IEventActivityInvitedRepositoryProvider>(
+    'EventActivityInvitedRepositoryProvider',
+    EventActivityInvitedRepository,
+  );
+  container.registerSingleton<IAddressRepositoryProvider>('AddressRepositoryProvider', AddressRepository);
 
-container.registerSingleton<IRepositoryProvider<Payment>>('PaymentRepositoryProvider', PaymentRepository);
-container.registerSingleton<IRepositoryProvider<CardInformation>>(
-  'CardInformationRepositoryProvider',
-  CardInformationRepository,
-);
-container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
-container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
-container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);
-container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
-container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider', RedisConnection);
-container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);
-container.registerSingleton<IFileRepositoryProvider>('FileRepositoryProvider', FileRepository);
-container.registerSingleton<IStorageProvider>('StorageProvider', MinioStorageImplementation);
-container.registerSingleton<IMailerProvider>('MailerProvider', ResendMailerImplementation);
-container.registerSingleton<IQRCodeProvider<PresenceQRPayloadDTO>>('QRCodeProvider', QrcodeLibStrategyImplementation);
+  container.registerSingleton<IRepositoryProvider<Payment>>('PaymentRepositoryProvider', PaymentRepository);
+  container.registerSingleton<IRepositoryProvider<CardInformation>>(
+    'CardInformationRepositoryProvider',
+    CardInformationRepository,
+  );
+  container.registerSingleton<IHashProvider>('HashProvider', BcryptHashProvider);
+  container.registerSingleton<IJwtProvider>('JwtProvider', JsonWebTokenJwtProvider);
+  container.registerSingleton<IPaymentGatewayProvider>('PixGatewayProvider', AbacatepayPixGatewayImplementation);
+  container.registerSingleton<IProducerProvider>('ProducerProvider', BullMQProducer);
+  container.registerSingleton<IRedisConnectionProvider>('RedisConnectionProvider', RedisConnection);
+  container.registerSingleton<IWebSocketProvider>('WebSocketProvider', WebSocketImplementation);
+  container.registerSingleton<IFileRepositoryProvider>('FileRepositoryProvider', FileRepository);
+  container.registerSingleton<IStorageProvider>('StorageProvider', MinioStorageImplementation);
+  container.registerSingleton<IMailerProvider>('MailerProvider', ResendMailerImplementation);
+  container.registerSingleton<IQRCodeProvider<PresenceQRPayloadDTO>>('QRCodeProvider', QrcodeLibStrategyImplementation);
+}
+
+registerContainers();
+export { registerContainers };

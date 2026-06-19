@@ -4,10 +4,7 @@ import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
-
-interface FindUsersOptions {
-  organization_id: string;
-}
+import { FindUsersOptionsDTO } from '../../dtos/incoming/http/user/find-users-options.dto';
 
 @injectable()
 class FindUsersService {
@@ -20,7 +17,7 @@ class FindUsersService {
     private permissionRepository: IPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, options: FindUsersOptions) {
+  public async execute(user_id: string, options: FindUsersOptionsDTO) {
     const userOrganization = (
       await this.userOrganizationRepository.find({ user_id, organization_id: options.organization_id })
     ).at(0);

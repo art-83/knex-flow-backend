@@ -7,7 +7,7 @@ import { bullmqConfig } from '../../../../config/bullmq.config';
 import { QueueNames } from '../../../../shared/infra/queue/enums/queues-names.enum';
 import { IWorkerProvider } from '../../../../shared/infra/queue/infra/providers/worker.provider';
 import { IRedisConnectionProvider } from '../../../../shared/infra/queue/infra/providers/redis-connection.provider';
-import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/discord-error-webhook/discord-error-webhook-job-payload.dto';
+import { DiscordErrorWebhookJobPayloadDTO } from '../../dtos/internal/queue/discord-error-webhook-job-payload.dto';
 import { SendDiscordErrorWebhookService } from '../../services/discord-webhooks/send-discord-error-webhook.service';
 
 class DiscordErrorWebhookWorker implements IWorkerProvider {

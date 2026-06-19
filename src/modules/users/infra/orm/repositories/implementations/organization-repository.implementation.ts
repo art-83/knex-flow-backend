@@ -1,6 +1,6 @@
 import { IOrganizationRepositoryProvider } from '../providers/organization-repository.provider';
 import { Organization } from '../../entities/organization.entity';
-import { OrganizationQueryOptions } from '../../../../dtos/organization/organization-query-options';
+import { OrganizationQueryOptionsDTO } from '../../../../dtos/incoming/http/organization/organization-query-options.dto';
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 
@@ -11,7 +11,7 @@ class OrganizationRepository implements IOrganizationRepositoryProvider {
     this.repository = dataSource.getRepository(Organization);
   }
 
-  public async find(data: Partial<OrganizationQueryOptions>): Promise<Organization[]> {
+  public async find(data: Partial<OrganizationQueryOptionsDTO>): Promise<Organization[]> {
     const query = this.repository.createQueryBuilder('organization');
 
     if (data.id) query.andWhere('organization.id = :id', { id: data.id });

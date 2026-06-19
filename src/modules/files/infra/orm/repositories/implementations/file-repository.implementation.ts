@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { dataSource } from '../../../../../../shared/infra/orm/database';
 import { File } from '../../entities/file.entity';
-import { FileQueryOptions } from '../../../../dtos/file/file-query-options';
+import { FileQueryOptionsDTO } from '../../../../dtos/incoming/http/file-query-options.dto';
 import { IFileRepositoryProvider } from '../providers/file-repository.provider';
 
 class FileRepository implements IFileRepositoryProvider {
@@ -11,7 +11,7 @@ class FileRepository implements IFileRepositoryProvider {
     this.repository = dataSource.getRepository(File);
   }
 
-  public async find(data: Partial<FileQueryOptions>): Promise<File[]> {
+  public async find(data: Partial<FileQueryOptionsDTO>): Promise<File[]> {
     const query = this.repository.createQueryBuilder('file');
 
     if (data.id) query.andWhere('file.id = :id', { id: data.id });

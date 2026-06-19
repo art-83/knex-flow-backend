@@ -15,6 +15,17 @@ export default [
     },
     rules: {
       'import/no-default-export': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/types/**', '**/types'],
+              message: 'Use dtos/incoming, dtos/outgoing, or dtos/internal instead of types/.',
+            },
+          ],
+        },
+      ],
     },
   },
 ];

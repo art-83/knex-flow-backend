@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { EventActivityQueryOptions } from '../../dtos/event-activity/event-activity-query-options';
-import { EventActivityPresenceQueryOptions } from '../../dtos/event-activity-presence/event-activity-presence-query-options';
+import { EventActivityQueryOptionsDTO } from '../../dtos/incoming/http/event-activity/event-activity-query-options.dto';
+import { EventActivityPresenceQueryOptionsDTO } from '../../dtos/incoming/http/event-activity-presence/event-activity-presence-query-options.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IEventActivityRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-repository.provider';
 import { IEventActivityPresenceRepositoryProvider } from '../../infra/orm/repositories/providers/event-activity-presence-repository.provider';
@@ -25,7 +25,7 @@ class FindUserEventActivityEnrollmentsService {
       throw new AppError(404, 'Event not found.', 'Evento nao encontrado.');
     }
 
-    const activities = await this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptions>);
+    const activities = await this.eventActivityRepository.find({ event_id } as Partial<EventActivityQueryOptionsDTO>);
 
     if (!activities.length) {
       return {
@@ -45,7 +45,7 @@ class FindUserEventActivityEnrollmentsService {
           event_activity_id: activity.id,
           user_id,
           limit: 1,
-        } as Partial<EventActivityPresenceQueryOptions>)
+        } as Partial<EventActivityPresenceQueryOptionsDTO>)
       ).at(0);
 
       if (presence) {

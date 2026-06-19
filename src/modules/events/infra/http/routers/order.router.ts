@@ -1,10 +1,8 @@
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
 import { OrderStatus } from '../../orm/enums/order-status.enum';
-import {
-  defaultQueryOptionsSchema,
-  timestampQueryOptionsSchema,
-} from '../../../../../shared/infra/http/dtos/query-options-schema.dto';
+import { defaultQueryOptionsSchema } from '../../../../../shared/dtos/incoming/http/schemas/default-query-options.schema';
+import { timestampQueryOptionsSchema } from '../../../../../shared/dtos/incoming/http/schemas/timestamp-query-options.schema';
 import { OrderController } from '../controllers/order.controller';
 
 const orderRouter = Router();
@@ -25,5 +23,18 @@ orderRouter.get(
     }),
   }),
   orderController.findUserOrders,
+);
+
+orderRouter.post(
+  '/:id/refund',
+  celebrate({
+    [Segments.PARAMS]: Joi.object({
+      id: Joi.string().uuid().required(),
+    }),
+    [Segments.BODY]: Joi.object({
+      reason: Joi.string().max(500).optional(),
+    }),
+  }),
+  orderController.requestRefund,
 );
 export { orderRouter };

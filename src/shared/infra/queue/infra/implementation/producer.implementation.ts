@@ -1,5 +1,6 @@
 import { BaseJobOptions, Queue } from 'bullmq';
 import { inject, injectable } from 'tsyringe';
+import { bullmqConfig } from '../../../../../config/bullmq.config';
 import { IProducerProvider } from '../providers/producer.provider';
 import { IRedisConnectionProvider } from '../providers/redis-connection.provider';
 
@@ -14,13 +15,14 @@ class BullMQProducer<T> implements IProducerProvider<T, BaseJobOptions> {
     this.queues = new Map();
   }
 
-  async createJob(queueName: string, payload: T, jobOptions: BaseJobOptions): Promise<void> {
+  async createJob(queueName: string, payload: T, jobOptions?: BaseJobOptions): Promise<void> {
     let queue = this.queues.get(queueName);
     if (!queue) {
       queue = new Queue(queueName, { connection: this.redisConnection.getConnection() });
       this.queues.set(queueName, queue);
     }
-    await queue.add(queueName, payload, jobOptions);
+    const options = jobOptions ?? bullmqConfig.defaultJobOptions;
+    await queue.add(queueName, payload, options);
   }
 
   async close(): Promise<void> {

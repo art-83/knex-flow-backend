@@ -4,7 +4,7 @@ import { IUserRepositoryProvider } from '../../infra/orm/repositories/providers/
 import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { CreateOrUpdateUserPermissionDTO } from '../../dtos/user-permission/create-or-update-user-permission.dto';
+import { CreateOrUpdateUserPermissionDTO } from '../../dtos/incoming/http/user-permission/create-or-update-user-permission.dto';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
 

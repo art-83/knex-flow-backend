@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { BatchQueryOptions } from '../../dtos/batch/batch-query-options';
+import { BatchQueryOptionsDTO } from '../../dtos/incoming/http/batch/batch-query-options.dto';
 import { IBatchRepositoryProvider } from '../../infra/orm/repositories/providers/batch-repository.provider';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
@@ -23,7 +23,7 @@ class FindBatchesService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, options: Partial<BatchQueryOptions>) {
+  public async execute(user_id: string, options: Partial<BatchQueryOptionsDTO>) {
     if (!options.event_id) {
       throw new AppError(400, 'event_id is required.', 'event_id e obrigatorio.');
     }

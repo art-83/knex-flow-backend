@@ -1,15 +1,12 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
-import { OrganizationConfiguration } from '../../dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../dtos/internal/domain/organization-configuration.dto';
+import { UpdateOrganizationRequestDTO } from '../../dtos/incoming/http/organization/update-organization-request.dto';
 import { IOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/organization-repository.provider';
 import { IUserOrganizationRepositoryProvider } from '../../infra/orm/repositories/providers/user-organization-repository.provider';
 import { IPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/permission-repository.provider';
 import { IUserPermissionRepositoryProvider } from '../../infra/orm/repositories/providers/user-permission-repository.provider';
 import { PermissionDescriptionEnum } from '../../infra/orm/enums/permission-description.enum';
-
-interface UpdateOrganizationDTO {
-  configuration?: Partial<OrganizationConfiguration>;
-}
 
 @injectable()
 class UpdateOrganizationService {
@@ -24,7 +21,7 @@ class UpdateOrganizationService {
     private userPermissionRepository: IUserPermissionRepositoryProvider,
   ) {}
 
-  public async execute(user_id: string, organization_id: string, data: UpdateOrganizationDTO) {
+  public async execute(user_id: string, organization_id: string, data: UpdateOrganizationRequestDTO) {
     const userOrganization = (await this.userOrganizationRepository.find({ user_id, organization_id })).at(0);
 
     if (!userOrganization) {
@@ -65,7 +62,7 @@ class UpdateOrganizationService {
       throw new AppError(404, 'Organization not found.', 'Organizacao nao encontrada.');
     }
 
-    const currentConfig = (organization.configuration ?? {}) as OrganizationConfiguration;
+    const currentConfig = (organization.configuration ?? {}) as OrganizationConfigurationDTO;
     const nextConfig = data.configuration ? { ...currentConfig, ...data.configuration } : currentConfig;
 
     const updated = await this.organizationRepository.update(organization_id, {
@@ -83,4 +80,4 @@ class UpdateOrganizationService {
     };
   }
 }
-export { UpdateOrganizationDTO, UpdateOrganizationService };
+export { UpdateOrganizationService };

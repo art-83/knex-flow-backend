@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import { CreateOrUpdateEventDTO } from '../../dtos/event/create-or-update-event.dto';
+import { CreateOrUpdateEventDTO } from '../../dtos/incoming/http/event/create-or-update-event.dto';
 import { IEventRepositoryProvider } from '../../infra/orm/repositories/providers/event-repository.provider';
 import { IAddressRepositoryProvider } from '../../infra/orm/repositories/providers/address-repository.provider';
 import { AppError } from '../../../../shared/infra/http/errors/app-error';
@@ -11,10 +11,11 @@ import { EventStatus } from '../../infra/orm/enums/event-status.enum';
 import { EventModality } from '../../infra/orm/enums/event-modality.enum';
 import { Event } from '../../infra/orm/entities/event.entity';
 import { IFileRepositoryProvider } from '../../../files/infra/orm/repositories/providers/file-repository.provider';
-import { FileQueryOptions } from '../../../files/dtos/file/file-query-options';
+import { FileQueryOptionsDTO } from '../../../files/dtos/incoming/http/file-query-options.dto';
 import { IStorageProvider } from '../../../files/infra/storage/providers/storage.provider';
 import { mapStoredFile } from '../../../files/utils/map-stored-file';
-import { OrganizationConfiguration } from '../../../users/dtos/organization/organization-configuration.dto';
+import { OrganizationConfigurationDTO } from '../../../users/dtos/internal/domain/organization-configuration.dto';
+import { resolvePublishConfigurationGuard } from '../../utils/resolve-publish-configuration-guard';
 
 @injectable()
 class UpdateEventService {
@@ -79,8 +80,8 @@ class UpdateEventService {
     }
 
     if (eventExists.status === EventStatus.ACTIVE) {
-      const config = eventExists.organization.configuration as OrganizationConfiguration | undefined;
-      const allowed = config?.can_edit_event_after_publish ?? true;
+      const config = eventExists.organization.configuration as OrganizationConfigurationDTO | undefined;
+      const allowed = resolvePublishConfigurationGuard(config, 'can_edit_event_after_publish', true);
 
       if (!allowed) {
         throw new AppError(
@@ -101,12 +102,11 @@ class UpdateEventService {
       }
     }
 
+    const hasAddress = eventExists.address && eventExists.address.id;
     const isSwitchingToOnline =
-      data.modality === EventModality.ONLINE &&
-      eventExists.modality === EventModality.OFFLINE &&
-      Boolean(eventExists.address?.id);
+      data.modality === EventModality.ONLINE && eventExists.modality === EventModality.OFFLINE && Boolean(hasAddress);
 
-    if (isSwitchingToOnline && eventExists.address?.id) {
+    if (isSwitchingToOnline && eventExists.address && eventExists.address.id) {
       await this.addressRepository.delete(eventExists.address.id);
     }
 
@@ -144,7 +144,7 @@ class UpdateEventService {
       return null;
     }
 
-    const file = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptions)).at(0);
+    const file = (await this.fileRepository.find({ id: file_id, user_id } as FileQueryOptionsDTO)).at(0);
 
     if (!file) {
       throw new AppError(404, 'File not found.', 'Arquivo nao encontrado.');
@@ -169,7 +169,7 @@ class UpdateEventService {
       return updatePayload;
     }
 
-    if (eventExists.address?.id) {
+    if (eventExists.address && eventExists.address.id) {
       await this.addressRepository.update(eventExists.address.id, address);
       return updatePayload;
     }
